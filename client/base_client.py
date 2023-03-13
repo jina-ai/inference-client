@@ -1,7 +1,5 @@
 class BaseClient(object):
-    def __init__(self, host, port, model_name, model_version, timeout=10):
-        self.host = host
-        self.port = port
+    def __init__(self, model_name):
         self.model_name = model_name
 
     def encode(self, data):

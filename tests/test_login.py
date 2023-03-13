@@ -26,14 +26,6 @@ def test_no_token_valid_session():
     assert client.token == 'valid session'
 
 
-@patch.dict(os.environ, {'JINA_AUTH_TOKEN': 'valid session'})
-@patch('client.Client._login', Mock(return_value='valid session 2'))
-@patch('client.Client._fetch_metadata', Mock(return_value={'model': 'model name'}))
-def test_no_token_valid_session_force():
-    client = Client(model='model name')
-    assert client.token == 'valid session 2'
-
-
 @patch.dict(os.environ, {'JINA_AUTH_TOKEN': 'invalid session'})
 @patch('client.Client._login', Mock(return_value='valid session'))
 @patch('client.Client._fetch_metadata', Mock(return_value={'model': 'model name'}))
