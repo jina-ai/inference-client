@@ -2,7 +2,6 @@ import os
 from typing import Optional
 
 import hubble
-from base_client import BaseClient
 from hubble.utils.auth import Auth
 
 
@@ -23,8 +22,8 @@ class Client:
         to login regardless of the current system env session
         :return: None
         """
-        self.token = self._login(token=token, force=force)
         self.model = model
+        self.token = self._login(token=token, force=force)
         self._connect(self.model)
 
     def _login(self, token: Optional[str] = None, force: Optional[bool] = False):
