@@ -1,2 +1,0 @@
-jina
-jina-hubble-sdk
