@@ -3,7 +3,7 @@ repos:
     rev: 4.0.1
     hooks:
     -   id: flake8
-        exclude: ^(.git|__pycache__|docs/source/conf.py|old|build|dist|tests|jina/resources/|jina/proto/pb/jina_pb2.py|jina/proto/pb/jina_pb2_grpc.py|jina/proto/pb2/jina_pb2.py|jina/proto/pb2/jina_pb2_grpc.py)
+        exclude: ^(.git|__pycache__|docs/source/conf.py|old|build|dist|tests|client/resources/)
         args:
           - --max-complexity=10
           - --max-line-length=127
@@ -12,8 +12,8 @@ repos:
   rev: v1.5.8
   hooks:
   - id: darglint
-    files: jina/
-    exclude: ^(jina/helloworld/|jina/proto/pb/jina_pb2.py|jina/proto/pb/jina_pb2_grpc.py|jina/proto/pb2/jina_pb2.py|jina/proto/pb2/jina_pb2_grpc.py|docs/|jina/resources/)
+    files: client/
+    exclude: ^(docs/|client/resources/)
     args:
     - --message-template={path}:{line} {msg_id} {msg}
     - -s=sphinx
@@ -23,8 +23,8 @@ repos:
   rev: 5.1.1  # pick a git hash / tag to point to
   hooks:
   -   id: pydocstyle
-      files: jina/
-      exclude: ^(jina/helloworld/|jina/proto/pb/jina_pb2.py|jina/proto/pb/jina_pb2_grpc.py|jina/proto/pb2/jina_pb2.py|jina/proto/pb2/jina_pb2_grpc.py|docs/|jina/resources/)
+      files: client/
+      exclude: ^(docs/|client/resources/)
       args:
       - --select=D101,D102,D103
 - repo: https://github.com/ambv/black
@@ -32,7 +32,7 @@ repos:
   hooks:
   - id: black
     types: [python]
-    exclude: ^(jina/proto/pb/jina_pb2.py|jina/proto/pb/jina_pb2_grpc.py|jina/proto/pb2/jina_pb2.py|jina/proto/pb2/jina_pb2_grpc.py|docs/|jina/resources/)
+    exclude: ^(docs/|client/resources/)
     args:
       - -S
 - repo: https://github.com/asottile/blacken-docs
