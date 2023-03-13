@@ -1,1 +1,0 @@
-from jina import Client
