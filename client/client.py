@@ -1,5 +1,6 @@
 from typing import Optional
 
+from .base_client import BaseClient
 from .helper import fetch_metadata, login, validate_model
 
 
@@ -30,3 +31,4 @@ class Client:
         config = fetch_metadata(self.token, self.model_name)
         self.endpoint = config['grpc']
         self.image_size = config['image_size']
+        self.model = BaseClient()
