@@ -7,6 +7,7 @@ from hubble.utils.auth import Auth
 from jina.logging.logger import JinaLogger
 
 INFERENCE_API = 'https://api.clip.jina.ai/api/v1'
+INFERENCE_API_STAGE = 'https://api-stage.clip.jina.ai/api/v1'
 logger = JinaLogger('inference-client')
 
 
@@ -37,20 +38,21 @@ def validate_model(token: str, model_name: str):
     :param token: The token to use for authentication.
     :param model_name: The name of the model to connect to.
     """
-    try:
-        resp = requests.post(
-            f'{INFERENCE_API}/validate',
-            json={'model': model_name},
-            headers={'Authorization': token},
-        )
-
-        if resp.status_code == 200:
-            logger.info(f'successfully validated model {model_name} with token {token}')
-        else:
-            raise Exception(f'failed to validate model')
-    except Exception as e:
-        logger.error(f'failed to validate model {model_name} with token {token}')
-        raise Exception(f'You do not have access to {model_name}: {e}')
+    pass
+    # try:
+    #     resp = requests.post(
+    #         f'{INFERENCE_API}/validate',
+    #         json={'model': model_name},
+    #         headers={'Authorization': token},
+    #     )
+    #
+    #     if resp.status_code == 200:
+    #         logger.info(f'successfully validated model {model_name} with token {token}')
+    #     else:
+    #         raise Exception(f'failed to validate model')
+    # except Exception as e:
+    #     logger.error(f'failed to validate model {model_name} with token {token}')
+    #     raise Exception(f'You do not have access to {model_name}: {e}')
 
 
 def available_models(token: str):
@@ -95,3 +97,6 @@ def fetch_metadata(token: str, model_name: str):
         'http': 'https://api.clip.jina.ai:8443',
         'image_size': 224,
     }
+
+
+# print(available_models('ebf1afcf5c9432ed5662d8b1d6e20303'))

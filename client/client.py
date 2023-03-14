@@ -31,4 +31,13 @@ class Client:
         config = fetch_metadata(self.token, self.model_name)
         self.endpoint = config['grpc']
         self.image_size = config['image_size']
-        self.model = BaseClient()
+        self.model = BaseClient(self.endpoint, self.token)
+
+    def encode(self, docs):
+        """
+        Encodes the documents using the model.
+
+        :param docs: The documents to encode.
+        :return: The encoded documents.
+        """
+        return self.model.encode(docs)
