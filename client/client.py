@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .helper import get_model, login
+from .helper import login, validate_model
 
 
 class Client:
@@ -24,4 +24,5 @@ class Client:
 
         self.model_name = model_name
         self.token = login(token)
-        self.cfg = get_model(self.token, self.model_name)
+
+        # validate_model(self.token, self.model_name)
