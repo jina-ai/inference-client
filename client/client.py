@@ -41,7 +41,7 @@ class Client:
         :param kwargs: Additional arguments to pass to the model.
         :return: The encoded documents.
         """
-        return self.model.encode(docs, **kwargs)
+        return self.model._encode(docs, **kwargs)
 
     def caption(self, docs, **kwargs):
         """
@@ -51,4 +51,4 @@ class Client:
         :param kwargs: Additional arguments to pass to the model.
         :return: The captioned documents.
         """
-        return self.model.caption(docs, **kwargs)
+        return self.model._caption(docs, **kwargs)
