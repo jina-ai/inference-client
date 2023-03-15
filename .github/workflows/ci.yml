@@ -101,15 +101,8 @@ jobs:
       - name: Test
         id: test
         run: |
-          pytest --suppress-no-test-exit-code --cov=inference_client --cov-report=xml \
-            -v -s ${{ matrix.test-path }}
-          echo "::set-output name=codecov_flag::cas"
+          pytest --suppress-no-test-exit-code -v -s ${{ matrix.test-path }}
         timeout-minutes: 30
-      - name: Check codecov file
-        id: check_files
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "coverage.xml"
 
   # just for blocking the merge until all parallel core-test are successful
   success-all-test:
