@@ -62,26 +62,27 @@ def available_models(token: str):
     :param token: The token to use for authentication.
     :return: A list of model names.
     """
-    try:
-        resp = requests.get(
-            f'{INFERENCE_API}/charts/', headers={'Authorization': token}
-        )
-
-        if resp.status_code == 200:
-            available = []
-            for res in resp.json():
-                name = res['name']
-                for model_name in res['params_matrix'][0]['model_name']:
-                    available.append(f'{name}/{model_name}')
-            logger.info(
-                f'successfully fetched model list: {available} with token {token}'
-            )
-            return available
-        else:
-            raise Exception(f'failed to fetch the model list')
-    except Exception as e:
-        logger.error(f'failed to fetch the model list with token {token}')
-        raise Exception(f'failed to fetch the model list: {e}')
+    return ['clip', 'blip']
+    # try:
+    #     resp = requests.get(
+    #         f'{INFERENCE_API}/charts/', headers={'Authorization': token}
+    #     )
+    #
+    #     if resp.status_code == 200:
+    #         available = []
+    #         for res in resp.json():
+    #             name = res['name']
+    #             for model_name in res['params_matrix'][0]['model_name']:
+    #                 available.append(f'{name}/{model_name}')
+    #         logger.info(
+    #             f'successfully fetched model list: {available} with token {token}'
+    #         )
+    #         return available
+    #     else:
+    #         raise Exception(f'failed to fetch the model list')
+    # except Exception as e:
+    #     logger.error(f'failed to fetch the model list with token {token}')
+    #     raise Exception(f'failed to fetch the model list: {e}')
 
 
 def fetch_metadata(token: str, model_name: str):
@@ -92,11 +93,13 @@ def fetch_metadata(token: str, model_name: str):
     :param model_name: The name of the model to retrieve metadata for.
     :return: A dictionary containing metadata for the model.
     """
+    if model_name == 'blip':
+        return {
+            'grpc': 'grpcs://precious-mongrel-468a83b493-grpc.wolf.jina.ai',
+            'image_size': 224,
+        }
     return {
         'grpc': 'grpcs://api.clip.jina.ai:2096',
         'http': 'https://api.clip.jina.ai:8443',
         'image_size': 224,
     }
-
-
-# print(available_models('ebf1afcf5c9432ed5662d8b1d6e20303'))

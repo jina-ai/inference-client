@@ -29,15 +29,26 @@ class Client:
         validate_model(self.token, self.model_name)
 
         config = fetch_metadata(self.token, self.model_name)
-        self.endpoint = config['grpc']
+        self.address = config['grpc']
         self.image_size = config['image_size']
-        self.model = BaseClient(self.endpoint, self.token)
+        self.model = BaseClient(self.address, self.token)
 
-    def encode(self, docs):
+    def encode(self, docs, **kwargs):
         """
         Encodes the documents using the model.
 
         :param docs: The documents to encode.
+        :param kwargs: Additional arguments to pass to the model.
         :return: The encoded documents.
         """
-        return self.model.encode(docs)
+        return self.model.encode(docs, **kwargs)
+
+    def caption(self, docs, **kwargs):
+        """
+        Captions the documents using the model.
+
+        :param docs: The documents to caption.
+        :param kwargs: Additional arguments to pass to the model.
+        :return: The captioned documents.
+        """
+        return self.model.caption(docs, **kwargs)
