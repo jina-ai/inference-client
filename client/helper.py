@@ -98,6 +98,11 @@ def fetch_metadata(token: str, model_name: str):
             'grpc': 'grpcs://precious-mongrel-468a83b493-grpc.wolf.jina.ai',
             'image_size': 224,
         }
+    elif model_name == 'blip2':
+        return {
+            'grpc': 'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai',
+            'image_size': 224,
+        }
     return {
         'grpc': 'grpcs://api.clip.jina.ai:2096',
         'http': 'https://api.clip.jina.ai:8443',
