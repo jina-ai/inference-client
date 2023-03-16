@@ -12,6 +12,10 @@ authors = [
 repository = "https://github.com/jina-ai/inference-client"
 homepage = "https://inference-api.jina.ai"
 
+packages = [
+    { include = "client" },
+]
+
 # README file(s) are used as the package description
 readme = ["README.md", "LICENSE"]
 
@@ -30,6 +34,7 @@ python = ">=3.8,<4.0.0"
 jina  = "^3.14.0"
 jina-hubble-sdk = ">=0.34.0"
 rich = "^13.3.0"
+torch = ">=1.10.0"
 
 # Dependency groups are supported for organizing your dependencies
 [tool.poetry.group.dev.dependencies]
