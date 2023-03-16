@@ -98,7 +98,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install wheel pytest pytest-cov
-          pip install --no-cache-dir -e .
+          pip install --no-cache-dir -e .[torch]
       - name: Test
         id: test
         run: |

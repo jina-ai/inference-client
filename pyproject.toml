@@ -34,7 +34,9 @@ python = ">=3.8,<4.0.0"
 jina  = "^3.14.0"
 jina-hubble-sdk = ">=0.34.0"
 rich = "^13.3.0"
-torch = ">=1.10.0"
+
+[tool.poetry.extras]
+torch = ["torch >= 1.10.0"]
 
 # Dependency groups are supported for organizing your dependencies
 [tool.poetry.group.dev.dependencies]
