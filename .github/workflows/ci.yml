@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.10', '3.11']
+        python-version: ['3.8', '3.10', '3.11']
         test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     steps:
       - name: Checkout code
@@ -98,7 +98,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install wheel pytest pytest-cov
-          python -m pip install docarray jina torch
+          pip install --no-cache-dir -e .[pytorch]
       - name: Test
         id: test
         run: |
