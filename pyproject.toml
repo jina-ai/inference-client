@@ -34,6 +34,7 @@ python = ">=3.8,<4.0.0"
 jina  = "^3.14.0"
 jina-hubble-sdk = ">=0.34.0"
 rich = "^13.3.0"
+torch = {version = ">=1.10.0", optional = true}
 
 [tool.poetry.extras]
 pytorch = ["torch"]
