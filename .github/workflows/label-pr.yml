@@ -35,7 +35,7 @@ jobs:
           echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
       - uses: actions/checkout@v2
         with:
-          repository: jina-ai/clip-as-service
+          repository: jina-ai/inference-client
           ref: ${{ env.BRANCH_NAME }}
       - uses: actions/setup-python@v2
         with:
