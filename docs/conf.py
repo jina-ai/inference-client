@@ -5,7 +5,7 @@ from os import path
 
 sys.path.insert(0, path.abspath('..'))
 
-project = 'CLIP-as-service'
+project = 'Inference Client'
 slug = re.sub(r'\W+', '-', project.lower())
 author = 'Jina AI'
 copyright = 'Jina AI Limited. All rights reserved.'
@@ -14,18 +14,7 @@ master_doc = 'index'
 language = 'en'
 repo_dir = '../'
 
-try:
-    if 'CAS_VERSION' not in os.environ:
-        libinfo_py = path.join(repo_dir, 'client/clip_client', '__init__.py')
-        libinfo_content = open(libinfo_py, 'r').readlines()
-        version_line = [
-            l.strip() for l in libinfo_content if l.startswith('__version__')
-        ][0]
-        exec(version_line)
-    else:
-        __version__ = os.environ['CAS_VERSION']
-except FileNotFoundError:
-    __version__ = '0.0.0'
+__version__ = '0.0.1'
 
 version = __version__
 release = __version__
@@ -43,7 +32,7 @@ pygments_style = 'rainbow_dash'
 html_theme = 'furo'
 
 base_url = '/'
-html_baseurl = 'https://clip-as-service.jina.ai'
+html_baseurl = 'https://jina.ai'
 sitemap_url_scheme = '{link}'
 sitemap_locales = [None]
 sitemap_filename = "sitemap.xml"
@@ -121,7 +110,7 @@ notfound_context = {
 <h1>Page Not Found</h1>
 <p>Oops, we couldn't find that page. </p>
 <p>You can try "asking our docs" on the right corner of the page to find answer.</p>
-<p>Otherwise, <a href="https://github.com/jina-ai/clip-as-service/">please create a Github issue</a> and one of our team will respond.</p>
+<p>Otherwise, <a href="https://github.com/jina-ai/inference-client/">please create a Github issue</a> and one of our team will respond.</p>
 
 ''',
 }
@@ -143,7 +132,7 @@ linkcheck_ignore = [
     # Avoid link check on local uri
     'http://0.0.0.0:*',
     'pods/encode.yml',
-    'https://github.com/jina-ai/clip-as-service/commit/*',
+    'https://github.com/jina-ai/inference-client/commit/*',
     '.github/*',
     'extra-requirements.txt',
     'fastentrypoints.py' '../../101',
@@ -157,19 +146,19 @@ linkcheck_timeout = 20
 linkcheck_retries = 2
 linkcheck_anchors = False
 
-ogp_site_url = 'https://clip-as-service.jina.ai/'
+ogp_site_url = 'https://jina.ai/'
 ogp_image = 'https://clip-as-service.jina.ai/_static/banner.png'
 ogp_use_first_image = True
 ogp_description_length = 300
 ogp_type = 'website'
-ogp_site_name = f'CLIP-as-service {os.environ.get("SPHINX_MULTIVERSION_VERSION", version)} Documentation'
+ogp_site_name = f'Inference Client {os.environ.get("SPHINX_MULTIVERSION_VERSION", version)} Documentation'
 
 ogp_custom_meta_tags = [
     '<meta name="twitter:card" content="summary_large_image">',
     '<meta name="twitter:site" content="@JinaAI_">',
     '<meta name="twitter:creator" content="@JinaAI_">',
-    '<meta name="description" content="Embed images and sentences into fixed-length vectors via CLIP.">',
-    '<meta property="og:description" content="CLIP-as-service is a low-latency high-scalability embedding service for images and texts. It can be easily integrated as a microservice into neural search solutions.">',
+    '<meta name="description" content="Inference Client">',
+    '<meta property="og:description" content="Inference Client">',
     '''
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-E63SXVNDXZ"></script>
@@ -190,20 +179,6 @@ def add_server_address(app):
     # This makes variable `server_address` available to docbot.js
     server_address = app.config['server_address']
     js_text = "var server_address = '%s';" % server_address
-    app.add_js_file(None, body=js_text)
-
-
-def configure_qa_bot_ui(app):
-    # This sets the server address to <qa-bot>
-    server_address = app.config['server_address']
-    js_text = (
-        """
-        document.addEventListener('DOMContentLoaded', function() { 
-            document.querySelector('qa-bot').setAttribute('server', '%s');
-        });
-        """
-        % server_address
-    )
     app.add_js_file(None, body=js_text)
 
 
@@ -233,11 +208,3 @@ def setup(app):
             ),
         ],
     )
-    app.add_config_value(
-        name='server_address',
-        default=os.getenv(
-            'JINA_DOCSBOT_SERVER', 'https://jina-ai-clip-as-service.docsqa.jina.ai'
-        ),
-        rebuild='',
-    )
-    app.connect('builder-inited', configure_qa_bot_ui)
