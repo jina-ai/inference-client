@@ -31,7 +31,7 @@ class Client:
         config = fetch_metadata(self.token, self.model_name)
         self.address = config['grpc']
         self.image_size = config['image_size']
-        self.model = BaseClient(self.address, self.token)
+        self.model = BaseClient(self.address, self.token, self.image_size)
 
     def encode(self, docs, **kwargs):
         """
