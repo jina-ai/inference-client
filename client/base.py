@@ -18,34 +18,35 @@ class BaseClient:
         self.token = token
         self.image_size = image_size
 
-    def _encode(self, docs, **kwargs):
+    def _encode(self, content, **kwargs):
         """
         Encode the documents using the model.
-        :param docs: docs
+        :param content: content
         :param kwargs: additional arguments to pass to the model
-        :return: encoded docs
+        :return: encoded content
         """
         # res = self.client.post(
         #     on='/encode',
-        #     inputs=docs,
+        #     inputs=content,
         #     metadata=(('authorization', self.token),),
         # )
         # return res
-        return self._post(docs, endpoint='/encode', **kwargs)
+        return self._post(content, endpoint='/encode', **kwargs)
 
-    def _caption(self, docs, **kwargs):
+    def _caption(self, **kwargs):
         """
         Caption the documents using the model.
-        :param docs: docs
         :param kwargs: additional arguments to pass to the model
-        :return: captioned docs
+        :return: captioned content
         """
-        return self._post(docs, endpoint='/caption', **kwargs)
+        # TODO get from args/kwargs
 
-    def _iter_doc(self, docs):
+        return self._post(None, endpoint='/caption', **kwargs)
+
+    def _iter_doc(self, content):
         from docarray import Document
 
-        for c in docs:
+        for c in content:
             if isinstance(c, str):
                 _mime = mimetypes.guess_type(c)[0]
                 if _mime and _mime.startswith('image'):

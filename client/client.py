@@ -33,22 +33,21 @@ class Client:
         self.image_size = config['image_size']
         self.model = BaseClient(self.address, self.token, self.image_size)
 
-    def encode(self, docs, **kwargs):
+    def encode(self, content, **kwargs):
         """
         Encodes the documents using the model.
 
-        :param docs: The documents to encode.
+        :param content: The documents to encode.
         :param kwargs: Additional arguments to pass to the model.
         :return: The encoded documents.
         """
-        return self.model._encode(docs, **kwargs)
+        return self.model._encode(content, **kwargs)
 
-    def caption(self, docs, **kwargs):
+    def caption(self, **kwargs):
         """
         Captions the documents using the model.
 
-        :param docs: The documents to caption.
         :param kwargs: Additional arguments to pass to the model.
         :return: The captioned documents.
         """
-        return self.model._caption(docs, **kwargs)
+        return self.model._caption(**kwargs)
