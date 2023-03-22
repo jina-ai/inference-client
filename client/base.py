@@ -1,9 +1,15 @@
 import mimetypes
 from io import BytesIO
-from typing import Optional
+from typing import TYPE_CHECKING, Optional, Union, overload
 
+import numpy
+import torch
+from docarray import Document, DocumentArray
 from jina import Client
 from PIL import Image
+
+if TYPE_CHECKING:  # pragma: no cover
+    from docarray.typing import ArrayType
 
 
 class BaseClient:
@@ -18,22 +24,60 @@ class BaseClient:
         self.token = token
         self.image_size = image_size
 
-    def _encode(self, content, **kwargs):
+    @overload
+    def encode(self, text: str, **kwargs):
+        """
+        Encode plain text
+        :param text: the text to encode
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def encode(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
+        """
+        Encode image # TODO: add image type
+        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def encode(self, docs: Union['Document', 'DocumentArray'], **kwargs):
+        """
+        Encode documents
+        :param docs: the documents to encode
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    def encode(self, **kwargs):
         """
         Encode the documents using the model.
-        :param content: content
         :param kwargs: additional arguments to pass to the model
         :return: encoded content
         """
-        # res = self.client.post(
-        #     on='/encode',
-        #     inputs=content,
-        #     metadata=(('authorization', self.token),),
-        # )
-        # return res
-        return self._post(content, endpoint='/encode', **kwargs)
+        return self._post(endpoint='/encode', **kwargs)
 
-    def _caption(self, **kwargs):
+    @overload
+    def caption(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
+        """
+        caption image # TODO: add image type
+        :param image: the image to caption, can be a `ndarray`, 'bytes' or uri of the image
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def caption(self, docs: Union['Document', 'DocumentArray'], **kwargs):
+        """
+        caption documents
+        :param docs: the documents to caption
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    def caption(self, **kwargs):
         """
         Caption the documents using the model.
         :param kwargs: additional arguments to pass to the model
@@ -41,7 +85,7 @@ class BaseClient:
         """
         # TODO get from args/kwargs
 
-        return self._post(None, endpoint='/caption', **kwargs)
+        return self._post(endpoint='/caption', **kwargs)
 
     def _iter_doc(self, content):
         from docarray import Document
@@ -66,6 +110,7 @@ class BaseClient:
                     d = c
                 elif not c.blob and c.uri:
                     if self.image_size:
+                        # TODO: open online url
                         im = Image.open(c.uri).resize(
                             (self.image_size, self.image_size)
                         )
@@ -88,23 +133,35 @@ class BaseClient:
 
             yield d
 
-    def _get_post_payload(self, docs, **kwargs):
-        endpoint = kwargs.pop('endpoint', '/')
-        inputs = self._iter_doc(docs)  # TODO: add preprocess
-        request_size = kwargs.pop('request_size', 1)
-        total_docs = len(docs) if hasattr(docs, '__len__') else None
-        metadata = (('authorization', self.token),)
-
-        print(f">>>>>> {kwargs}")
-
-        return dict(
-            on=endpoint,
-            inputs=inputs,
-            request_size=request_size,
-            total_docs=total_docs,
-            metadata=metadata,
-            **kwargs,
+    def _get_post_payload(self, **kwargs):
+        payload = dict(
+            on=kwargs.pop('endpoint', '/'),
+            request_size=kwargs.pop('request_size', 1),
+            metadata=(('authorization', self.token),),
         )
 
-    def _post(self, docs, **kwargs):
-        return self.client.post(**self._get_post_payload(docs, **kwargs))
+        if 'docs' in kwargs:
+            total_docs = (
+                len(kwargs.get('docs'))
+                if hasattr(kwargs.get('docs'), '__len__')
+                else None
+            )
+            payload.update(total_docs=total_docs)
+            payload.update(inputs=self._iter_doc(kwargs.pop('docs')))
+        elif 'text' in kwargs:
+            payload.update(inputs=DocumentArray([Document(text=kwargs.pop('text'))]))
+            payload.update(total_docs=1)
+        elif 'image' in kwargs:
+            image = kwargs.pop('image')
+            if isinstance(image, str):
+                payload.update(inputs=DocumentArray([Document(uri=image)]))
+            elif isinstance(image, bytes):
+                payload.update(inputs=DocumentArray([Document(blob=image)]))
+            elif isinstance(image, (numpy.ndarray, torch.Tensor)):
+                payload.update(inputs=DocumentArray([Document(tensor=image)]))
+            payload.update(total_docs=1)
+
+        return payload
+
+    def _post(self, **kwargs):
+        return self.client.post(**self._get_post_payload(**kwargs))
