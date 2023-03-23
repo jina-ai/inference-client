@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING, Optional, Union, overload
 
 import numpy
 import torch
-from docarray import Document, DocumentArray
 from jina import Client
-from PIL import Image
 
 if TYPE_CHECKING:  # pragma: no cover
+    from docarray import Document, DocumentArray
     from docarray.typing import ArrayType
+    from PIL import Image
 
 
 class BaseClient:
@@ -51,6 +51,24 @@ class BaseClient:
         """
         ...
 
+    @overload
+    def encode(
+        self,
+        docs: Optional[Union['Document', 'DocumentArray']] = None,
+        text: Optional[str] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        **kwargs,
+    ):
+        """
+        Encode text, image, or documents using a pre-trained model.
+
+        :param docs: The documents to encode. Default: None.
+        :param text: The text to encode. Default: None.
+        :param image: The image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param kwargs: Additional arguments to pass to the model.
+        """
+        ...
+
     def encode(self, **kwargs):
         """
         Encode the documents using the model.
@@ -74,6 +92,22 @@ class BaseClient:
         caption documents
         :param docs: the documents to caption
         :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def caption(
+        self,
+        docs: Optional[Union['Document', 'DocumentArray']] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        **kwargs,
+    ):
+        """
+        Generate a caption for an image or a set of documents using a pre-trained model.
+
+        :param docs: The documents to caption. Default: None.
+        :param image: The image to caption, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param kwargs: Additional arguments to pass to the model.
         """
         ...
 
