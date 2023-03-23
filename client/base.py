@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, Optional, Union, overload
 
 import numpy
 import torch
+from docarray import Document, DocumentArray
 from jina import Client
 
 if TYPE_CHECKING:  # pragma: no cover
-    from docarray import Document, DocumentArray
     from docarray.typing import ArrayType
     from PIL import Image
 
