@@ -1,11 +1,11 @@
+"""
 import os
 from unittest.mock import Mock, patch
 
 import pytest
 
-from client.helper import available_models, fetch_metadata, login, validate_model
+from client.helper import available_models, fetch_host, login, validate_model
 
-"""
 @patch('client.helper.Auth.validate_token', Mock(return_value=None))
 def test_login_valid_token():
     assert login('valid token') == 'valid token'
