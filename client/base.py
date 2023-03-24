@@ -1,5 +1,4 @@
 import mimetypes
-from io import BytesIO
 from typing import TYPE_CHECKING, Optional, Union, overload
 
 import numpy
@@ -9,7 +8,6 @@ from jina import Client
 
 if TYPE_CHECKING:  # pragma: no cover
     from docarray.typing import ArrayType
-    from PIL import Image
 
 
 class BaseClient:
@@ -17,12 +15,11 @@ class BaseClient:
     Base client of inference-client.
     """
 
-    def __init__(
-        self, host: str, token: str, image_size: Optional[int] = None, **kwargs
-    ):
-        self.client = Client(host=host)
+    def __init__(self, model_name: str, token: str, host: str, **kwargs):
+        self.model_name = model_name
         self.token = token
-        self.image_size = image_size
+        self.host = host
+        self.client = Client(host=self.host)
 
     @overload
     def encode(self, text: str, **kwargs):
@@ -128,37 +125,18 @@ class BaseClient:
             if isinstance(c, str):
                 _mime = mimetypes.guess_type(c)[0]
                 if _mime and _mime.startswith('image'):
-                    if self.image_size:
-                        im = Image.open(c).resize((self.image_size, self.image_size))
-                        imb = BytesIO()
-                        im.save(imb, format='JPEG')
-                        d = Document(blob=imb.getvalue())
-                    else:
-                        d = Document(
-                            uri=c,
-                        ).load_uri_to_blob()
+                    d = Document(
+                        uri=c,
+                    ).load_uri_to_blob()
                 else:
                     d = Document(text=c)
             elif isinstance(c, Document):
                 if c.content_type in ('text', 'blob'):
                     d = c
                 elif not c.blob and c.uri:
-                    if self.image_size:
-                        # TODO: open online url
-                        im = Image.open(c.uri).resize(
-                            (self.image_size, self.image_size)
-                        )
-                        imb = BytesIO()
-                        im.save(imb, format='JPEG')
-                        c.blob = imb.getvalue()
-                    else:
-                        c.load_uri_to_blob()
+                    c.load_uri_to_blob()
                     d = c
                 elif c.tensor is not None:
-                    if self.image_size:
-                        c.set_image_tensor_shape(
-                            shape=(self.image_size, self.image_size)
-                        )
                     d = c
                 else:
                     raise TypeError(f'unsupported input type {c!r} {c.content_type}')

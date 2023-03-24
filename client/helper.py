@@ -38,6 +38,7 @@ def validate_model(token: str, model_name: str):
     :param token: The token to use for authentication.
     :param model_name: The name of the model to connect to.
     """
+    # TODO: combine with fetch_metadata
     pass
     # try:
     #     resp = requests.post(
@@ -85,26 +86,16 @@ def available_models(token: str):
     #     raise Exception(f'failed to fetch the model list: {e}')
 
 
-def fetch_metadata(token: str, model_name: str):
+def fetch_host(token: str, model_name: str):
     """
-    Retrieves metadata for the specified model.
+    Retrieves host for the specified model.
 
     :param token: The token to use for authentication.
-    :param model_name: The name of the model to retrieve metadata for.
-    :return: A dictionary containing metadata for the model.
+    :param model_name: The name of the model to retrieve host for.
+    :return: A string containing the host.
     """
     if model_name == 'blip':
-        return {
-            'grpc': 'grpcs://precious-mongrel-468a83b493-grpc.wolf.jina.ai',
-            'image_size': 224,
-        }
+        return 'grpcs://precious-mongrel-468a83b493-grpc.wolf.jina.ai'
     elif model_name == 'blip2':
-        return {
-            'grpc': 'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai',
-            'image_size': 224,
-        }
-    return {
-        'grpc': 'grpcs://api.clip.jina.ai:2096',
-        'http': 'https://api.clip.jina.ai:8443',
-        'image_size': 224,
-    }
+        return 'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'
+    return 'grpcs://api.clip.jina.ai:2096'
