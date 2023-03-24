@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .base import BaseClient
-from .helper import fetch_metadata, login, validate_model
+from .helper import fetch_host, login, validate_model
 
 
 class Client:
@@ -29,10 +29,8 @@ class Client:
         :param model_name: The name of the model to connect to.
         :return: The model.
         """
-        if model_name in self.models:
-            return self.models.get(model_name)
-
-        config = fetch_metadata(self.token, model_name)
-        model = BaseClient(model_name=model_name, token=self.token, config=config)
-        self.models[model_name] = model
+        if (model := self.models.get(model_name)) is None:
+            host = fetch_host(self.token, model_name)
+            model = BaseClient(model_name=model_name, token=self.token, host=host)
+            self.models[model_name] = model
         return model
