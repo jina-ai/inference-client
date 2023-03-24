@@ -11,42 +11,28 @@ class Client:
 
     def __init__(
         self,
-        model_name: str,
         *,
         token: Optional[str] = None,
     ):
         """
         Initializes the client with the desired model and user token.
 
-        :param model_name: The name of the model to access.
         :param token: An optional user token for authentication.
         """
-        assert model_name, '`model_name` is required to create a client'
 
-        self.model_name = model_name
         self.token = login(token)
+        self.models = {}
 
-        validate_model(self.token, self.model_name)
-
-        config = fetch_metadata(self.token, self.model_name)
-        self.address = config['grpc']
-        self.image_size = config['image_size']
-        self.model = BaseClient(self.address, self.token, self.image_size)
-
-    def encode(self, **kwargs):
+    def get_model(self, model_name):
         """
-        Encodes the documents using the model.
-
-        :param kwargs: Additional arguments to pass to the model.
-        :return: The encoded documents.
+        Get a model by name. Returns a cached model if it exists.
+        :param model_name: The name of the model to connect to.
+        :return: The model.
         """
-        return self.model.encode(**kwargs)
+        if model_name in self.models:
+            return self.models.get(model_name)
 
-    def caption(self, **kwargs):
-        """
-        Captions the documents using the model.
-
-        :param kwargs: Additional arguments to pass to the model.
-        :return: The captioned documents.
-        """
-        return self.model.caption(**kwargs)
+        config = fetch_metadata(self.token, model_name)
+        model = BaseClient(model_name=model_name, token=self.token, config=config)
+        self.models[model_name] = model
+        return model

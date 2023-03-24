@@ -17,12 +17,12 @@ class BaseClient:
     Base client of inference-client.
     """
 
-    def __init__(
-        self, host: str, token: str, image_size: Optional[int] = None, **kwargs
-    ):
-        self.client = Client(host=host)
+    def __init__(self, model_name: str, token: str, config: dict, **kwargs):
+        self.model_name = model_name
         self.token = token
-        self.image_size = image_size
+        self.host = config.get('grpc')
+        self.image_size = config.get('image_size')
+        self.client = Client(host=self.host)
 
     @overload
     def encode(self, text: str, **kwargs):

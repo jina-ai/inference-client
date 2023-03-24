@@ -38,6 +38,7 @@ def validate_model(token: str, model_name: str):
     :param token: The token to use for authentication.
     :param model_name: The name of the model to connect to.
     """
+    # TODO: combine with fetch_metadata
     pass
     # try:
     #     resp = requests.post(
