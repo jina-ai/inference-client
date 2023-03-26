@@ -96,7 +96,7 @@ def fetch_host(token: str, model_name: str):
     """
     try:
         resp = requests.get(
-            f"https://stage-api.clip.jina.ai/api/v1/models/?model_name={model_name}",
+            f"https://api.clip.jina.ai/api/v1/models/?model_name={model_name}",
             headers={"Authorization": token},
         )
 
