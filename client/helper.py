@@ -94,8 +94,24 @@ def fetch_host(token: str, model_name: str):
     :param model_name: The name of the model to retrieve host for.
     :return: A string containing the host.
     """
-    if model_name == 'blip':
-        return 'grpcs://precious-mongrel-468a83b493-grpc.wolf.jina.ai'
-    elif model_name == 'blip2':
-        return 'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'
-    return 'grpcs://api.clip.jina.ai:2096'
+    try:
+        resp = requests.get(
+            f"https://api.clip.jina.ai/api/v1/models/?model_name={model_name}",
+            headers={"Authorization": token},
+        )
+
+        if resp.status_code == 401:
+            raise ValueError(
+                "The given Jina auth token is invalid. Please check your Jina auth token."
+            )
+        elif resp.status_code == 404:
+            raise ValueError(
+                f"The given model name `{model_name}` is not valid. "
+                f"Please go to https://cloud.jina.ai/user/inference "
+                f"and create a model with the given model name."
+            )
+        resp.raise_for_status()
+        print(resp.json())
+        return resp.json()["endpoints"]["grpc"]
+    except requests.exceptions.HTTPError as err:
+        raise ValueError(f"Error: {err!r}")

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .base import BaseClient
-from .helper import fetch_host, login, validate_model
+from .helper import fetch_host, login
 
 
 class Client:
