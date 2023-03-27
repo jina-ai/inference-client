@@ -1,5 +1,5 @@
 import mimetypes
-from typing import TYPE_CHECKING, Optional, Union, overload
+from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
 import numpy
 import torch
@@ -40,7 +40,7 @@ class BaseClient:
         ...
 
     @overload
-    def encode(self, docs: Union['Document', 'DocumentArray'], **kwargs):
+    def encode(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         Encode documents
         :param docs: the documents to encode
@@ -51,7 +51,7 @@ class BaseClient:
     @overload
     def encode(
         self,
-        docs: Optional[Union['Document', 'DocumentArray']] = None,
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         text: Optional[str] = None,
         image: Optional[Union[str, bytes, 'ArrayType']] = None,
         **kwargs,
@@ -59,10 +59,10 @@ class BaseClient:
         """
         Encode text, image, or documents using a pre-trained model.
 
-        :param docs: The documents to encode. Default: None.
-        :param text: The text to encode. Default: None.
-        :param image: The image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
-        :param kwargs: Additional arguments to pass to the model.
+        :param docs: the documents to encode. Default: None.
+        :param text: the text to encode. Default: None.
+        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
@@ -84,7 +84,7 @@ class BaseClient:
         ...
 
     @overload
-    def caption(self, docs: Union['Document', 'DocumentArray'], **kwargs):
+    def caption(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         caption documents
         :param docs: the documents to caption
@@ -95,7 +95,7 @@ class BaseClient:
     @overload
     def caption(
         self,
-        docs: Optional[Union['Document', 'DocumentArray']] = None,
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         image: Optional[Union[str, bytes, 'ArrayType']] = None,
         **kwargs,
     ):
@@ -117,6 +117,73 @@ class BaseClient:
         # TODO get from args/kwargs
 
         return self._post(endpoint='/caption', **kwargs)
+
+    @overload
+    def rank(self, text, candidates, **kwargs):
+        """
+        Rank the documents using the model.
+        :param text: the text to be ranked against
+        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def rank(self, image, candidates, **kwargs):
+        """
+        Rank the documents using the model.
+        :param image: the image to be ranked against
+        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def rank(self, docs, **kwargs):
+        """
+        Rank the documents using the model.
+        :param docs: the documents to be ranked with candidates stored in the matches
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def rank(
+        self,
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
+        text: Optional[str] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        candidates: Optional[Iterable[Union[str, bytes, 'ArrayType']]] = None,
+        **kwargs,
+    ):
+        """
+        Rank the documents using the model.
+
+        :param docs: the documents to be ranked with candidates stored in the matches. Default: None.
+        :param text: the text to be ranked against. Default: None.
+        :param image: the image to be ranked against. Default: None.
+        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images. Default: None.
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    def rank(self, **kwargs):
+        """
+        Rank the documents using the model.
+        :param kwargs: additional arguments to pass to the model
+        :return: ranked content
+        """
+        return self._post(endpoint='/rank', **kwargs)
+
+    @overload
+    def vqa(self, image, question, **kwargs):
+        """
+        Rank the documents using the model.
+        :param image: the image that the question is about
+        :param question: the question to be answered
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
 
     def _iter_doc(self, content):
         from docarray import Document
