@@ -178,12 +178,46 @@ class BaseClient:
     @overload
     def vqa(self, image, question, **kwargs):
         """
-        Rank the documents using the model.
+        Answer the question using the model.
         :param image: the image that the question is about
         :param question: the question to be answered
         :param kwargs: additional arguments to pass to the model
         """
         ...
+
+    @overload
+    def vqa(self, docs, **kwargs):
+        """
+        Answer the question using the model.
+        :param docs: the documents to be answered with image as root and question stored in the tags
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    @overload
+    def vqa(
+        self,
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        question: Optional[str] = None,
+        **kwargs,
+    ):
+        """
+        Answer the question using the model.
+        :param docs: the documents to be answered with image as root and question stored in the tags. Default: None.
+        :param image: the image that the question is about. Default: None.
+        :param question: the question to be answered. Default: None.
+        :param kwargs: additional arguments to pass to the model
+        """
+        ...
+
+    def vqa(self, **kwargs):
+        """
+        Answer the question using the model.
+        :param kwargs: additional arguments to pass to the model
+        :return: answered content
+        """
+        return self._post(endpoint='/vqa', **kwargs)
 
     def _iter_doc(self, content):
         from docarray import Document
