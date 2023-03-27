@@ -26,6 +26,7 @@ class Client:
     def get_model(self, model_name):
         """
         Get a model by name. Returns a cached model if it exists.
+
         :param model_name: The name of the model to connect to.
         :return: The model.
         """

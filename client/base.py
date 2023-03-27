@@ -1,9 +1,7 @@
-import mimetypes
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
-import numpy
-import torch
 from docarray import Document, DocumentArray
+from helper import load_plain_into_document
 from jina import Client
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -25,6 +23,7 @@ class BaseClient:
     def encode(self, text: str, **kwargs):
         """
         Encode plain text
+
         :param text: the text to encode
         :param kwargs: additional arguments to pass to the model
         """
@@ -34,6 +33,7 @@ class BaseClient:
     def encode(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
         """
         Encode image # TODO: add image type
+
         :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image
         :param kwargs: additional arguments to pass to the model
         """
@@ -43,6 +43,7 @@ class BaseClient:
     def encode(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         Encode documents
+
         :param docs: the documents to encode
         :param kwargs: additional arguments to pass to the model
         """
@@ -69,6 +70,7 @@ class BaseClient:
     def encode(self, **kwargs):
         """
         Encode the documents using the model.
+
         :param kwargs: additional arguments to pass to the model
         :return: encoded content
         """
@@ -78,6 +80,7 @@ class BaseClient:
     def caption(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
         """
         caption image # TODO: add image type
+
         :param image: the image to caption, can be a `ndarray`, 'bytes' or uri of the image
         :param kwargs: additional arguments to pass to the model
         """
@@ -87,6 +90,7 @@ class BaseClient:
     def caption(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         caption documents
+
         :param docs: the documents to caption
         :param kwargs: additional arguments to pass to the model
         """
@@ -111,17 +115,17 @@ class BaseClient:
     def caption(self, **kwargs):
         """
         Caption the documents using the model.
+
         :param kwargs: additional arguments to pass to the model
         :return: captioned content
         """
-        # TODO get from args/kwargs
-
         return self._post(endpoint='/caption', **kwargs)
 
     @overload
     def rank(self, text, candidates, **kwargs):
         """
         Rank the documents using the model.
+
         :param text: the text to be ranked against
         :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
         :param kwargs: additional arguments to pass to the model
@@ -132,6 +136,7 @@ class BaseClient:
     def rank(self, image, candidates, **kwargs):
         """
         Rank the documents using the model.
+
         :param image: the image to be ranked against
         :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
         :param kwargs: additional arguments to pass to the model
@@ -142,6 +147,7 @@ class BaseClient:
     def rank(self, docs, **kwargs):
         """
         Rank the documents using the model.
+
         :param docs: the documents to be ranked with candidates stored in the matches
         :param kwargs: additional arguments to pass to the model
         """
@@ -170,6 +176,7 @@ class BaseClient:
     def rank(self, **kwargs):
         """
         Rank the documents using the model.
+
         :param kwargs: additional arguments to pass to the model
         :return: ranked content
         """
@@ -179,6 +186,7 @@ class BaseClient:
     def vqa(self, image, question, **kwargs):
         """
         Answer the question using the model.
+
         :param image: the image that the question is about
         :param question: the question to be answered
         :param kwargs: additional arguments to pass to the model
@@ -189,6 +197,7 @@ class BaseClient:
     def vqa(self, docs, **kwargs):
         """
         Answer the question using the model.
+
         :param docs: the documents to be answered with image as root and question stored in the tags
         :param kwargs: additional arguments to pass to the model
         """
@@ -204,6 +213,7 @@ class BaseClient:
     ):
         """
         Answer the question using the model.
+
         :param docs: the documents to be answered with image as root and question stored in the tags. Default: None.
         :param image: the image that the question is about. Default: None.
         :param question: the question to be answered. Default: None.
@@ -214,36 +224,23 @@ class BaseClient:
     def vqa(self, **kwargs):
         """
         Answer the question using the model.
+
         :param kwargs: additional arguments to pass to the model
         :return: answered content
         """
         return self._post(endpoint='/vqa', **kwargs)
 
     def _iter_doc(self, content):
-        from docarray import Document
-
         for c in content:
-            if isinstance(c, str):
-                _mime = mimetypes.guess_type(c)[0]
-                if _mime and _mime.startswith('image'):
-                    d = Document(
-                        uri=c,
-                    ).load_uri_to_blob()
-                else:
-                    d = Document(text=c)
-            elif isinstance(c, Document):
-                if c.content_type in ('text', 'blob'):
-                    d = c
-                elif not c.blob and c.uri:
-                    c.load_uri_to_blob()
-                    d = c
-                elif c.tensor is not None:
-                    d = c
-                else:
-                    raise TypeError(f'unsupported input type {c!r} {c.content_type}')
+            if c.content_type in ('text', 'blob'):
+                d = c
+            elif not c.blob and c.uri:
+                c.load_uri_to_blob()
+                d = c
+            elif c.tensor is not None:
+                d = c
             else:
-                raise TypeError(f'unsupported input type {c!r}')
-
+                raise TypeError(f'unsupported input type {c!r} {c.content_type}')
             yield d
 
     def _get_post_payload(self, **kwargs):
@@ -261,17 +258,28 @@ class BaseClient:
             )
             payload.update(total_docs=total_docs)
             payload.update(inputs=self._iter_doc(kwargs.pop('docs')))
+
         elif 'text' in kwargs:
-            payload.update(inputs=DocumentArray([Document(text=kwargs.pop('text'))]))
+            text_doc = Document(text=kwargs.pop('text'))
+            if 'candidates' in kwargs:
+                candidates = kwargs.pop('candidates')
+                text_doc.matches = DocumentArray(
+                    [load_plain_into_document(c) for c in candidates]
+                )
+
+            payload.update(inputs=DocumentArray([text_doc]))
             payload.update(total_docs=1)
+
         elif 'image' in kwargs:
-            image = kwargs.pop('image')
-            if isinstance(image, str):
-                payload.update(inputs=DocumentArray([Document(uri=image)]))
-            elif isinstance(image, bytes):
-                payload.update(inputs=DocumentArray([Document(blob=image)]))
-            elif isinstance(image, (numpy.ndarray, torch.Tensor)):
-                payload.update(inputs=DocumentArray([Document(tensor=image)]))
+            image_doc = load_plain_into_document(kwargs.pop('image'))
+            if 'candidates' in kwargs:
+                candidates = kwargs.pop('candidates')
+                image_doc.matches = DocumentArray(
+                    [load_plain_into_document(c) for c in candidates]
+                )
+            elif 'question' in kwargs:
+                image_doc.tags.update('prompt', kwargs.pop('question'))
+            payload.update(inputs=DocumentArray([image_doc]))
             payload.update(total_docs=1)
 
         return payload
