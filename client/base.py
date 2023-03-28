@@ -279,7 +279,7 @@ class BaseClient:
                     [load_plain_into_document(c) for c in candidates]
                 )
             elif 'question' in kwargs:
-                image_doc.tags.update('prompt', kwargs.pop('question'))
+                image_doc.tags.update(prompt=kwargs.pop('question'))
             payload.update(inputs=DocumentArray([image_doc]))
             payload.update(total_docs=1)
 
