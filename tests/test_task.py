@@ -6,227 +6,155 @@ from docarray import Document, DocumentArray
 from client import Client
 
 
-@patch('client.client.fetch_host', Mock(return_value='grpcs://api.clip.jina.ai:2096'))
-def test_clip_encode_documentarray():
-    docs = DocumentArray([Document(text='hello world'), Document(text='hello jina')])
+@pytest.mark.parametrize(
+    'input',
+    [
+        DocumentArray(
+            [
+                Document(text='hello world'),
+                Document(uri='https://picsum.photos/id/233/100'),
+            ]
+        ),
+        [
+            Document(text='hello world'),
+            Document(uri='https://picsum.photos/id/233/100'),
+        ],
+    ],
+)
+@pytest.mark.parametrize(
+    ('model_name', 'model_host'),
+    [
+        ('ViT-B-32::openai', 'grpcs://api.clip.jina.ai:2096'),
+        (
+            'Salesforce/blip2-opt-2.7b',
+            'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai',
+        ),
+    ],
+)
+@patch('client.client.fetch_host')
+def test_encode_document(mock_fetch_host, model_name, model_host, input):
+    mock_fetch_host.return_value = model_host
+
     client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    clip = client.get_model('ViT-B-32::openai')
-    res = clip.encode(docs=docs)
+    model = client.get_model(model_name)
+    res = model.encode(docs=input)
     res.summary()
     res[0].summary()
 
 
-@patch('client.client.fetch_host', Mock(return_value='grpcs://api.clip.jina.ai:2096'))
-def test_clip_encode_list_of_document():
-    docs = [Document(text='hello world'), Document(text='hello jina')]
+@pytest.mark.parametrize('input', ['hello world'])
+@pytest.mark.parametrize(
+    ('model_name', 'model_host'),
+    [
+        ('ViT-B-32::openai', 'grpcs://api.clip.jina.ai:2096'),
+        (
+            'Salesforce/blip2-opt-2.7b',
+            'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai',
+        ),
+    ],
+)
+@patch('client.client.fetch_host')
+def test_encode_plain_text(mock_fetch_host, model_name, model_host, input):
+    mock_fetch_host.return_value = model_host
+
     client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    clip = client.get_model('ViT-B-32::openai')
-    res = clip.encode(docs=docs)
+    model = client.get_model(model_name)
+    res = model.encode(text=input)
     res.summary()
     res[0].summary()
 
 
-@patch('client.client.fetch_host', Mock(return_value='grpcs://api.clip.jina.ai:2096'))
-def test_clip_encode_plain_text():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    clip = client.get_model('ViT-B-32::openai')
-    res = clip.encode(text='hello world')
-    res.summary()
-    res[0].summary()
-
-
-@patch('client.client.fetch_host', Mock(return_value='grpcs://api.clip.jina.ai:2096'))
-def test_clip_encode_plain_image_uri():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    clip = client.get_model('ViT-B-32::openai')
-    res = clip.encode(image='https://picsum.photos/id/233/100')
-    res.summary()
-    res[0].summary()
-
-
-@patch('client.client.fetch_host', Mock(return_value='grpcs://api.clip.jina.ai:2096'))
-def test_clip_encode_plain_image_blob():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    clip = client.get_model('ViT-B-32::openai')
-    res = clip.encode(
-        image=Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob
-    )
-    res.summary()
-    res[0].summary()
-
-
-@patch('client.client.fetch_host', Mock(return_value='grpcs://api.clip.jina.ai:2096'))
-def test_clip_encode_plain_image_tensor():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    clip = client.get_model('ViT-B-32::openai')
-    res = clip.encode(
-        image=Document(uri='https://picsum.photos/id/233/100')
+@pytest.mark.parametrize(
+    'input',
+    [
+        'https://picsum.photos/id/233/100',
+        Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
+        Document(uri='https://picsum.photos/id/233/100')
         .load_uri_to_image_tensor()
-        .tensor
-    )
-    res.summary()
-    res[0].summary()
-
-
-@patch('client.client.fetch_host', Mock(return_value='grpcs://api.clip.jina.ai:2096'))
-def test_clip_caption():
-    docs = DocumentArray(
-        [Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob()]
-    )
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    clip = client.get_model('ViT-B-32::openai')
-    res = clip.caption(
-        docs=docs, parameters={'num_captions': 3, 'use_nucleus_sampling': True}
-    )
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
+        .tensor,
+    ],
 )
-def test_blip2_encode_documentarray():
-    docs = DocumentArray([Document(text='hello world'), Document(text='hello jina')])
+@pytest.mark.parametrize(
+    ('model_name', 'model_host'),
+    [
+        ('ViT-B-32::openai', 'grpcs://api.clip.jina.ai:2096'),
+        (
+            'Salesforce/blip2-opt-2.7b',
+            'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai',
+        ),
+    ],
+)
+@patch('client.client.fetch_host')
+def test_encode_plain_image(mock_fetch_host, model_name, model_host, input):
+    mock_fetch_host.return_value = model_host
+
     client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.encode(docs=docs)
+    model = client.get_model(model_name)
+    res = model.encode(image=input)
     res.summary()
     res[0].summary()
 
 
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
+@pytest.mark.parametrize(
+    'input',
+    [
+        DocumentArray(
+            [
+                Document(uri='https://picsum.photos/id/233/100'),
+            ]
+        ),
+        [
+            Document(uri='https://picsum.photos/id/233/100'),
+        ],
+    ],
 )
-def test_blip2_encode_list_of_document():
-    docs = [Document(text='hello world'), Document(text='hello jina')]
+@pytest.mark.parametrize(
+    ('model_name', 'model_host'),
+    [
+        ('ViT-B-32::openai', 'grpcs://api.clip.jina.ai:2096'),
+        (
+            'Salesforce/blip2-opt-2.7b',
+            'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai',
+        ),
+    ],
+)
+@patch('client.client.fetch_host')
+def test_caption_document(mock_fetch_host, model_name, model_host, input):
+    mock_fetch_host.return_value = model_host
+
     client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.encode(docs=docs)
+    model = client.get_model(model_name)
+    res = model.caption(docs=input)
     res.summary()
     res[0].summary()
 
 
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
-)
-def test_blip2_encode_plain_text():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.encode(text='hello world')
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
-)
-def test_blip2_encode_plain_image_uri():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.encode(image='https://picsum.photos/id/233/100')
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
-)
-def test_blip2_encode_plain_image_blob():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.encode(
-        image=Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob
-    )
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
-)
-def test_blip2_encode_plain_image_tensor():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.encode(
-        image=Document(uri='https://picsum.photos/id/233/100')
+@pytest.mark.parametrize(
+    'input',
+    [
+        'https://picsum.photos/id/233/100',
+        Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
+        Document(uri='https://picsum.photos/id/233/100')
         .load_uri_to_image_tensor()
-        .tensor
-    )
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
+        .tensor,
+    ],
 )
-def test_blip2_caption_documentarray():
-    docs = DocumentArray(
-        [Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob()]
-    )
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.caption(docs=docs)
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
+@pytest.mark.parametrize(
+    ('model_name', 'model_host'),
+    [
+        ('ViT-B-32::openai', 'grpcs://api.clip.jina.ai:2096'),
+        (
+            'Salesforce/blip2-opt-2.7b',
+            'grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai',
+        ),
+    ],
 )
-def test_blip2_caption_list_of_document():
-    docs = [Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob()]
+@patch('client.client.fetch_host')
+def test_caption_plain_image(mock_fetch_host, model_name, model_host, input):
+    mock_fetch_host.return_value = model_host
+
     client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.caption(docs=docs)
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
-)
-def test_blip2_caption_plain_image_uri():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.caption(image='https://picsum.photos/id/233/100')
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
-)
-def test_blip2_caption_plain_image_blob():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.caption(
-        image=Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob
-    )
-    res.summary()
-    res[0].summary()
-
-
-@patch(
-    'client.client.fetch_host',
-    Mock(return_value='grpcs://crucial-gazelle-779d1c8739-grpc.wolf.jina.ai'),
-)
-def test_blip2_caption_plain_image_tensor():
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    blip2 = client.get_model('Salesforce/blip2-opt-2.7b')
-    res = blip2.caption(
-        image=Document(uri='https://picsum.photos/id/233/100')
-        .load_uri_to_image_tensor()
-        .tensor
-    )
+    model = client.get_model(model_name)
+    res = model.caption(image=input)
     res.summary()
     res[0].summary()
