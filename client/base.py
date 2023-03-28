@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
 from docarray import Document, DocumentArray
-from helper import load_plain_into_document
 from jina import Client
+
+from .helper import load_plain_into_document
 
 if TYPE_CHECKING:  # pragma: no cover
     from docarray.typing import ArrayType
@@ -271,7 +272,7 @@ class BaseClient:
             payload.update(total_docs=1)
 
         elif 'image' in kwargs:
-            image_doc = load_plain_into_document(kwargs.pop('image'))
+            image_doc = load_plain_into_document(kwargs.pop('image'), is_image=True)
             if 'candidates' in kwargs:
                 candidates = kwargs.pop('candidates')
                 image_doc.matches = DocumentArray(
