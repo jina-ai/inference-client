@@ -77,7 +77,7 @@ blip2_model = inference_client.get_model('Salesforce/blip2-opt-2.7b')
 blip2_embed = blip2_model.encode(text='hello jina')[0].embeddings
 ```
 
-Now it's time to use the models to perform some tasks.
+Now it's time to use the models to perform some tasks!
 We will use the Singapore Skyline with Merlion in the foreground as an example image for the rest of the examples.
 
 <p align="center">
@@ -133,7 +133,7 @@ response = clip_model.encode(image='singapore.jpg')
 print(response[0].embedding)
 
 # Encode image binary data
-image_bytes = open('my_image.jpg', 'rb').read()
+image_bytes = open('singapore.jpg', 'rb').read()
 response = clip_model.encode(image=image_bytes)
 
 # Access the embedding
@@ -144,7 +144,7 @@ import torch
 from PIL import Image
 import torchvision.transforms as transforms
 
-image_bytes = Image.open('my_image.jpg')
+image_bytes = Image.open('singapore.jpg')
 transform = transforms.ToTensor()
 image_tensor = transform(image_bytes)
 response = clip_model.encode(image=image_tensor)
@@ -212,6 +212,9 @@ response = clip_model.rank(reference=reference, candidates=candidates)
 print(response[0].matches)
 ```
 
+You may also input images as bytes or tensors similarly to the encode method.
+
+
 **NOTICE**: The following tasks Caption and VQA are BLIP2 exclusive. Calling these methods on other models will fall back to the default encode method.
 
 ### Captioning
@@ -237,10 +240,10 @@ blip2_model = Client().get_model('Salesforce/blip2-opt-2.7b')
 # Create a DocumentArray with a single image document
 docs = DocumentArray([Document(uri='singapore.jpg')])
 
-# Rank the documents
+# Caption the documents
 response = blip2_model.caption(docs=docs)
 
-# Access the matches
+# Access the captions
 for doc in response:
     print(doc.tags['response'])
 ```
@@ -248,7 +251,67 @@ for doc in response:
 2. Caption plain input:
 
 ```python
+response = blip2_model.caption(image='singapore.jpg')
+
+# Access the captions
+print(response[0].tags['response'])
 ```
+
+You may also input images as bytes or tensors similarly to the encode method.
+
+
+### Visual Question Answering
+
+Visual Question Answering (VQA) is a task that involves answering natural language questions about visual content such as images. 
+Given an image and a question, the goal of VQA is to provide a natural language answer.
+The VQA method takes either a DocumentArray of images and questions, or a single plain image and question.
+
+Here are some examples of how to use the VQA method:
+
+1. VQA a 'DocumentArray':
+
+```python
+from client import Client
+from docarray import Document, DocumentArray
+
+# Initialize client
+inference_client = Client()
+
+# Initialize model
+blip2_model = Client().get_model('Salesforce/blip2-opt-2.7b')
+
+# Create a DocumentArray with one document
+docs = DocumentArray(
+    [
+        Document(
+            uri='singapore.jpg',
+            tags={'prompt': 'Question: What is this photo about? Answer:'},
+        )
+    ]
+)
+
+# VQA the documents
+response = blip2_model.vqa(docs=docs)
+
+# Access the answers
+for doc in response:
+    print(doc.tags['response'])
+```
+
+2. VQA plain input:
+
+```python
+image = 'singapore.jpg'
+question = 'Question: What is this photo about? Answer:'
+
+response = blip2_model.vqa(image=image, question=question)
+
+# Access the answers
+print(response[0].tags['response'])
+```
+
+You may also input images as bytes or tensors similarly to the encode method.
+Please notice that due to the limitation of the current model, the question must start with 'Question:' and end with 'Answer:'.
 
 ## Support
 
