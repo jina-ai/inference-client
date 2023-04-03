@@ -161,7 +161,7 @@ You can also construct a cross-modal Document where the root contains an image o
 
 Here are some examples of how to use the rank method:
 
-1. Rank a 'DocumentArray':
+1. Rank a `DocumentArray`:
 
 ```python
 from client import Client
@@ -225,7 +225,7 @@ The plain input image can be in the form of a URL string, an image blob, or an i
 
 Here are some examples of how to use the caption method:
 
-1. Caption a 'DocumentArray':
+1. Caption a `DocumentArray`:
 
 ```python
 from client import Client
@@ -268,7 +268,7 @@ The VQA method takes either a DocumentArray of images and questions, or a single
 
 Here are some examples of how to use the VQA method:
 
-1. VQA a 'DocumentArray':
+1. VQA a `DocumentArray`:
 
 ```python
 from client import Client
