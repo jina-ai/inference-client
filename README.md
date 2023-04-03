@@ -1,4 +1,4 @@
-# inference-client
+# Inference Client
 
 Inference Client is a library that provides a simple and efficient way to use Jina AI's Inference, a powerful platform that offers a range of AI models for common tasks such as visual reasoning, question answering, and embedding modalities like texts and images. 
 With Inference Client, you can easily select the task and model of your choice and integrate the API call into your workflow with zero technical overhead. 
@@ -80,7 +80,9 @@ blip2_embed = blip2_model.encode(text='hello jina')[0].embeddings
 Now it's time to use the models to perform some tasks.
 We will use the Singapore Skyline with Merlion in the foreground as an example image for the rest of the examples.
 
-![image](.github/README-img/Singapore_Skyline_2019-10.jpeg)
+<p align="center">
+    <img src=".github/README-img/Singapore_Skyline_2019-10.jpeg" width="50%">
+</p>
 
 ### Encoding
 
