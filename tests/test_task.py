@@ -249,22 +249,6 @@ def test_rank_document(mock_fetch_host, make_model_name_and_host, inputs):
                 'https://picsum.photos/id/235/100',
             ],
         ],
-    ],
-)
-@patch('client.client.fetch_host')
-def test_rank_plain_text(mock_fetch_host, make_model_name_and_host, inputs):
-    mock_fetch_host.return_value = make_model_name_and_host[1]
-
-    client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
-    model = client.get_model(make_model_name_and_host[0])
-    res = model.rank(text=inputs[0], candidates=inputs[1])
-    res.summary()
-    res[0].summary()
-
-
-@pytest.mark.parametrize(
-    'inputs',
-    [
         [
             'https://picsum.photos/id/233/100',
             [
@@ -284,12 +268,12 @@ def test_rank_plain_text(mock_fetch_host, make_model_name_and_host, inputs):
     ],
 )
 @patch('client.client.fetch_host')
-def test_rank_plain_image(mock_fetch_host, make_model_name_and_host, inputs):
+def test_rank_plain_input(mock_fetch_host, make_model_name_and_host, inputs):
     mock_fetch_host.return_value = make_model_name_and_host[1]
 
     client = Client(token='ebf1afcf5c9432ed5662d8b1d6e20303')
     model = client.get_model(make_model_name_and_host[0])
-    res = model.rank(image=inputs[0], candidates=inputs[1])
+    res = model.rank(reference=inputs[0], candidates=inputs[1])
     res.summary()
     res[0].summary()
 

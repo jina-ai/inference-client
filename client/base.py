@@ -123,29 +123,23 @@ class BaseClient:
         return self._post(endpoint='/caption', **kwargs)
 
     @overload
-    def rank(self, text, candidates, **kwargs):
+    def rank(
+        self,
+        reference: Union[str, bytes, 'ArrayType'],
+        candidates: Iterable[Union[str, bytes, 'ArrayType']],
+        **kwargs,
+    ):
         """
         Rank the documents using the model.
 
-        :param text: the text to be ranked against
+        :param reference: the reference image or text
         :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
         :param kwargs: additional arguments to pass to the model
         """
         ...
 
     @overload
-    def rank(self, image, candidates, **kwargs):
-        """
-        Rank the documents using the model.
-
-        :param image: the image to be ranked against
-        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
-        :param kwargs: additional arguments to pass to the model
-        """
-        ...
-
-    @overload
-    def rank(self, docs, **kwargs):
+    def rank(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         Rank the documents using the model.
 
@@ -158,8 +152,7 @@ class BaseClient:
     def rank(
         self,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
-        text: Optional[str] = None,
-        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        reference: Optional[Union[str, bytes, 'ArrayType']] = None,
         candidates: Optional[Iterable[Union[str, bytes, 'ArrayType']]] = None,
         **kwargs,
     ):
@@ -167,8 +160,7 @@ class BaseClient:
         Rank the documents using the model.
 
         :param docs: the documents to be ranked with candidates stored in the matches. Default: None.
-        :param text: the text to be ranked against. Default: None.
-        :param image: the image to be ranked against. Default: None.
+        :param reference: the reference image or text. Default: None.
         :param candidates: the candidates to be ranked, can be either a list of strings or a list of images. Default: None.
         :param kwargs: additional arguments to pass to the model
         """
@@ -184,7 +176,7 @@ class BaseClient:
         return self._post(endpoint='/rank', **kwargs)
 
     @overload
-    def vqa(self, image, question, **kwargs):
+    def vqa(self, image: Union[str, bytes, 'ArrayType'], question: str, **kwargs):
         """
         Answer the question using the model.
 
@@ -195,7 +187,7 @@ class BaseClient:
         ...
 
     @overload
-    def vqa(self, docs, **kwargs):
+    def vqa(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         Answer the question using the model.
 
@@ -281,6 +273,15 @@ class BaseClient:
             elif 'question' in kwargs:
                 image_doc.tags.update(prompt=kwargs.pop('question'))
             payload.update(inputs=DocumentArray([image_doc]))
+            payload.update(total_docs=1)
+
+        elif 'reference' in kwargs:
+            reference_doc = load_plain_into_document(kwargs.pop('reference'))
+            candidates = kwargs.pop('candidates')
+            reference_doc.matches = DocumentArray(
+                [load_plain_into_document(c) for c in candidates]
+            )
+            payload.update(inputs=DocumentArray([reference_doc]))
             payload.update(total_docs=1)
 
         return payload
