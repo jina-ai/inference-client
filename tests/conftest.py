@@ -10,3 +10,8 @@ def make_model_name_and_host(request):
         )
     else:
         return 'ViT-B-32::openai', 'grpcs://api.clip.jina.ai:2096'
+
+
+@pytest.fixture(scope='session')
+def make_inference():
+    return 'inference-model-name', 'grpcs://model-name.inference.jina.ai'
