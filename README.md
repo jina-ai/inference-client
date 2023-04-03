@@ -77,6 +77,11 @@ blip2_model = inference_client.get_model('Salesforce/blip2-opt-2.7b')
 blip2_embed = blip2_model.encode(text='hello jina')[0].embeddings
 ```
 
+Now it's time to use the models to perform some tasks.
+We will use the Singapore Skyline with Merlion in the foreground as an example image for the rest of the examples.
+
+![image](.github/README-img/Singapore_Skyline_2019-10.jpeg)
+
 ### Encoding
 
 To use the encode method of an inference model, you need to initialize the model and provide input data as DocumentArray, plain text, or an image. 
@@ -96,9 +101,7 @@ inference_client = Client()
 clip_model = inference_client.get_model('ViT-B-32::openai')
 
 # Create a DocumentArray with two documents
-docs = DocumentArray(
-    [Document(text='hello world'), Document(uri='https://picsum.photos/id/233/100')]
-)
+docs = DocumentArray([Document(text='hello world'), Document(uri='singapore.jpg')])
 
 # Encode the documents
 response = clip_model.encode(docs=docs)
@@ -122,7 +125,7 @@ print(response[0].embedding)
 
 ```python
 # Encode image URL
-response = clip_model.encode(image='https://picsum.photos/id/233/100')
+response = clip_model.encode(image='singapore.jpg')
 
 # Access the embedding
 print(response[0].embedding)
@@ -172,7 +175,7 @@ clip_model = Client().get_model('ViT-B-32::openai')
 docs = DocumentArray(
     [
         Document(
-            text='a black and white photo of nature',
+            uri='singapore.jpg',
             matches=DocumentArray(
                 [
                     Document(text='a colorful photo of nature'),
@@ -188,13 +191,14 @@ docs = DocumentArray(
 response = clip_model.rank(docs=docs)
 
 # Access the matches
-print(response[0].matches)
+for doc in response:
+    print(doc.matches)
 ```
 
 2. Rank plain input:
 
 ```python
-reference = 'a black and white photo of nature'
+reference = 'singapore.jpg'
 candidates = [
     'a colorful photo of nature',
     'a black and white photo of a dog',
@@ -203,8 +207,45 @@ candidates = [
 response = clip_model.rank(reference=reference, candidates=candidates)
 
 # Access the matches
+print(response[0].matches)
+```
+
+**NOTICE**: The following tasks Caption and VQA are BLIP2 exclusive. Calling these methods on other models will fall back to the default encode method.
+
+### Captioning
+
+You can use caption to generate natural language descriptions of images.
+The caption method takes a DocumentArray containing images or a single plain image as input.
+The plain input image can be in the form of a URL string, an image blob, or an image tensor.
+
+Here are some examples of how to use the caption method:
+
+1. Caption a 'DocumentArray':
+
+```python
+from client import Client
+from docarray import Document, DocumentArray
+
+# Initialize client
+inference_client = Client()
+
+# Initialize model
+blip2_model = Client().get_model('Salesforce/blip2-opt-2.7b')
+
+# Create a DocumentArray with a single image document
+docs = DocumentArray([Document(uri='singapore.jpg')])
+
+# Rank the documents
+response = blip2_model.caption(docs=docs)
+
+# Access the matches
 for doc in response:
-    print(doc.matches)
+    print(doc.tags['response'])
+```
+
+2. Caption plain input:
+
+```python
 ```
 
 ## Support
