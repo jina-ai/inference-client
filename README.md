@@ -5,13 +5,13 @@ With Inference Client, you can easily select the task and model of your choice a
 
 The current version of Inference Client includes methods to call the following tasks:
 
-📈**Encode**: Encode data into embeddings using various models 
+📈 **Encode**: Encode data into embeddings using various models 
 
-🔍**Rank**: Re-rank cross-modal matches according to their joint likelihood
+🔍 **Rank**: Re-rank cross-modal matches according to their joint likelihood
 
-📷**Caption**: Generate captions for images 
+📷 **Caption**: Generate captions for images 
 
-🤔**VQA**: Answer questions related to images 
+🤔 **VQA**: Answer questions related to images 
 
 In addition to these tasks, the client provides the ability to connect to the inference server and user authentication.
 
@@ -80,6 +80,7 @@ blip2_embed = blip2_model.encode(text='hello jina')[0].embeddings
 ### Encoding
 
 To use the encode method of an inference model, you need to initialize the model and provide input data as DocumentArray, plain text, or an image. 
+
 Here are some examples of how to use the encode method:
 
 1. Encode a `DocumentArray`:
@@ -145,6 +146,65 @@ response = clip_model.encode(image=image_tensor)
 
 # Access the embedding
 print(response[0].embedding)
+```
+
+### Ranking
+
+To perform similarity-based ranking of candidate matches, you can use the rank method of an inference model. 
+The rank method takes a reference input and a list of candidates, and reorder that list of candidates based on their similarity to the reference input. 
+You can also construct a cross-modal Document where the root contains an image or text and .matches contain images or sentences to rerank.
+
+Here are some examples of how to use the rank method:
+
+1. Rank a 'DocumentArray':
+
+```python
+from client import Client
+from docarray import Document, DocumentArray
+
+# Initialize client
+inference_client = Client()
+
+# Initialize model
+clip_model = Client().get_model('ViT-B-32::openai')
+
+# Create a DocumentArray with a single document and some candidate matches
+docs = DocumentArray(
+    [
+        Document(
+            text='a black and white photo of nature',
+            matches=DocumentArray(
+                [
+                    Document(text='a colorful photo of nature'),
+                    Document(text='a black and white photo of a dog'),
+                    Document(text='a black and white photo of a cat'),
+                ]
+            ),
+        ),
+    ]
+)
+
+# Rank the documents
+response = clip_model.rank(docs=docs)
+
+# Access the matches
+print(response[0].matches)
+```
+
+2. Rank plain input:
+
+```python
+reference = 'a black and white photo of nature'
+candidates = [
+    'a colorful photo of nature',
+    'a black and white photo of a dog',
+    'a black and white photo of a cat',
+]
+response = clip_model.rank(reference=reference, candidates=candidates)
+
+# Access the matches
+for doc in response:
+    print(doc.matches)
 ```
 
 ## Support
