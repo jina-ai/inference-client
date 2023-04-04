@@ -30,6 +30,18 @@ pip install inference-client
 
 Before using Inference Client, please create an inference on [Jina AI Cloud](https://cloud.jina.ai/user/inference).
 
+<p align="center">
+    <img src=".github/README-img/jac-1.png" width="50%">
+</p>
+
+<p align="center">
+    <img src=".github/README-img/jac-2.png" width="50%">
+</p>
+
+<p align="center">
+    <img src=".github/README-img/jac-3.png" width="50%">
+</p>
+
 ### Client Initialization
 
 To initialize the Client object and connect to the inference server, you can choose to pass a valid personal access token to the token parameter.
