@@ -1,5 +1,9 @@
 # Inference Client
 
+[![PyPI](https://img.shields.io/pypi/v/inference-client)](https://pypi.org/project/inference-client/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/inference-client)](https://pypi.org/project/inference-client/)
+[![PyPI - License](https://img.shields.io/pypi/l/inference-client)](https://pypi.org/project/inference-client/)
+
 Inference Client is a library that provides a simple and efficient way to use Jina AI's Inference, a powerful platform that offers a range of AI models for common tasks such as visual reasoning, question answering, and embedding modalities like texts and images. 
 With Inference Client, you can easily select the task and model of your choice and integrate the API call into your workflow with zero technical overhead. 
 
