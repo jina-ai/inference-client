@@ -46,7 +46,7 @@ From there, you can select the model you want to use.
     <img src=".github/README-img/jac-3.png">
 </p>
 
-After the inference is created and the status is "Serving", you can use the inference client to connect to it.
+After the inference is created and the status is "Serving", you can use Inference Client to connect to it.
 This could take a few minutes, depending on the model you selected.
 
 ### Client Initialization
@@ -60,16 +60,16 @@ jina auth token create <name of PAT> -e <expiration days>
 To pass the token to the client, you can use the following code snippet:
 
 ```python
-from client import Client
+from inference_client import Client
 
 # Initialize client with valid token
-client = Client(token='valid token')
+client = Client(token='<your token>')
 ```
 
 If you don't provide a token explicitly, Inference Client will look for a `JINA_AUTH_TOKEN` environment variable, otherwise it will try to authenticate via browser.
 
 ```python
-from client import Client
+from inference_client import Client
 
 client = Client()
 ```
@@ -86,18 +86,18 @@ You can connect to as many inference models as you want once they have been crea
 Here's an example of how to connect to two models and encode some text using each of them:
     
 ```python
-from client import Client
+from inference_client import Client
 
 # Initialize client
 inference_client = Client()
 
 # Connect to CLIP model
 clip_model = inference_client.get_model('ViT-B-32::openai')
-clip_embed = clip_model.encode(text='hello world')[0].embeddings
+clip_embed = clip_model.encode(text='hello world')[0].embedding
 
 # Connect to BLIP2 model
 blip2_model = inference_client.get_model('Salesforce/blip2-opt-2.7b')
-blip2_embed = blip2_model.encode(text='hello jina')[0].embeddings
+blip2_embed = blip2_model.encode(text='hello jina')[0].embedding
 ```
 
 Now it's time to use the models to perform some tasks!
@@ -116,20 +116,20 @@ Here are some examples of how to use the encode method:
 1. Encode a `DocumentArray`:
 
 ```python
-from client import Client
+from inference_client import Client
 from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Connect to CLIP model
-clip_model = inference_client.get_model('ViT-B-32::openai')
+model = inference_client.get_model('ViT-B-32::openai')
 
 # Create a DocumentArray with two documents
 docs = DocumentArray([Document(text='hello world'), Document(uri='singapore.jpg')])
 
 # Encode the documents
-response = clip_model.encode(docs=docs)
+response = model.encode(docs=docs)
 
 # Access the embeddings
 for doc in response:
@@ -139,15 +139,19 @@ for doc in response:
 ```bash
 [-5.48706055e-02 -1.10717773e-01  5.13671875e-01 -3.22509766e-01
  -1.40380859e-01  6.23535156e-01  3.07617188e-01  4.26025391e-01
- ...
- 8.04443359e-02  8.53515625e-01 -5.96008301e-02  3.61633301e-02]
+  ...
+  8.04443359e-02  8.53515625e-01 -5.96008301e-02  3.61633301e-02]
+[ 1.26416489e-01  2.53842145e-01  1.32031530e-01 -6.55740649e-02
+  3.77700478e-01  1.34678692e-01  1.94542333e-01  6.93580136e-04
+  ...
+  1.24198742e-01  2.51199156e-02 -1.18231498e-01  1.66848406e-01]
 ```
 
 2. Encode plain text:
 
 ```python
 # Encode the documents
-response = clip_model.encode(text='hello world')
+response = model.encode(text='hello world')
 
 # Access the embeddings
 print(response[0].embedding)
@@ -164,27 +168,26 @@ print(response[0].embedding)
 
 ```python
 # Encode image URL
-response = clip_model.encode(image='singapore.jpg')
+response = model.encode(image='singapore.jpg')
 
 # Access the embedding
 print(response[0].embedding)
 
 # Encode image binary data
 image_bytes = open('singapore.jpg', 'rb').read()
-response = clip_model.encode(image=image_bytes)
+response = model.encode(image=image_bytes)
 
 # Access the embedding
 print(response[0].embedding)
 
 # Encode image tensor data
-import torch
 from PIL import Image
 import torchvision.transforms as transforms
 
 image_bytes = Image.open('singapore.jpg')
 transform = transforms.ToTensor()
 image_tensor = transform(image_bytes)
-response = clip_model.encode(image=image_tensor)
+response = model.encode(image=image_tensor)
 
 # Access the embedding
 print(response[0].embedding)
@@ -209,14 +212,14 @@ Here are some examples of how to use the rank method:
 1. Rank a `DocumentArray`:
 
 ```python
-from client import Client
+from inference_client import Client
 from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Initialize model
-clip_model = Client().get_model('ViT-B-32::openai')
+model = Client().get_model('ViT-B-32::openai')
 
 # Create a DocumentArray with a single document and some candidate matches
 docs = DocumentArray(
@@ -235,7 +238,7 @@ docs = DocumentArray(
 )
 
 # Rank the documents
-response = clip_model.rank(docs=docs)
+response = model.rank(docs=docs)
 
 # Access the matches
 for match in not response[0]:
@@ -257,7 +260,7 @@ candidates = [
     'a photo of blue scenery',
     'a black and white photo of a cat',
 ]
-response = clip_model.rank(reference=reference, candidates=candidates)
+response = model.rank(reference=reference, candidates=candidates)
 
 # Access the matches
 for match in not response[0]:
@@ -285,20 +288,20 @@ Here are some examples of how to use the caption method:
 1. Caption a `DocumentArray`:
 
 ```python
-from client import Client
+from inference_client import Client
 from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Initialize model
-blip2_model = Client().get_model('Salesforce/blip2-opt-2.7b')
+model = Client().get_model('Salesforce/blip2-opt-2.7b')
 
 # Create a DocumentArray with a single image document
 docs = DocumentArray([Document(uri='singapore.jpg')])
 
 # Caption the documents
-response = blip2_model.caption(docs=docs)
+response = model.caption(docs=docs)
 
 # Access the captions
 for doc in response:
@@ -312,7 +315,7 @@ the merlion fountain in singapore at night
 2. Caption plain input:
 
 ```python
-response = blip2_model.caption(image='singapore.jpg')
+response = model.caption(image='singapore.jpg')
 
 # Access the captions
 print(response[0].tags['response'])
@@ -336,14 +339,14 @@ Here are some examples of how to use the VQA method:
 1. VQA a `DocumentArray`:
 
 ```python
-from client import Client
+from inference_client import Client
 from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Initialize model
-blip2_model = Client().get_model('Salesforce/blip2-opt-2.7b')
+model = Client().get_model('Salesforce/blip2-opt-2.7b')
 
 # Create a DocumentArray with one document
 docs = DocumentArray(
@@ -356,7 +359,7 @@ docs = DocumentArray(
 )
 
 # VQA the documents
-response = blip2_model.vqa(docs=docs)
+response = model.vqa(docs=docs)
 
 # Access the answers
 for doc in response:
@@ -373,7 +376,7 @@ the merlion fountain in singapore
 image = 'singapore.jpg'
 question = 'Question: What is this photo about? Answer:'
 
-response = blip2_model.vqa(image=image, question=question)
+response = model.vqa(image=image, question=question)
 
 # Access the answers
 print(response[0].tags['response'])

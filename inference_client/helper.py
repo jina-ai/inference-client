@@ -115,7 +115,6 @@ def fetch_host(token: str, model_name: str):
                 f"and create a model with the given model name."
             )
         resp.raise_for_status()
-        print(resp.json())
         return resp.json()["endpoints"]["grpc"]
     except requests.exceptions.HTTPError as err:
         raise ValueError(f"Error: {err!r}")
