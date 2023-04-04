@@ -1,8 +1,12 @@
+import mimetypes
 import os
 from typing import Optional
 
 import hubble
+import numpy
 import requests
+import torch
+from docarray import Document
 from hubble.utils.auth import Auth
 from jina.logging.logger import JinaLogger
 
@@ -115,3 +119,34 @@ def fetch_host(token: str, model_name: str):
         return resp.json()["endpoints"]["grpc"]
     except requests.exceptions.HTTPError as err:
         raise ValueError(f"Error: {err!r}")
+
+
+def load_plain_into_document(content, is_image: bool = False):
+    """
+    Load plain input into document. If the raw input is a str, it will automatically load into text or image Document
+    based on the mime type.
+
+    :param content: input
+    :param is_image: whether the input is an image when the input content is of string type, if True, it will force to
+    load into image Document
+    :return: a text or image document with content loaded
+    """
+    if isinstance(content, str):
+        if is_image:
+            return Document(
+                uri=content,
+            ).load_uri_to_blob()
+
+        _mime = mimetypes.guess_type(content)[0]
+        if _mime and _mime.startswith('image'):
+            return Document(
+                uri=content,
+            ).load_uri_to_blob()
+        else:
+            return Document(text=content)
+    elif isinstance(content, bytes):
+        return Document(blob=content)
+    elif isinstance(content, (numpy.ndarray, torch.Tensor)):
+        return Document(tensor=content)
+    else:
+        raise TypeError(f"Cannot convert content to Document")
