@@ -113,6 +113,13 @@ for doc in response:
     print(doc.embedding)
 ```
 
+```bash
+[-5.48706055e-02 -1.10717773e-01  5.13671875e-01 -3.22509766e-01
+ -1.40380859e-01  6.23535156e-01  3.07617188e-01  4.26025391e-01
+ ...
+ 8.04443359e-02  8.53515625e-01 -5.96008301e-02  3.61633301e-02]
+```
+
 2. Encode plain text:
 
 ```python
@@ -121,6 +128,13 @@ response = clip_model.encode(text='hello world')
 
 # Access the embeddings
 print(response[0].embedding)
+```
+
+```bash
+[-5.48706055e-02 -1.10717773e-01  5.13671875e-01 -3.22509766e-01
+ -1.40380859e-01  6.23535156e-01  3.07617188e-01  4.26025391e-01
+  ...
+  8.04443359e-02  8.53515625e-01 -5.96008301e-02  3.61633301e-02]
 ```
 
 3. Encode an image:
@@ -153,6 +167,14 @@ response = clip_model.encode(image=image_tensor)
 print(response[0].embedding)
 ```
 
+```bash
+
+[-1.70776367e-01 -4.17236328e-01  2.29370117e-01  1.95770264e-02
+ -5.86914062e-01  1.30981445e-01 -2.38037109e-01 -1.24328613e-01
+  ...
+  2.59277344e-01  7.36694336e-02  4.23339844e-01 -2.92480469e-01]
+```
+
 ### Ranking
 
 To perform similarity-based ranking of candidate matches, you can use the rank method of an inference model. 
@@ -181,7 +203,7 @@ docs = DocumentArray(
             matches=DocumentArray(
                 [
                     Document(text='a colorful photo of nature'),
-                    Document(text='a black and white photo of a dog'),
+                    Document(text='a photo of blue scenery'),
                     Document(text='a black and white photo of a cat'),
                 ]
             ),
@@ -193,8 +215,14 @@ docs = DocumentArray(
 response = clip_model.rank(docs=docs)
 
 # Access the matches
-for doc in response:
-    print(doc.matches)
+for match in not response[0]:
+    print(match.text)
+```
+
+```bash
+a photo of blue scenery
+a colorful photo of nature
+a black and white photo of a cat
 ```
 
 2. Rank plain input:
@@ -203,17 +231,23 @@ for doc in response:
 reference = 'singapore.jpg'
 candidates = [
     'a colorful photo of nature',
-    'a black and white photo of a dog',
+    'a photo of blue scenery',
     'a black and white photo of a cat',
 ]
 response = clip_model.rank(reference=reference, candidates=candidates)
 
 # Access the matches
-print(response[0].matches)
+for match in not response[0]:
+    print(match.text)
+```
+
+```bash
+a photo of blue scenery
+a colorful photo of nature
+a black and white photo of a cat
 ```
 
 You may also input images as bytes or tensors similarly to the encode method.
-
 
 **NOTICE**: The following tasks Caption and VQA are BLIP2 exclusive. Calling these methods on other models will fall back to the default encode method.
 
@@ -248,6 +282,10 @@ for doc in response:
     print(doc.tags['response'])
 ```
 
+```bash
+the merlion fountain in singapore at night
+```
+
 2. Caption plain input:
 
 ```python
@@ -255,6 +293,10 @@ response = blip2_model.caption(image='singapore.jpg')
 
 # Access the captions
 print(response[0].tags['response'])
+```
+
+```bash
+the merlion fountain in singapore at night
 ```
 
 You may also input images as bytes or tensors similarly to the encode method.
@@ -298,6 +340,10 @@ for doc in response:
     print(doc.tags['response'])
 ```
 
+```bash
+the merlion fountain in singapore
+```
+
 2. VQA plain input:
 
 ```python
@@ -308,6 +354,10 @@ response = blip2_model.vqa(image=image, question=question)
 
 # Access the answers
 print(response[0].tags['response'])
+```
+
+```bash
+the merlion fountain in singapore
 ```
 
 You may also input images as bytes or tensors similarly to the encode method.
