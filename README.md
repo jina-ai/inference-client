@@ -113,17 +113,71 @@ To use the encode method of an inference model, you need to initialize the model
 
 Here are some examples of how to use the encode method:
 
-1. Encode a `DocumentArray`:
+1. Encode plain text:
 
 ```python
 from inference_client import Client
-from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Connect to CLIP model
-model = inference_client.get_model('ViT-B-32::openai')
+model = inference_client.get_model('<inference model name>')
+
+# Encode the documents
+response = model.encode(text='hello world')
+
+# Access the embeddings
+print(response[0].embedding)
+```
+
+```bash
+[-5.48706055e-02 -1.10717773e-01  5.13671875e-01 -3.22509766e-01
+ -1.40380859e-01  6.23535156e-01  3.07617188e-01  4.26025391e-01
+  ...
+  8.04443359e-02  8.53515625e-01 -5.96008301e-02  3.61633301e-02]
+```
+
+2. Encode an image:
+
+```python
+# Encode image URL
+response = model.encode(image='singapore.jpg')
+
+# Access the embedding
+print(response[0].embedding)
+
+# Encode image binary data
+image_bytes = open('singapore.jpg', 'rb').read()
+response = model.encode(image=image_bytes)
+
+# Access the embedding
+print(response[0].embedding)
+
+# Encode image tensor data
+from PIL import Image
+from numpy import asarray
+
+image_bytes = Image.open('singapore.jpg')
+image_tensor = asarray(image_bytes)
+response = model.encode(image=image_tensor)
+
+# Access the embedding
+print(response[0].embedding)
+```
+
+```bash
+
+[-1.70776367e-01 -4.17236328e-01  2.29370117e-01  1.95770264e-02
+ -5.86914062e-01  1.30981445e-01 -2.38037109e-01 -1.24328613e-01
+  ...
+  2.59277344e-01  7.36694336e-02  4.23339844e-01 -2.92480469e-01]
+```
+
+3. Encode a `DocumentArray`:
+
+```python
+from docarray import Document, DocumentArray
 
 # Create a DocumentArray with two documents
 docs = DocumentArray([Document(text='hello world'), Document(uri='singapore.jpg')])
@@ -147,60 +201,6 @@ for doc in response:
   1.24198742e-01  2.51199156e-02 -1.18231498e-01  1.66848406e-01]
 ```
 
-2. Encode plain text:
-
-```python
-# Encode the documents
-response = model.encode(text='hello world')
-
-# Access the embeddings
-print(response[0].embedding)
-```
-
-```bash
-[-5.48706055e-02 -1.10717773e-01  5.13671875e-01 -3.22509766e-01
- -1.40380859e-01  6.23535156e-01  3.07617188e-01  4.26025391e-01
-  ...
-  8.04443359e-02  8.53515625e-01 -5.96008301e-02  3.61633301e-02]
-```
-
-3. Encode an image:
-
-```python
-# Encode image URL
-response = model.encode(image='singapore.jpg')
-
-# Access the embedding
-print(response[0].embedding)
-
-# Encode image binary data
-image_bytes = open('singapore.jpg', 'rb').read()
-response = model.encode(image=image_bytes)
-
-# Access the embedding
-print(response[0].embedding)
-
-# Encode image tensor data
-from PIL import Image
-import torchvision.transforms as transforms
-
-image_bytes = Image.open('singapore.jpg')
-transform = transforms.ToTensor()
-image_tensor = transform(image_bytes)
-response = model.encode(image=image_tensor)
-
-# Access the embedding
-print(response[0].embedding)
-```
-
-```bash
-
-[-1.70776367e-01 -4.17236328e-01  2.29370117e-01  1.95770264e-02
- -5.86914062e-01  1.30981445e-01 -2.38037109e-01 -1.24328613e-01
-  ...
-  2.59277344e-01  7.36694336e-02  4.23339844e-01 -2.92480469e-01]
-```
-
 ### Ranking
 
 To perform similarity-based ranking of candidate matches, you can use the rank method of an inference model. 
@@ -209,17 +209,41 @@ You can also construct a cross-modal Document where the root contains an image o
 
 Here are some examples of how to use the rank method:
 
-1. Rank a `DocumentArray`:
+1. Rank plain input:
 
 ```python
 from inference_client import Client
-from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Initialize model
-model = Client().get_model('ViT-B-32::openai')
+model = Client().get_model('<inference model name>')
+
+reference = 'singapore.jpg'
+candidates = [
+    'a colorful photo of nature',
+    'a photo of blue scenery',
+    'a black and white photo of a cat',
+]
+response = model.rank(reference=reference, candidates=candidates)
+
+# Access the matches
+for match in not response[0]:
+    print(match.text)
+```
+
+```bash
+a photo of blue scenery
+a colorful photo of nature
+a black and white photo of a cat
+```
+You may also input images as bytes or tensors similarly to the encode method.
+
+2. Rank a `DocumentArray`:
+
+```python
+from docarray import Document, DocumentArray
 
 # Create a DocumentArray with a single document and some candidate matches
 docs = DocumentArray(
@@ -251,30 +275,6 @@ a colorful photo of nature
 a black and white photo of a cat
 ```
 
-2. Rank plain input:
-
-```python
-reference = 'singapore.jpg'
-candidates = [
-    'a colorful photo of nature',
-    'a photo of blue scenery',
-    'a black and white photo of a cat',
-]
-response = model.rank(reference=reference, candidates=candidates)
-
-# Access the matches
-for match in not response[0]:
-    print(match.text)
-```
-
-```bash
-a photo of blue scenery
-a colorful photo of nature
-a black and white photo of a cat
-```
-
-You may also input images as bytes or tensors similarly to the encode method.
-
 **NOTICE**: The following tasks Caption and VQA are BLIP2 exclusive. Calling these methods on other models will fall back to the default encode method.
 
 ### Captioning
@@ -285,17 +285,33 @@ The plain input image can be in the form of a URL string, an image blob, or an i
 
 Here are some examples of how to use the caption method:
 
-1. Caption a `DocumentArray`:
+1. Caption plain input:
 
 ```python
 from inference_client import Client
-from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Initialize model
-model = Client().get_model('Salesforce/blip2-opt-2.7b')
+model = Client().get_model('<inference model name>')
+
+response = model.caption(image='singapore.jpg')
+
+# Access the captions
+print(response[0].tags['response'])
+```
+
+```bash
+the merlion fountain in singapore at night
+```
+
+You may also input images as bytes or tensors similarly to the encode method.
+
+2. Caption a `DocumentArray`:
+
+```python
+from docarray import Document, DocumentArray
 
 # Create a DocumentArray with a single image document
 docs = DocumentArray([Document(uri='singapore.jpg')])
@@ -312,22 +328,6 @@ for doc in response:
 the merlion fountain in singapore at night
 ```
 
-2. Caption plain input:
-
-```python
-response = model.caption(image='singapore.jpg')
-
-# Access the captions
-print(response[0].tags['response'])
-```
-
-```bash
-the merlion fountain in singapore at night
-```
-
-You may also input images as bytes or tensors similarly to the encode method.
-
-
 ### Visual Question Answering
 
 Visual Question Answering (VQA) is a task that involves answering natural language questions about visual content such as images. 
@@ -336,17 +336,37 @@ The VQA method takes either a DocumentArray of images and questions, or a single
 
 Here are some examples of how to use the VQA method:
 
-1. VQA a `DocumentArray`:
+2. VQA plain input:
 
 ```python
 from inference_client import Client
-from docarray import Document, DocumentArray
 
 # Initialize client
 inference_client = Client()
 
 # Initialize model
-model = Client().get_model('Salesforce/blip2-opt-2.7b')
+model = Client().get_model('<inference model name>')
+
+image = 'singapore.jpg'
+question = 'Question: What is this photo about? Answer:'
+
+response = model.vqa(image=image, question=question)
+
+# Access the answers
+print(response[0].tags['response'])
+```
+
+```bash
+the merlion fountain in singapore
+```
+
+You may also input images as bytes or tensors similarly to the encode method.
+Please notice that due to the limitation of the current model, the question must start with 'Question:' and end with 'Answer:'.
+
+2. VQA a `DocumentArray`:
+
+```python
+from docarray import Document, DocumentArray
 
 # Create a DocumentArray with one document
 docs = DocumentArray(
@@ -369,25 +389,6 @@ for doc in response:
 ```bash
 the merlion fountain in singapore
 ```
-
-2. VQA plain input:
-
-```python
-image = 'singapore.jpg'
-question = 'Question: What is this photo about? Answer:'
-
-response = model.vqa(image=image, question=question)
-
-# Access the answers
-print(response[0].tags['response'])
-```
-
-```bash
-the merlion fountain in singapore
-```
-
-You may also input images as bytes or tensors similarly to the encode method.
-Please notice that due to the limitation of the current model, the question must start with 'Question:' and end with 'Answer:'.
 
 ## Support
 
