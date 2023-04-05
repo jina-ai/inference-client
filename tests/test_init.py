@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from client import Client
+from inference_client import Client
 
 
 @patch('client.client.login', Mock(return_value='valid token'))

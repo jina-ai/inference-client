@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from docarray import Document, DocumentArray
 
-from client import Client
+from inference_client import Client
 
 
 @pytest.mark.parametrize(

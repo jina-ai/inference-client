@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 from docarray import Document, DocumentArray
 
-from client import Client
+from inference_client import Client
 
 
 @pytest.mark.parametrize(
