@@ -19,10 +19,13 @@ from inference_client import Client
         ],
     ],
 )
-@patch('client.client.fetch_host', Mock(return_value='grpc://mock.inference.jina.ai'))
-@patch('client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'client.base.BaseClient.caption',
+    'inference_client.client.fetch_host',
+    Mock(return_value='grpc://mock.inference.jina.ai'),
+)
+@patch('inference_client.client.login', Mock(return_value='valid_token'))
+@patch(
+    'inference_client.base.BaseClient.caption',
     Mock(
         return_value=DocumentArray(
             [
@@ -51,10 +54,13 @@ def test_caption_document(inputs):
         .tensor,
     ],
 )
-@patch('client.client.fetch_host', Mock(return_value='grpc://mock.inference.jina.ai'))
-@patch('client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'client.base.BaseClient.caption',
+    'inference_client.client.fetch_host',
+    Mock(return_value='grpc://mock.inference.jina.ai'),
+)
+@patch('inference_client.client.login', Mock(return_value='valid_token'))
+@patch(
+    'inference_client.base.BaseClient.caption',
     Mock(
         return_value=DocumentArray(
             [
@@ -79,10 +85,13 @@ def test_encode_plain_image_str(inputs):
         Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
     ],
 )
-@patch('client.client.fetch_host', Mock(return_value='grpc://mock.inference.jina.ai'))
-@patch('client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'client.base.BaseClient.caption',
+    'inference_client.client.fetch_host',
+    Mock(return_value='grpc://mock.inference.jina.ai'),
+)
+@patch('inference_client.client.login', Mock(return_value='valid_token'))
+@patch(
+    'inference_client.base.BaseClient.caption',
     Mock(
         return_value=DocumentArray(
             [
@@ -109,10 +118,13 @@ def test_encode_plain_image_blob(inputs):
         .tensor,
     ],
 )
-@patch('client.client.fetch_host', Mock(return_value='grpc://mock.inference.jina.ai'))
-@patch('client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'client.base.BaseClient.caption',
+    'inference_client.client.fetch_host',
+    Mock(return_value='grpc://mock.inference.jina.ai'),
+)
+@patch('inference_client.client.login', Mock(return_value='valid_token'))
+@patch(
+    'inference_client.base.BaseClient.caption',
     Mock(
         return_value=DocumentArray(
             [
