@@ -20,8 +20,8 @@ from inference_client import Client
     ],
 )
 @patch(
-    'inference_client.client.fetch_host',
-    Mock(return_value='grpc://mock.inference.jina.ai'),
+    'inference_client.client.get_model_spec',
+    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
@@ -55,8 +55,8 @@ def test_caption_document(inputs):
     ],
 )
 @patch(
-    'inference_client.client.fetch_host',
-    Mock(return_value='grpc://mock.inference.jina.ai'),
+    'inference_client.client.get_model_spec',
+    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
@@ -86,8 +86,8 @@ def test_encode_plain_image_str(inputs):
     ],
 )
 @patch(
-    'inference_client.client.fetch_host',
-    Mock(return_value='grpc://mock.inference.jina.ai'),
+    'inference_client.client.get_model_spec',
+    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
@@ -119,8 +119,8 @@ def test_encode_plain_image_blob(inputs):
     ],
 )
 @patch(
-    'inference_client.client.fetch_host',
-    Mock(return_value='grpc://mock.inference.jina.ai'),
+    'inference_client.client.get_model_spec',
+    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
