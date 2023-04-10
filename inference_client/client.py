@@ -1,7 +1,8 @@
+from functools import lru_cache
 from typing import Optional
 
 from .base import BaseClient
-from .helper import fetch_host, login
+from .helper import get_model_spec, login
 
 
 class Client:
@@ -20,18 +21,20 @@ class Client:
         :param token: An optional user token for authentication.
         """
 
-        self.token = login(token)
-        self.models = {}
+        self._auth_token = login(token)
 
-    def get_model(self, model_name):
+    @lru_cache(maxsize=10)
+    def get_model(self, model_name: str):
         """
         Get a model by name. Returns a cached model if it exists.
 
         :param model_name: The name of the model to connect to.
         :return: The model.
         """
-        if (model := self.models.get(model_name)) is None:
-            host = fetch_host(self.token, model_name)
-            model = BaseClient(model_name=model_name, token=self.token, host=host)
-            self.models[model_name] = model
-        return model
+
+        spec = get_model_spec(model_name, self._auth_token)
+        return BaseClient(
+            model_name=model_name,
+            token=self._auth_token,
+            host=spec["endpoints"]["grpc"],
+        )

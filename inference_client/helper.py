@@ -1,5 +1,6 @@
 import mimetypes
 import os
+from functools import lru_cache
 from typing import Optional
 
 import hubble
@@ -9,10 +10,8 @@ import torch
 from docarray import Document
 from hubble.utils.auth import Auth
 
+from .config import settings
 from .logging import logger
-
-INFERENCE_API = 'https://api.clip.jina.ai/api/v1'
-INFERENCE_API_STAGE = 'https://api-stage.clip.jina.ai/api/v1'
 
 
 def login(token: Optional[str] = None) -> str:
@@ -33,6 +32,38 @@ def login(token: Optional[str] = None) -> str:
         token = hubble.get_token()
         logger.info(f'successfully logged in with token: {token}')
         return token
+
+
+@lru_cache(maxsize=10)
+def get_model_spec(model_name: str, token: str):
+    """
+    Retrieves the model spec for the specified model.
+
+    :param model_name: The name of the model to retrieve spec for.
+    :param token: The token to use for authentication.
+    :return: A dict containing the model spec.
+    """
+    try:
+        resp = requests.get(
+            f"{settings.api_endpoint}/models/?model_name={model_name}",
+            headers={"Authorization": token},
+        )
+
+        if resp.status_code == 401:
+            raise ValueError(
+                "The given Jina auth token is invalid. Please check your Jina auth token."
+            )
+        elif resp.status_code == 404:
+            raise ValueError(
+                f"The given model name `{model_name}` is not valid. "
+                f"Please go to https://cloud.jina.ai/user/inference "
+                f"and create a model with the given model name."
+            )
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        logger.error(f'failed to fetch the model spec for {model_name}')
+        raise Exception(f'failed to fetch the model spec: {e}')
 
 
 def validate_model(token: str, model_name: str):
