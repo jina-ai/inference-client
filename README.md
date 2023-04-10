@@ -69,12 +69,12 @@ As example, the above code connects to the CLIP model named "ViT-B-32::openai" o
 You can connect to as many inference models as you want once they have been created on Jina AI Cloud, and you can use them for multiple tasks.
 
 
-### Using models to perform tasks
+### Performing tasks
 
 Now that you have connected to the models you want to use, you can use them to perform the tasks they support.
 
 
-#### Encode
+#### 1. Encode
 
 The encode task is used to encode data into embeddings using various models.
 For example, you can use the CLIP model to encode text or images into embeddings:
@@ -110,7 +110,7 @@ The output of the encode method is a DocumentArray, which contains the embedding
   8.04443359e-02  8.53515625e-01 -5.96008301e-02  3.61633301e-02]
 ```
 
-### Ranking
+### 2. Ranking
 
 To perform similarity-based ranking of candidate matches, you can use the `rank` method of an inference model. 
 The rank method takes a reference input and a list of candidates, and reorder that list of candidates based on their similarity to the reference input. 
@@ -142,7 +142,7 @@ You may also input images as bytes or tensors similarly to the encode method.
 
 **NOTICE**: The following tasks Caption and VQA are BLIP2 exclusive. Calling these methods on other models will fall back to the default encode method.
 
-### Captioning
+### 3. Captioning
 
 You can use caption method to generate natural language descriptions of images.
 
@@ -167,7 +167,7 @@ the merlion fountain in singapore at night
 ```
 
 
-### Visual Question Answering
+### 4. VQA (Visual Question Answering)
 
 Visual Question Answering (VQA) is a task that involves answering natural language questions about visual content such as images. 
 Given an image and a question, the goal of VQA is to provide a natural language answer.
