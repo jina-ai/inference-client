@@ -31,20 +31,11 @@ pip install inference-client
 Before using Inference Client, please create an inference on [Jina AI Cloud](https://cloud.jina.ai/user/inference).
 
 <p align="center">
-    <img src=".github/README-img/jac-1.png">
+    <img src=".github/README-img/jac.png">
 </p>
 
 After login with your Jina AI Cloud account, you can create an inference by clicking the "Create" button in the inference page.
-
-<p align="center">
-    <img src=".github/README-img/jac-2.png">
-</p>
-
 From there, you can select the model you want to use.
-
-<p align="center">
-    <img src=".github/README-img/jac-3.png">
-</p>
 
 After the inference is created and the status is "Serving", you can use Inference Client to connect to it.
 This could take a few minutes, depending on the model you selected.
