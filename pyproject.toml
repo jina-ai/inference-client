@@ -13,7 +13,7 @@ repository = "https://github.com/jina-ai/inference-client"
 homepage = "https://inference-api.jina.ai"
 
 packages = [
-    { include = "client" },
+    { include = "inference_client" },
 ]
 
 # README file(s) are used as the package description

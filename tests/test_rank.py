@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 from docarray import Document, DocumentArray
 
-from client import Client
+from inference_client import Client
 
 
 @pytest.mark.parametrize(
@@ -37,10 +37,13 @@ from client import Client
         ],
     ],
 )
-@patch('client.client.fetch_host', Mock(return_value='grpc://mock.inference.jina.ai'))
-@patch('client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'client.base.BaseClient.rank',
+    'inference_client.client.fetch_host',
+    Mock(return_value='grpc://mock.inference.jina.ai'),
+)
+@patch('inference_client.client.login', Mock(return_value='valid_token'))
+@patch(
+    'inference_client.base.BaseClient.rank',
     Mock(
         return_value=DocumentArray(
             [
@@ -78,10 +81,13 @@ def test_rank_document(inputs):
         ],
     ],
 )
-@patch('client.client.fetch_host', Mock(return_value='grpc://mock.inference.jina.ai'))
-@patch('client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'client.base.BaseClient.rank',
+    'inference_client.client.fetch_host',
+    Mock(return_value='grpc://mock.inference.jina.ai'),
+)
+@patch('inference_client.client.login', Mock(return_value='valid_token'))
+@patch(
+    'inference_client.base.BaseClient.rank',
     Mock(
         return_value=DocumentArray(
             [
