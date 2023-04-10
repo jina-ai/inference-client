@@ -8,11 +8,11 @@ import requests
 import torch
 from docarray import Document
 from hubble.utils.auth import Auth
-from jina.logging.logger import JinaLogger
+
+from .logging import logger
 
 INFERENCE_API = 'https://api.clip.jina.ai/api/v1'
 INFERENCE_API_STAGE = 'https://api-stage.clip.jina.ai/api/v1'
-logger = JinaLogger('inference-client')
 
 
 def login(token: Optional[str] = None) -> str:
