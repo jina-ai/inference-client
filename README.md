@@ -37,7 +37,7 @@ After the inference is created and the status is "Serving", you can use Inferenc
 This could take a few minutes, depending on the model you selected.
 
 <p align="center">
-    <img src=".github/README-img/jac.png" width="450px">
+    <img src=".github/README-img/jac.png" width="500px">
 </p>
 
 ### Client Initialization
@@ -115,10 +115,6 @@ The output of the encode method is a DocumentArray, which contains the embedding
 To perform similarity-based ranking of candidate matches, you can use the `rank` method of an inference model. 
 The rank method takes a reference input and a list of candidates, and reorder that list of candidates based on their similarity to the reference input. 
 You can also construct a cross-modal Document where the root contains an image or text and `.matches` contain images or sentences to rerank.
-
-Here are some examples of how to use the rank method:
-
-1. Rank plain input:
 
 ```python
 # Connect to a model
