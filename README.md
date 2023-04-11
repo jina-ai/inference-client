@@ -56,7 +56,7 @@ jina auth token create <name of PAT> -e <expiration days>
 ```
 
 
-### Connecting to models
+### Connecting to Models
 
 Once you have initialized the Client object, you can connect to the models you want to use by calling the `get_model` method, which takes the name of the model as it appears in Jina AI Cloud as an argument.
 
@@ -71,10 +71,10 @@ You can connect to as many inference models as you want once they have been crea
 
 ### Performing tasks
 
-Now that you have connected to the models you want to use, you can use them to perform the tasks they support.
+Now that you have connected to the models, you can use them to perform the tasks they support.
 
 
-#### 1. Encode
+#### 1. Encoding
 
 The encode task is used to encode data into embeddings using various models.
 For example, you can use the CLIP model to encode text or images into embeddings:
