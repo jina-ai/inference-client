@@ -1,18 +1,16 @@
 import mimetypes
 import os
+from functools import lru_cache
 from typing import Optional
 
 import hubble
 import numpy
 import requests
-import torch
 from docarray import Document
 from hubble.utils.auth import Auth
-from jina.logging.logger import JinaLogger
 
-INFERENCE_API = 'https://api.clip.jina.ai/api/v1'
-INFERENCE_API_STAGE = 'https://api-stage.clip.jina.ai/api/v1'
-logger = JinaLogger('inference-client')
+from .config import settings
+from .logging import logger
 
 
 def login(token: Optional[str] = None) -> str:
@@ -35,72 +33,18 @@ def login(token: Optional[str] = None) -> str:
         return token
 
 
-def validate_model(token: str, model_name: str):
+@lru_cache(maxsize=10)
+def get_model_spec(model_name: str, token: str):
     """
-    Validate whether the user has access to the specified model.
+    Retrieves the model spec for the specified model.
 
+    :param model_name: The name of the model to retrieve spec for.
     :param token: The token to use for authentication.
-    :param model_name: The name of the model to connect to.
-    """
-    # TODO: combine with fetch_metadata
-    pass
-    # try:
-    #     resp = requests.post(
-    #         f'{INFERENCE_API}/validate',
-    #         json={'model': model_name},
-    #         headers={'Authorization': token},
-    #     )
-    #
-    #     if resp.status_code == 200:
-    #         logger.info(f'successfully validated model {model_name} with token {token}')
-    #     else:
-    #         raise Exception(f'failed to validate model')
-    # except Exception as e:
-    #     logger.error(f'failed to validate model {model_name} with token {token}')
-    #     raise Exception(f'You do not have access to {model_name}: {e}')
-
-
-def available_models(token: str):
-    """
-    Retrieves a list of models that the user has access to.
-
-    :param token: The token to use for authentication.
-    :return: A list of model names.
-    """
-    return ['clip', 'blip']
-    # try:
-    #     resp = requests.get(
-    #         f'{INFERENCE_API}/charts/', headers={'Authorization': token}
-    #     )
-    #
-    #     if resp.status_code == 200:
-    #         available = []
-    #         for res in resp.json():
-    #             name = res['name']
-    #             for model_name in res['params_matrix'][0]['model_name']:
-    #                 available.append(f'{name}/{model_name}')
-    #         logger.info(
-    #             f'successfully fetched model list: {available} with token {token}'
-    #         )
-    #         return available
-    #     else:
-    #         raise Exception(f'failed to fetch the model list')
-    # except Exception as e:
-    #     logger.error(f'failed to fetch the model list with token {token}')
-    #     raise Exception(f'failed to fetch the model list: {e}')
-
-
-def fetch_host(token: str, model_name: str):
-    """
-    Retrieves host for the specified model.
-
-    :param token: The token to use for authentication.
-    :param model_name: The name of the model to retrieve host for.
-    :return: A string containing the host.
+    :return: A dict containing the model spec.
     """
     try:
         resp = requests.get(
-            f"https://api.clip.jina.ai/api/v1/models/?model_name={model_name}",
+            f"{settings.api_endpoint}/models/?model_name={model_name}",
             headers={"Authorization": token},
         )
 
@@ -115,9 +59,10 @@ def fetch_host(token: str, model_name: str):
                 f"and create a model with the given model name."
             )
         resp.raise_for_status()
-        return resp.json()["endpoints"]["grpc"]
-    except requests.exceptions.HTTPError as err:
-        raise ValueError(f"Error: {err!r}")
+        return resp.json()
+    except Exception as e:
+        logger.error(f'failed to fetch the model spec for {model_name}')
+        raise Exception(f'failed to fetch the model spec: {e}')
 
 
 def load_plain_into_document(content, is_image: bool = False):
@@ -130,6 +75,8 @@ def load_plain_into_document(content, is_image: bool = False):
     load into image Document
     :return: a text or image document with content loaded
     """
+    import torch
+
     if isinstance(content, str):
         if is_image:
             return Document(

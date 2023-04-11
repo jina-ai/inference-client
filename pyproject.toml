@@ -31,6 +31,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.dependencies]
 # Compatible Python versions
 python = ">=3.8,<4.0.0"
+pydantic = "^1.10.7"
 jina  = "^3.14.0"
 jina-hubble-sdk = ">=0.34.0"
 rich = "^13.3.0"
