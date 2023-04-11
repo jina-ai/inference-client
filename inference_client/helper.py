@@ -6,7 +6,6 @@ from typing import Optional
 import hubble
 import numpy
 import requests
-import torch
 from docarray import Document
 from hubble.utils.auth import Auth
 
@@ -76,6 +75,8 @@ def load_plain_into_document(content, is_image: bool = False):
     load into image Document
     :return: a text or image document with content loaded
     """
+    import torch
+
     if isinstance(content, str):
         if is_image:
             return Document(

@@ -1,11 +1,10 @@
 import sys
 
-# import importlib.metadata if available, otherwise importlib_metadata
-# (for Python < 3.8)
-if sys.version_info >= (3, 8):
-    import importlib.metadata as importlib_metadata
+if sys.version_info < (3, 10):
+    # compatibility for python <3.10
+    import importlib_metadata as metadata
 else:
-    import importlib_metadata
+    from importlib import metadata
 
 
 def get_version() -> str:
@@ -13,7 +12,7 @@ def get_version() -> str:
 
     :return: The version number.
     """
-    return importlib_metadata.version(__package__)
+    return metadata.version(__package__)
 
 
 __version__ = get_version()
