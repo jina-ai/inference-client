@@ -95,7 +95,9 @@ class BaseClient:
         :param kwargs: additional arguments to pass to the model
         :return: encoded content
         """
-        payload, input_type = self._get_post_payload(endpoint='/encode', **kwargs)
+        payload, input_type, is_list = self._get_post_payload(
+            endpoint='/encode', **kwargs
+        )
         return self._post(payload=payload)
 
     @overload
@@ -281,7 +283,7 @@ class BaseClient:
             text_content = kwargs.pop('text')
             if not isinstance(text_content, list):
                 is_list = False
-                text_doc = Document(text_content)
+                text_doc = Document(text=text_content)
                 if 'candidates' in kwargs:
                     candidates = kwargs.pop('candidates')
                     text_doc.matches = DocumentArray(
@@ -291,9 +293,7 @@ class BaseClient:
                 payload.update(total_docs=1)
             else:
                 is_list = True
-                text_docs = DocumentArray(
-                    [Document(text=text) for text in text_content]
-                )
+                text_docs = DocumentArray([Document(text=c) for c in text_content])
                 payload.update(inputs=text_docs)
                 payload.update(total_docs=len(text_docs))
 
