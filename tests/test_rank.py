@@ -75,8 +75,13 @@ def test_rank_document(inputs):
             'a black and white photo of nature',
             [
                 'a colorful photo of nature',
-                'a black and white photo of a dog',
-                'a black and white photo of a cat',
+                'https://picsum.photos/id/232/100',
+                Document(uri='https://picsum.photos/id/233/100')
+                .load_uri_to_blob()
+                .blob,
+                Document(uri='https://picsum.photos/id/234/100')
+                .load_uri_to_image_tensor()
+                .tensor,
             ],
         ],
     ],
@@ -95,9 +100,18 @@ def test_rank_document(inputs):
                     text='a black and white photo of nature',
                     matches=DocumentArray(
                         [
+                            Document(
+                                tensor=Document(uri='https://picsum.photos/id/234/100')
+                                .load_uri_to_image_tensor()
+                                .tensor
+                            ),
+                            Document(
+                                blob=Document(uri='https://picsum.photos/id/233/100')
+                                .load_uri_to_blob()
+                                .blob
+                            ),
+                            Document(uri='https://picsum.photos/id/232/100'),
                             Document(text='a colorful photo of nature'),
-                            Document(text='a black and white photo of a cat'),
-                            Document(text='a black and white photo of a dog'),
                         ]
                     ),
                 ),
@@ -108,5 +122,17 @@ def test_rank_document(inputs):
 def test_rank_plain_input(inputs):
     model = Client().get_model('mock-model')
     res = model.rank(reference=inputs[0], candidates=inputs[1])
-    res.summary()
-    res[0].summary()
+    assert isinstance(res, list)
+    assert len(res) == 4
+    assert (
+        res[0]
+        == Document(uri='https://picsum.photos/id/234/100')
+        .load_uri_to_image_tensor()
+        .tensor
+    ).all()
+    assert (
+        res[1]
+        == Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob
+    )
+    assert res[2] == 'https://picsum.photos/id/232/100'
+    assert res[3] == 'a colorful photo of nature'
