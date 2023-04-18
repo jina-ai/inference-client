@@ -28,7 +28,7 @@ from inference_client import Client
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.encode',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [
@@ -55,7 +55,7 @@ def test_encode_document(inputs):
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.encode',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [Document(text='hello world', embedding=np.random.random((512,)))]
@@ -85,7 +85,7 @@ def test_encode_plain_text(inputs):
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.encode',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [
@@ -116,7 +116,7 @@ def test_encode_plain_image_str(inputs):
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.encode',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [
@@ -149,7 +149,7 @@ def test_encode_plain_image_blob(inputs):
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.encode',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [

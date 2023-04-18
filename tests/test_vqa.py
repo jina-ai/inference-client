@@ -31,7 +31,7 @@ from inference_client import Client
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.vqa',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [
@@ -75,7 +75,7 @@ def test_vqa_document(inputs):
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.vqa',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [
@@ -109,7 +109,7 @@ def test_vqa_plain_str(inputs):
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.vqa',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [
@@ -145,7 +145,7 @@ def test_vqa_plain_blob(inputs):
 )
 @patch('inference_client.client.login', Mock(return_value='valid_token'))
 @patch(
-    'inference_client.base.BaseClient.vqa',
+    'inference_client.base.BaseClient._post',
     Mock(
         return_value=DocumentArray(
             [

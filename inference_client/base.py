@@ -21,7 +21,7 @@ class BaseClient:
         self.client = Client(host=self.host)
 
     @overload
-    def encode(self, text: str, **kwargs):
+    def encode(self, text: Union[str, Iterable[str]], **kwargs):
         """
         Encode plain text
 
@@ -31,7 +31,18 @@ class BaseClient:
         ...
 
     @overload
-    def encode(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
+    def encode(
+        self,
+        image: Union[
+            str,
+            bytes,
+            'ArrayType',
+            Iterable[str],
+            Iterable[bytes],
+            Iterable['ArrayType'],
+        ],
+        **kwargs,
+    ):
         """
         Encode image # TODO: add image type
 
@@ -54,8 +65,17 @@ class BaseClient:
     def encode(
         self,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
-        text: Optional[str] = None,
-        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        text: Optional[Union[str, Iterable[str]]] = None,
+        image: Optional[
+            Union[
+                str,
+                bytes,
+                'ArrayType',
+                Iterable[str],
+                Iterable[bytes],
+                Iterable['ArrayType'],
+            ]
+        ] = None,
         **kwargs,
     ):
         """
@@ -75,7 +95,8 @@ class BaseClient:
         :param kwargs: additional arguments to pass to the model
         :return: encoded content
         """
-        return self._post(endpoint='/encode', **kwargs)
+        payload, input_type = self._get_post_payload(endpoint='/encode', **kwargs)
+        return self._post(payload=payload)
 
     @overload
     def caption(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
@@ -243,6 +264,9 @@ class BaseClient:
             metadata=(('authorization', self.token),),
         )
 
+        input_type = None
+        is_list = False
+
         if 'docs' in kwargs:
             total_docs = (
                 len(kwargs.get('docs'))
@@ -251,29 +275,52 @@ class BaseClient:
             )
             payload.update(total_docs=total_docs)
             payload.update(inputs=self._iter_doc(kwargs.pop('docs')))
+            input_type = 'docarray'
 
         elif 'text' in kwargs:
-            text_doc = Document(text=kwargs.pop('text'))
-            if 'candidates' in kwargs:
-                candidates = kwargs.pop('candidates')
-                text_doc.matches = DocumentArray(
-                    [load_plain_into_document(c) for c in candidates]
+            text_content = kwargs.pop('text')
+            if not isinstance(text_content, list):
+                is_list = False
+                text_doc = Document(text_content)
+                if 'candidates' in kwargs:
+                    candidates = kwargs.pop('candidates')
+                    text_doc.matches = DocumentArray(
+                        [load_plain_into_document(c) for c in candidates]
+                    )
+                payload.update(inputs=DocumentArray([text_doc]))
+                payload.update(total_docs=1)
+            else:
+                is_list = True
+                text_docs = DocumentArray(
+                    [Document(text=text) for text in text_content]
                 )
+                payload.update(inputs=text_docs)
+                payload.update(total_docs=len(text_docs))
 
-            payload.update(inputs=DocumentArray([text_doc]))
-            payload.update(total_docs=1)
+            input_type = 'plain'
 
         elif 'image' in kwargs:
-            image_doc = load_plain_into_document(kwargs.pop('image'), is_image=True)
-            if 'candidates' in kwargs:
-                candidates = kwargs.pop('candidates')
-                image_doc.matches = DocumentArray(
-                    [load_plain_into_document(c) for c in candidates]
+            image_content = kwargs.pop('image')
+            if not isinstance(image_content, list):
+                is_list = False
+                image_doc = load_plain_into_document(image_content, is_image=True)
+                if 'candidates' in kwargs:
+                    candidates = kwargs.pop('candidates')
+                    image_doc.matches = DocumentArray(
+                        [load_plain_into_document(c) for c in candidates]
+                    )
+                elif 'question' in kwargs:
+                    image_doc.tags.update(prompt=kwargs.pop('question'))
+                payload.update(inputs=DocumentArray([image_doc]))
+                payload.update(total_docs=1)
+            else:
+                is_list = True
+                image_docs = DocumentArray(
+                    [load_plain_into_document(c, is_image=True) for c in image_content]
                 )
-            elif 'question' in kwargs:
-                image_doc.tags.update(prompt=kwargs.pop('question'))
-            payload.update(inputs=DocumentArray([image_doc]))
-            payload.update(total_docs=1)
+                payload.update(inputs=image_docs)
+                payload.update(total_docs=len(image_docs))
+            input_type = 'plain'
 
         elif 'reference' in kwargs:
             reference_doc = load_plain_into_document(kwargs.pop('reference'))
@@ -283,8 +330,21 @@ class BaseClient:
             )
             payload.update(inputs=DocumentArray([reference_doc]))
             payload.update(total_docs=1)
+            input_type = 'plain'
 
-        return payload
+        return payload, input_type, is_list
 
-    def _post(self, **kwargs):
-        return self.client.post(**self._get_post_payload(**kwargs))
+    def _post(self, payload):
+        return self.client.post(payload)
+
+    def _unboxed_result(
+        results: Optional['DocumentArray'] = None, output_type: str = 'docarray'
+    ):
+        if results is not None:
+            if results.embeddings is None:
+                raise ValueError(
+                    'Empty embedding returned from the server. '
+                    'This often due to a mis-config of the server, '
+                    'restarting the server or changing the serving port number often solves the problem'
+                )
+            return results.embeddings
