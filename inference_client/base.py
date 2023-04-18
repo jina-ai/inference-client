@@ -314,6 +314,9 @@ class BaseClient:
             payload.update(inputs=self._iter_doc(kwargs.pop('docs')))
 
         elif 'text' in kwargs:
+            if 'image' in kwargs:
+                raise ValueError('cannot handle both image and text at the same time')
+
             content_type = 'plain'
             text_content = kwargs.pop('text')
             if not isinstance(text_content, list):
@@ -334,6 +337,9 @@ class BaseClient:
                 payload.update(results_in_order=True)
 
         elif 'image' in kwargs:
+            if 'text' in kwargs:
+                raise ValueError('cannot handle both image and text at the same time')
+
             content_type = 'plain'
             image_content = kwargs.pop('image')
             if not isinstance(image_content, list):
@@ -379,16 +385,20 @@ class BaseClient:
         content_type: str = 'docarray',
         is_list: bool = False,
     ):
+        print(f'result: {result}')
         if content_type == 'plain':
             if task == 'encode':
                 if is_list:
-                    return [d.embedding for d in result]
+                    return result.embeddings
                 else:
                     return result[0].embedding
             elif task == 'caption':
                 return result[0].tags['response']
             elif task == 'rank':
-                return [d.uri if d.uri else d.content for d in result[0].matches]
+                return [
+                    (d.uri, d.scores) if d.uri else (d.content, d.scores)
+                    for d in result[0].matches
+                ]
             elif task == 'vqa':
                 return result[0].tags['response']
         else:
