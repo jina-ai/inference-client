@@ -37,7 +37,7 @@ After the inference is created and the status is "Serving", you can use Inferenc
 This could take a few minutes, depending on the model you selected.
 
 <p align="center">
-    <img src=".github/README-img/jac.png" width="500px">
+    <img src=".github/README-img/jac.png" width="100%">
 </p>
 
 ### Client Initialization
