@@ -315,7 +315,9 @@ class BaseClient:
 
         elif 'text' in kwargs:
             if 'image' in kwargs:
-                raise ValueError('cannot handle both image and text at the same time')
+                raise ValueError(
+                    'Multi-modal input not supported. Please provide only text or image input.'
+                )
 
             content_type = 'plain'
             text_content = kwargs.pop('text')
@@ -338,7 +340,9 @@ class BaseClient:
 
         elif 'image' in kwargs:
             if 'text' in kwargs:
-                raise ValueError('cannot handle both image and text at the same time')
+                raise ValueError(
+                    'Multi-modal input not supported. Please provide only text or image input.'
+                )
 
             content_type = 'plain'
             image_content = kwargs.pop('image')
@@ -385,7 +389,6 @@ class BaseClient:
         content_type: str = 'docarray',
         is_list: bool = False,
     ):
-        print(f'result: {result}')
         if content_type == 'plain':
             if task == 'encode':
                 if is_list:
