@@ -21,7 +21,7 @@ class BaseClient:
         self.client = Client(host=self.host)
 
     @overload
-    def encode(self, text: str, **kwargs):
+    def encode(self, text: Union[str, Iterable[str]], **kwargs):
         """
         Encode plain text
 
@@ -31,7 +31,18 @@ class BaseClient:
         ...
 
     @overload
-    def encode(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
+    def encode(
+        self,
+        image: Union[
+            str,
+            bytes,
+            'ArrayType',
+            Iterable[str],
+            Iterable[bytes],
+            Iterable['ArrayType'],
+        ],
+        **kwargs,
+    ):
         """
         Encode image # TODO: add image type
 
@@ -54,8 +65,17 @@ class BaseClient:
     def encode(
         self,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
-        text: Optional[str] = None,
-        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        text: Optional[Union[str, Iterable[str]]] = None,
+        image: Optional[
+            Union[
+                str,
+                bytes,
+                'ArrayType',
+                Iterable[str],
+                Iterable[bytes],
+                Iterable['ArrayType'],
+            ]
+        ] = None,
         **kwargs,
     ):
         """
@@ -75,7 +95,16 @@ class BaseClient:
         :param kwargs: additional arguments to pass to the model
         :return: encoded content
         """
-        return self._post(endpoint='/encode', **kwargs)
+        payload, content_type, is_list = self._get_post_payload(
+            endpoint='/encode', **kwargs
+        )
+        result = self._post(payload=payload)
+        return self._unboxed_result(
+            result=result,
+            task='encode',
+            content_type=content_type,
+            is_list=is_list,
+        )
 
     @overload
     def caption(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
@@ -120,7 +149,16 @@ class BaseClient:
         :param kwargs: additional arguments to pass to the model
         :return: captioned content
         """
-        return self._post(endpoint='/caption', **kwargs)
+        payload, content_type, is_list = self._get_post_payload(
+            endpoint='/caption', **kwargs
+        )
+        result = self._post(payload=payload)
+        return self._unboxed_result(
+            result=result,
+            task='caption',
+            content_type=content_type,
+            is_list=is_list,
+        )
 
     @overload
     def rank(
@@ -173,7 +211,16 @@ class BaseClient:
         :param kwargs: additional arguments to pass to the model
         :return: ranked content
         """
-        return self._post(endpoint='/rank', **kwargs)
+        payload, content_type, is_list = self._get_post_payload(
+            endpoint='/rank', **kwargs
+        )
+        result = self._post(payload=payload)
+        return self._unboxed_result(
+            result=result,
+            task='rank',
+            content_type=content_type,
+            is_list=is_list,
+        )
 
     @overload
     def vqa(self, image: Union[str, bytes, 'ArrayType'], question: str, **kwargs):
@@ -221,9 +268,19 @@ class BaseClient:
         :param kwargs: additional arguments to pass to the model
         :return: answered content
         """
-        return self._post(endpoint='/vqa', **kwargs)
+        payload, content_type, is_list = self._get_post_payload(
+            endpoint='/vqa', **kwargs
+        )
+        result = self._post(payload=payload)
+        return self._unboxed_result(
+            result=result,
+            task='vqa',
+            content_type=content_type,
+            is_list=is_list,
+        )
 
-    def _iter_doc(self, content):
+    @staticmethod
+    def _iter_doc(content):
         for c in content:
             if c.content_type in ('text', 'blob'):
                 d = c
@@ -243,7 +300,11 @@ class BaseClient:
             metadata=(('authorization', self.token),),
         )
 
+        content_type = None
+        is_list = False
+
         if 'docs' in kwargs:
+            content_type = 'docarray'
             total_docs = (
                 len(kwargs.get('docs'))
                 if hasattr(kwargs.get('docs'), '__len__')
@@ -253,29 +314,61 @@ class BaseClient:
             payload.update(inputs=self._iter_doc(kwargs.pop('docs')))
 
         elif 'text' in kwargs:
-            text_doc = Document(text=kwargs.pop('text'))
-            if 'candidates' in kwargs:
-                candidates = kwargs.pop('candidates')
-                text_doc.matches = DocumentArray(
-                    [load_plain_into_document(c) for c in candidates]
+            if 'image' in kwargs:
+                raise ValueError(
+                    'Multi-modal input not supported. Please provide only text or image input.'
                 )
 
-            payload.update(inputs=DocumentArray([text_doc]))
-            payload.update(total_docs=1)
+            content_type = 'plain'
+            text_content = kwargs.pop('text')
+            if not isinstance(text_content, list):
+                is_list = False
+                text_doc = Document(text=text_content)
+                if 'candidates' in kwargs:
+                    candidates = kwargs.pop('candidates')
+                    text_doc.matches = DocumentArray(
+                        [load_plain_into_document(c) for c in candidates]
+                    )
+                payload.update(inputs=DocumentArray([text_doc]))
+                payload.update(total_docs=1)
+            else:
+                is_list = True
+                text_docs = DocumentArray([Document(text=c) for c in text_content])
+                payload.update(inputs=text_docs)
+                payload.update(total_docs=len(text_docs))
+                payload.update(results_in_order=True)
 
         elif 'image' in kwargs:
-            image_doc = load_plain_into_document(kwargs.pop('image'), is_image=True)
-            if 'candidates' in kwargs:
-                candidates = kwargs.pop('candidates')
-                image_doc.matches = DocumentArray(
-                    [load_plain_into_document(c) for c in candidates]
+            if 'text' in kwargs:
+                raise ValueError(
+                    'Multi-modal input not supported. Please provide only text or image input.'
                 )
-            elif 'question' in kwargs:
-                image_doc.tags.update(prompt=kwargs.pop('question'))
-            payload.update(inputs=DocumentArray([image_doc]))
-            payload.update(total_docs=1)
+
+            content_type = 'plain'
+            image_content = kwargs.pop('image')
+            if not isinstance(image_content, list):
+                is_list = False
+                image_doc = load_plain_into_document(image_content, is_image=True)
+                if 'candidates' in kwargs:
+                    candidates = kwargs.pop('candidates')
+                    image_doc.matches = DocumentArray(
+                        [load_plain_into_document(c) for c in candidates]
+                    )
+                elif 'question' in kwargs:
+                    image_doc.tags.update(prompt=kwargs.pop('question'))
+                payload.update(inputs=DocumentArray([image_doc]))
+                payload.update(total_docs=1)
+            else:
+                is_list = True
+                image_docs = DocumentArray(
+                    [load_plain_into_document(c, is_image=True) for c in image_content]
+                )
+                payload.update(inputs=image_docs)
+                payload.update(total_docs=len(image_docs))
+                payload.update(results_in_order=True)
 
         elif 'reference' in kwargs:
+            content_type = 'plain'
             reference_doc = load_plain_into_document(kwargs.pop('reference'))
             candidates = kwargs.pop('candidates')
             reference_doc.matches = DocumentArray(
@@ -284,7 +377,32 @@ class BaseClient:
             payload.update(inputs=DocumentArray([reference_doc]))
             payload.update(total_docs=1)
 
-        return payload
+        return payload, content_type, is_list
 
-    def _post(self, **kwargs):
-        return self.client.post(**self._get_post_payload(**kwargs))
+    def _post(self, payload):
+        return self.client.post(payload)
+
+    @staticmethod
+    def _unboxed_result(
+        result: 'DocumentArray' = None,
+        task: str = 'encode',
+        content_type: str = 'docarray',
+        is_list: bool = False,
+    ):
+        if content_type == 'plain':
+            if task == 'encode':
+                if is_list:
+                    return result.embeddings
+                else:
+                    return result[0].embedding
+            elif task == 'caption':
+                return result[0].tags['response']
+            elif task == 'rank':
+                return [
+                    (d.uri, d.scores) if d.uri else (d.content, d.scores)
+                    for d in result[0].matches
+                ]
+            elif task == 'vqa':
+                return result[0].tags['response']
+        else:
+            return result
