@@ -1,7 +1,5 @@
 # Welcome to Inference Client
 
-
-
 ```{toctree}
 :caption: User Guides
 :hidden:
