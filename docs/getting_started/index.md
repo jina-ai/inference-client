@@ -3,7 +3,7 @@
 
 
 ```{toctree}
-:caption: User Guides
+:hidden:
 
 initialization
 create_model

@@ -6,18 +6,18 @@ To get started with the Inference Client, you'll need to import the `Client` cla
 from inference_client import Client
 ```
 
-We provide various ways to initialize the Client object, depending on your use case. 
+We provide various ways to initialize the `Client` object, depending on your use case. 
 
 ## Using a Jina AI Cloud authentication token
 
-The simplest way is to initialize the Client object with your Jina AI Cloud authentication token:
+The simplest way to initialize the `Client` object is to pass your Jina AI Cloud authentication token as a parameter when creating an instance of the `Client` class:
 
 ```python
-from inference_client import Client
-
 client = Client(token='<your auth token>')
 ```
-The token can be generated at the [Jina AI Cloud](https://cloud.jina.ai/settings/tokens), or via CLI as described in [this guide](https://docs.jina.ai/jina-ai-cloud/login/#create-a-new-pat):
+
+You can generate an authentication token in the [Jina AI Cloud UI](https://cloud.jina.ai/settings/tokens) by going to the Tokens section in your account settings. 
+Alternatively, you can generate an authentication token using the [Jina CLI](https://docs.jina.ai/jina-ai-cloud/login/#create-a-new-pat):
 
 ```bash
 jina auth token create <name of PAT> -e <expiration days>
@@ -29,8 +29,7 @@ Please note that the token will only be shown once, so make sure to save it some
 
 ## Using environment variables
 
-You can also initialize the Client object by setting the `JINA_AUTH_TOKEN` environment variable.
-This is convenient if you want to use the same token across multiple scripts and is the recommended way to initialize the Client object in production environments.
+Another way to initialize the `Client` object is to set the `JINA_AUTH_TOKEN` environment variable to your authentication token before creating an instance of the `Client` class:
 
 ```python
 import os
@@ -40,14 +39,14 @@ os.environ['JINA_AUTH_TOKEN'] = '<your auth token>'
 client = Client()
 ```
 
+Setting the `JINA_AUTH_TOKEN` environment variable is a convenient way to use the same authentication token across multiple scripts, and is the recommended way to initialize the `Client` object in production environments.
+
 ## Logging in via Web UI
 
-For convenience, you can also use the Jina AI Cloud Web UI to log in and initialize the Client object. 
+For convenience, you can also use the Jina AI Cloud Web UI to log in and initialize the `Client` object. 
 This will set the `JINA_AUTH_TOKEN` environment variable for you.
 This is suitable for development environments, but not recommended for production environments since the session will expire after a certain amount of time.
 
 ```python
-from inference_client import Client
-
 client = Client()
 ```

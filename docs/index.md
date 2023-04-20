@@ -31,6 +31,7 @@ This will install the Inference Client and any necessary dependencies.
 
 ```{toctree}
 :caption: User Guides
+:hidden:
 
 getting_started/index
 ```
