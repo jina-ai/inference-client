@@ -34,6 +34,7 @@ This will install the Inference Client and any necessary dependencies.
 :hidden:
 
 getting_started/index
+performing_tasks/index
 ```
 
 ```{toctree}
