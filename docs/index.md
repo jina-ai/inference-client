@@ -33,7 +33,10 @@ This will install the Inference Client and any necessary dependencies.
 :caption: User Guides
 :hidden:
 
-user-guides/getting_started
+getting_started
+getting_started/initialization
+getting_started/create_model
+getting_started/connect_model
 ```
 
 ```{toctree}

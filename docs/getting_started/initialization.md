@@ -1,4 +1,4 @@
-# Getting Started
+# Client Initialization
 
 To get started with the Inference Client, you'll need to import the `Client` class from the `inference_client` package:
 
@@ -6,11 +6,9 @@ To get started with the Inference Client, you'll need to import the `Client` cla
 from inference_client import Client
 ```
 
-## Client Initialization
-
 We provide various ways to initialize the Client object, depending on your use case. 
 
-### Using a Jina AI Cloud authentication token
+## Using a Jina AI Cloud authentication token
 
 The simplest way is to initialize the Client object with your Jina AI Cloud authentication token:
 
@@ -29,7 +27,7 @@ jina auth token create <name of PAT> -e <expiration days>
 Please note that the token will only be shown once, so make sure to save it somewhere safe.
 ```
 
-### Using environment variables
+## Using environment variables
 
 You can also initialize the Client object by setting the `JINA_AUTH_TOKEN` environment variable.
 This is convenient if you want to use the same token across multiple scripts and is the recommended way to initialize the Client object in production environments.
@@ -42,7 +40,7 @@ os.environ['JINA_AUTH_TOKEN'] = '<your auth token>'
 client = Client()
 ```
 
-### Logging in via Web UI
+## Logging in via Web UI
 
 For convenience, you can also use the Jina AI Cloud Web UI to log in and initialize the Client object. 
 This will set the `JINA_AUTH_TOKEN` environment variable for you.
@@ -53,9 +51,3 @@ from inference_client import Client
 
 client = Client()
 ```
-
-## Connecting to Models
-
-Once you have initialized the Client object, you can connect to the models you want to use by calling the `get_model` method, which takes the name of the model as it appears in Jina AI Cloud as an argument.
-
-```python
