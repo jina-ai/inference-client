@@ -1,4 +1,4 @@
-![Inference Client](/_static/inference_client.svg)
+# Welcome to the Inference Client
 
 The Inference Client is a powerful library that provides a simple and efficient way to use Jina AI's Inference platform. 
 Inference provides a range of AI models for common tasks such as visual reasoning, question answering, and embedding modalities like texts and images. 
