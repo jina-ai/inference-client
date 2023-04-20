@@ -33,7 +33,7 @@ This will install the Inference Client and any necessary dependencies.
 :caption: User Guides
 :hidden:
 
-user-guides/client
+user-guides/construct_client
 ```
 
 ```{toctree}
