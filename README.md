@@ -1,4 +1,4 @@
-# Inference Client
+![Inference Client](/.github/README-img/inference_client.svg)
 
 [![PyPI](https://img.shields.io/pypi/v/inference-client)](https://pypi.org/project/inference-client/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/inference-client)](https://pypi.org/project/inference-client/)
