@@ -9,8 +9,6 @@ You can also wrap the image using `DocArray`.
 
 ## Plain Input
 
-### Plain Image
-
 To generate a caption for a plain image, you can assign the image path, bytes, or array to the `image` parameter of the `caption` method:
 
 ```python
@@ -28,7 +26,7 @@ For example, the following image will generate a caption similar to 'the merlion
 <img src="../_static/singapore.jpg" width="50%" />
 </p>
 
-### DocumentArray Input
+## DocumentArray Input
 
 The `caption` method also supports `DocumentArray` inputs.
 [DocArray](https://github.com/docarray/docarray) is a library for **representing, sending and storing multi-model data**, which is perfect for **Machine Learning applications**.
@@ -43,7 +41,7 @@ docs = [Document(uri='path/to/image.jpg')]
 # A DocumentArray object
 docs = DocumentArray([Document(uri='path/to/image.jpg')])
 
-result = model.caption(docs)
+result = model.caption(docs=docs)
 print(result[0].tags['response'])
 ```
 
