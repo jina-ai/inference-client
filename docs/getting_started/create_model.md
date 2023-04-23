@@ -27,7 +27,7 @@ You can also click on the model list item to see more details about the model, i
 
 ![create5](images/create5.png)
 
-```{notice}
+```{note}
 If you do not use your model for a while, it will be marked as "pause" and will be shut down to save resources.
 You need to resume the model at the Inference page to use it again.
 ```
