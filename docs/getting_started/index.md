@@ -24,14 +24,14 @@ By following the steps outlined in this guide, you'll be able to connect to your
 :::::{grid} 2
 :gutter: 3
 
-::::{grid-item-card} {octicon}`cross-reference;1.5em` Initialization
+::::{grid-item-card} {octicon}`workflow;1.5em` Initialization
 :link: initialization
 :link-type: doc
 
 Initialize `Client` using authentication token, env variables or Web UI.
 ::::
 
-::::{grid-item-card} {octicon}`gear;1.5em` Creating a Model
+::::{grid-item-card} {octicon}`workflow;1.5em` Creating a Model
 :link: create_model
 :link-type: doc
 
