@@ -62,6 +62,13 @@ You can pass a `DocumentArray` object or a list of `Document` objects to the `en
 ```python
 from jina import DocumentArray, Document
 
+# A list of three Documents
+docs = [
+    Document(text='Hello, world!'),
+    Document(text='Hello, Jina!'),
+    Document(text='Hello, Goodbye!'),
+]
+
 # A DocumentArray containing three text Documents
 docs = DocumentArray(
     [
@@ -70,13 +77,6 @@ docs = DocumentArray(
         Document(text='Hello, Goodbye!'),
     ]
 )
-
-# A list of three Documents
-docs = [
-    Document(text='Hello, world!'),
-    Document(text='Hello, Jina!'),
-    Document(text='Hello, Goodbye!'),
-]
 
 # A DocumentArray containing three image Documents
 docs = DocumentArray(
