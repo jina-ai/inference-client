@@ -77,4 +77,4 @@ path/to/image3.jpg {'clip_score_cosine': {'value': 0.1,'op_name': 'cosine',},'cl
 ```
 
 You can refer to the [DocArray documentation](https://docarray.org/legacy-docs/) to learn more about how to construct a [text `Document`](https://docarray.org/legacy-docs/datatypes/text/) or an [image `Document`](https://docarray.org/legacy-docs/datatypes/image/).
-You can also learn more about how to construct a [Nested Structure `Document`](https://docarray.org/legacy-docs/fundamentals/document/nested/)
+You can also learn more about how to construct a [Nested Structure `Document`](https://docarray.org/legacy-docs/fundamentals/document/nested/).
