@@ -19,6 +19,34 @@ This method returns a `BaseClient` object that provides a high-level interface f
 
 By following the steps outlined in this guide, you'll be able to connect to your inference models and start integrating them into your application.
 
+## Next steps
+
+:::::{grid} 2
+:gutter: 3
+
+::::{grid-item-card} {octicon}`cross-reference;1.5em` Initialization
+:link: initialization
+:link-type: doc
+
+Initialize `Client` using authentication token, env variables or Web UI.
+::::
+
+::::{grid-item-card} {octicon}`gear;1.5em` Creating a Model
+:link: create_model
+:link-type: doc
+
+Create and manage AI models using Jina AI Cloud.
+::::
+
+::::{grid-item-card} {octicon}`workflow;1.5em` Connecting to Models
+:link: connect_model
+:link-type: doc
+
+Connect to models with `get_model` and use `BaseClient` for model-specific functionality.
+::::
+
+:::::
+
 
 ```{toctree}
 :hidden:
