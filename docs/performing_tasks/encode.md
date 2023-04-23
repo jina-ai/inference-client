@@ -54,3 +54,48 @@ embeddings = model.encode(image=['path/to/image1.jpg', 'path/to/image2.jpg'])
 The result will be a high-dimensional array of embeddings, where each row represents the embedding of the corresponding input.
 
 ## DocumentArray Input
+
+The `encode` method also supports `DocumentArray` inputs.
+[DocArray](https://github.com/docarray/docarray) is a library for **representing, sending and storing multi-model data**, which is perfect for **Machine Learning applications**.
+You can pass a `DocumentArray` object or a list of `Document` objects to the `encode` method to encode the data:
+
+```python
+from jina import DocumentArray, Document
+
+# A DocumentArray containing three text Documents
+docs = DocumentArray(
+    [
+        Document(text='Hello, world!'),
+        Document(text='Hello, Jina!'),
+        Document(text='Hello, Goodbye!'),
+    ]
+)
+
+# A list of three Documents
+docs = [
+    Document(text='Hello, world!'),
+    Document(text='Hello, Jina!'),
+    Document(text='Hello, Goodbye!'),
+]
+
+# A DocumentArray containing three image Documents
+docs = DocumentArray(
+    [
+        Document(uri='path/to/image1.jpg'),
+        Document(uri='path/to/image2.jpg').load_uri_to_blob(),
+        Document(uri='path/to/image3.jpg').load_uri_to_image_tensor(),
+    ]
+)
+
+result = model.encode(docs=docs)
+print(result.embeddings)
+```
+
+```bash
+[[0.123, 0.456, 0.789, ...]
+ [0.987, 0.654, 0.321, ...]
+ [0.111, 0.222, 0.333, ...]]
+```
+
+The result will be a `DocumentArray` object with the embedding of each input stored in the `embedding` attribute of each `Document` object.
+You can refer to the [DocArray documentation](https://docarray.org/legacy-docs/) to learn more about how to construct a [text `Document`](https://docarray.org/legacy-docs/datatypes/text/) or an [image `Document`](https://docarray.org/legacy-docs/datatypes/image/).
