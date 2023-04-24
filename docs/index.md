@@ -46,7 +46,7 @@ api
 ```
 
 
-[//]: # (---)
+---
 
-[//]: # ({ref}`genindex` | {ref}`modindex`)
+{ref}`genindex` | {ref}`modindex`
 
