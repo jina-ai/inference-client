@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "inference_client"
-version = "0.0.2rc1"
+version = "0.0.2"
 description = "Python Client for Jina Inference API"
 
 license = "Apache-2.0"
@@ -32,6 +32,7 @@ build-backend = "poetry.core.masonry.api"
 # Compatible Python versions
 python = ">=3.8,<4.0.0"
 pydantic = "^1.10.7"
+docarray = "^0.21.0"
 jina  = "^3.14.0"
 jina-hubble-sdk = ">=0.34.0"
 rich = "^13.3.0"
