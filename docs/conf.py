@@ -146,7 +146,7 @@ linkcheck_retries = 2
 linkcheck_anchors = False
 
 ogp_site_url = 'https://jina.ai/'
-ogp_image = 'https://clip-as-service.jina.ai/_static/banner.png'
+ogp_image = 'https://docs.jina.ai/_static/banner.png'
 ogp_use_first_image = True
 ogp_description_length = 300
 ogp_type = 'website'
