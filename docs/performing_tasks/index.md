@@ -4,7 +4,7 @@ The inference client provides several methods for performing different machine l
 
 Each method takes different types of input and returns different types of output. The following sections provide details on how to use each method.
 
-Before started, make sure you have learned the [getting started](../getting_started) guide.
+Before started, make sure you have learned the [getting started](../getting_started/index) guide.
 
 :::::{grid} 2
 :gutter: 3

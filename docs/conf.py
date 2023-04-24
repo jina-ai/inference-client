@@ -115,7 +115,7 @@ notfound_context = {
 }
 notfound_no_urls_prefix = True
 
-apidoc_module_dir = 'repo_dir'
+apidoc_module_dir = '../inference_client'
 apidoc_output_dir = 'api'
 apidoc_excluded_paths = ['tests', 'legacy', 'hub', 'toy*', 'setup.py']
 apidoc_separate_modules = True
