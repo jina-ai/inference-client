@@ -42,7 +42,7 @@ performing_tasks/index
 :hidden:
 :maxdepth: 1
 
-api
+api/inference_client
 ```
 
 [//]: # (---)
