@@ -38,8 +38,8 @@ sitemap_locales = [None]
 sitemap_filename = "sitemap.xml"
 
 html_theme_options = {
-    'light_logo': 'logo-light.svg',
-    'dark_logo': 'logo-dark.svg',
+    'light_logo': 'inference_client.svg',
+    'dark_logo': 'inference_client.svg',
     "sidebar_hide_name": True,
     "light_css_variables": {
         "color-brand-primary": "#009191",
