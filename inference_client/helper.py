@@ -18,7 +18,7 @@ def login(token: Optional[str] = None) -> str:
     Try to login using the token.
 
     :param token: An optional token to use for authentication. If not set, it will try to login using the auth token
-    in the env, or guide the user to login from a pop-out window
+        in the env, or guide the user to login from a pop-out window
     :return: The validated token.
     """
     if token:
@@ -72,7 +72,7 @@ def load_plain_into_document(content, is_image: bool = False):
 
     :param content: input
     :param is_image: whether the input is an image when the input content is of string type, if True, it will force to
-    load into image Document
+        load into image Document
     :return: a text or image document with content loaded
     """
     import torch

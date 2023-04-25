@@ -38,8 +38,8 @@ sitemap_locales = [None]
 sitemap_filename = "sitemap.xml"
 
 html_theme_options = {
-    'light_logo': 'logo-light.svg',
-    'dark_logo': 'logo-dark.svg',
+    'light_logo': 'inference.svg',
+    'dark_logo': 'inference.svg',
     "sidebar_hide_name": True,
     "light_css_variables": {
         "color-brand-primary": "#009191",
@@ -115,7 +115,7 @@ notfound_context = {
 }
 notfound_no_urls_prefix = True
 
-apidoc_module_dir = '../client'
+apidoc_module_dir = '../'
 apidoc_output_dir = 'api'
 apidoc_excluded_paths = ['tests', 'legacy', 'hub', 'toy*', 'setup.py']
 apidoc_separate_modules = True
@@ -146,7 +146,7 @@ linkcheck_retries = 2
 linkcheck_anchors = False
 
 ogp_site_url = 'https://jina.ai/'
-ogp_image = 'https://clip-as-service.jina.ai/_static/banner.png'
+ogp_image = 'https://docs.jina.ai/_static/banner.png'
 ogp_use_first_image = True
 ogp_description_length = 300
 ogp_type = 'website'
