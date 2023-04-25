@@ -32,6 +32,11 @@ result = model.rank(reference=reference, candidates=candidates)
 
 The result will be a list of tuples, where each tuple contains the candidate and its score.
 
+```{note}
+We try our best to guess the type of the input data, but there are certain cases where the image path or url cannot be distinguished from a text string and the input will be treated as text.
+To make sure the input is treated as an image, please use `DocumentArray` input instead.
+```
+
 ## DocumentArray Input
 
 When using `DocumentArray` input with the rank method, the reference and candidates can be passed as `DocumentArray` objects or lists of `Document` objects.
