@@ -1,0 +1,7 @@
+inference\_client.base module
+=============================
+
+.. automodule:: inference_client.base
+   :members:
+   :undoc-members:
+   :show-inheritance:

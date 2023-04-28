@@ -1,0 +1,7 @@
+inference\_client.logging module
+================================
+
+.. automodule:: inference_client.logging
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,487 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<meta property="og:title" content="Rank" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://jina.ai/performing_tasks/rank/" />
+<meta property="og:site_name" content="Inference Client 0.0.1 Documentation" />
+<meta property="og:description" content="In machine learning, ranking is the process of ordering a set of items based on their relevance to a specific query. It is often used in information retrieval, recommendation systems, and search engines to provide a personalized and optimized user experience. The goal of ranking is to present the..." />
+<meta property="og:image" content="https://docs.jina.ai/_static/banner.png" />
+<meta property="og:image:alt" content="Inference Client 0.0.1 Documentation" />
+<meta name="description" content="In machine learning, ranking is the process of ordering a set of items based on their relevance to a specific query. It is often used in information retrieval, recommendation systems, and search engines to provide a personalized and optimized user experience. The goal of ranking is to present the..." />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@JinaAI_">
+<meta name="twitter:creator" content="@JinaAI_">
+<meta name="description" content="Inference Client">
+<meta property="og:description" content="Inference Client">
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E63SXVNDXZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E63SXVNDXZ');
+</script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+    
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Caption" href="../caption/" /><link rel="prev" title="Encode" href="../encode/" />
+        <link rel="canonical" href="https://jina.ai/performing_tasks/rank.html" />
+
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
+        <title>Rank - Inference Client 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: #4d4d4d;
+  --color-brand-primary: #009191;
+  --color-brand-content: #009191;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #FBCB67;
+  --color-brand-content: #FBCB67;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #FBCB67;
+  --color-brand-content: #FBCB67;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+    <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+    <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+    <header class="mobile-header">
+        <div class="header-left">
+            <label class="nav-overlay-icon" for="__navigation">
+                <div class="visually-hidden">Toggle site navigation sidebar</div>
+                <i class="icon">
+                    <svg>
+                        <use href="#svg-menu"></use>
+                    </svg>
+                </i>
+            </label>
+        </div>
+        <div class="header-center">
+            <a href="../../">
+                <div class="brand">Inference Client 0.0.1 documentation</div>
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="theme-toggle-container theme-toggle-header">
+                <button class="theme-toggle">
+                    <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                    <svg class="theme-icon-when-auto">
+                        <use href="#svg-sun-half"></use>
+                    </svg>
+                    <svg class="theme-icon-when-dark">
+                        <use href="#svg-moon"></use>
+                    </svg>
+                    <svg class="theme-icon-when-light">
+                        <use href="#svg-sun"></use>
+                    </svg>
+                </button>
+            </div>
+            <label class="toc-overlay-icon toc-header-icon" for="__toc">
+                <div class="visually-hidden">Toggle table of contents sidebar</div>
+                <i class="icon">
+                    <svg>
+                        <use href="#svg-toc"></use>
+                    </svg>
+                </i>
+            </label>
+        </div>
+    </header>
+    <aside class="sidebar-drawer">
+        <div class="sidebar-container">
+            
+            <div class="sidebar-sticky"><a class="sidebar-brand" href="../../">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../_static/inference.svg" alt="Light Logo" />
+    <img class="sidebar-logo only-dark" src="../../_static/inference.svg" alt="Dark Logo" />
+  </div>
+  
+  
+</a>
+<div class="sd-d-flex-row sd-align-major-spaced">
+  <a class="github-button" href="https://github.com/jina-ai/inference-client" data-icon="octicon-star" data-show-count="true" aria-label="Star jina-ai/jina on GitHub" style="opacity: 0;">Star</a>
+  
+</div><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+    <p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../getting_started/">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/initialization/">Client Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/create_model/">Creating a Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/connect_model/">Connecting to Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Performing Tasks</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../encode/">Encode</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Rank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../caption/">Caption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vqa/">VQA</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/inference_client/">inference_client package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/inference_client.base/">inference_client.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/inference_client.client/">inference_client.client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/inference_client.config/">inference_client.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/inference_client.helper/">inference_client.helper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/inference_client.logging/">inference_client.logging module</a></li>
+</ul>
+</li>
+</ul>
+
+    <p class="caption" role="heading"><span class="caption-text">Ecosystem</span></p>
+    <ul>
+        <li class="toctree-l1">
+            <a class="reference external" href="https://docs.jina.ai">
+                <img class="sidebar-ecosys-logo only-light-line" src="../../_static/search-light.svg">
+                <img class="sidebar-ecosys-logo only-dark-line" src="../../_static/search-dark.svg">
+                Jina</a></li>
+        <li class="toctree-l1"><a class="reference external" href="https://hub.jina.ai">
+            <img class="sidebar-ecosys-logo only-light-line" src="../../_static/hub-light.svg">
+            <img class="sidebar-ecosys-logo only-dark-line" src="../../_static/hub-dark.svg">
+            Jina Hub</a></li>
+        <li class="toctree-l1"><a class="reference external" href="https://finetuner.jina.ai">
+            <img class="sidebar-ecosys-logo only-light-line" src="../../_static/finetuner-light.svg">
+            <img class="sidebar-ecosys-logo only-dark-line" src="../../_static/finetuner-dark.svg">
+            Finetuner</a></li>
+        <li class="toctree-l1"><a class="reference external" href="https://docarray.jina.ai">
+            <img class="sidebar-ecosys-logo only-light-line" src="../../_static/docarray-light.svg">
+            <img class="sidebar-ecosys-logo only-dark-line" src="../../_static/docarray-dark.svg">
+            DocArray</a></li>
+        <li class="toctree-l1"><a class="reference internal" href="https://clip-as-service.jina.ai">
+            <img class="sidebar-ecosys-logo only-light-line" src="../../_static/cas-light.svg">
+            <img class="sidebar-ecosys-logo only-dark-line" src="../../_static/cas-dark.svg">
+            CLIP-as-service</a></li>
+        <li class="toctree-l1"><a class="reference external" href="https://github.com/jina-ai/jcloud">
+            <img class="sidebar-ecosys-logo only-light-line" src="../../_static/JCloud-light.svg">
+            <img class="sidebar-ecosys-logo only-dark-line" src="../../_static/JCloud-dark.svg">
+            JCloud</a></li>
+        <li class="toctree-l1"><a class="reference external" href="https://now.jina.ai">
+            <img class="sidebar-ecosys-logo only-light-line" src="../../_static/now-light.svg">
+            <img class="sidebar-ecosys-logo only-dark-line" src="../../_static/now-dark.svg">
+            NOW</a></li>
+    </ul>
+</div>
+</div>
+
+            </div>
+            
+        </div>
+    </aside>
+    <div class="main">
+        <div class="content">
+            <div class="article-container">
+                <a href="#" class="back-to-top muted-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+                    </svg>
+                    <span>Back to top</span>
+                </a>
+                <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
+                        <button class="theme-toggle">
+                            <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                            <svg class="theme-icon-when-auto">
+                                <use href="#svg-sun-half"></use>
+                            </svg>
+                            <svg class="theme-icon-when-dark">
+                                <use href="#svg-moon"></use>
+                            </svg>
+                            <svg class="theme-icon-when-light">
+                                <use href="#svg-sun"></use>
+                            </svg>
+                        </button>
+                    </div>
+                    <label class="toc-overlay-icon toc-content-icon"
+                           for="__toc">
+                        <div class="visually-hidden">Toggle table of contents sidebar</div>
+                        <i class="icon">
+                            <svg>
+                                <use href="#svg-toc"></use>
+                            </svg>
+                        </i>
+                    </label>
+                </div>
+                <article role="main">
+                    <section class="tex2jax_ignore mathjax_ignore" id="rank">
+<h1>Rank<a class="headerlink" href="#rank" title="Permalink to this heading">#</a></h1>
+<p>In machine learning, ranking is the process of ordering a set of items based on their relevance to a specific query.
+It is often used in information retrieval, recommendation systems, and search engines to provide a personalized and optimized user experience.
+The goal of ranking is to present the most relevant items to the user, based on their preferences and behavior.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rank</span></code> method of the <code class="docutils literal notranslate"><span class="pre">BaseClient</span></code> object takes a reference as query and a list of candidates as input and returns a list of reordered candidates as well as their scores as output.
+You can also wrap the reference and candidates using <code class="docutils literal notranslate"><span class="pre">DocArray</span></code>.</p>
+<section id="plain-input">
+<h2>Plain Input<a class="headerlink" href="#plain-input" title="Permalink to this heading">#</a></h2>
+<p>When using plain input with the rank method, the reference and candidates can be passed as text or image data.
+The reference should be passed as a single data entry, while the candidates can be passed as a list of data entries.
+Similar to the <code class="docutils literal notranslate"><span class="pre">encode</span></code> method, each data entry can be a string, a path to an image, bytes of an image, or an array that represents an image.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reference</span> <span class="o">=</span> <span class="s1">&#39;path/to/image.jpg&#39;</span>
+<span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;an image about dogs&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;an image about cats&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;an image about birds&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[(</span><span class="s1">&#39;an image about cats&#39;</span>,<span class="w"> </span><span class="o">{</span><span class="s1">&#39;clip_score_cosine&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.3,<span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;cosine&#39;</span>,<span class="o">}</span>,<span class="s1">&#39;clip_score&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.6,<span class="w"> </span><span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;softmax&#39;</span><span class="o">}</span>,<span class="o">}</span>,
+<span class="o">(</span><span class="s1">&#39;an image about dogs&#39;</span>,<span class="w"> </span><span class="o">{</span><span class="s1">&#39;clip_score_cosine&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.2,<span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;cosine&#39;</span>,<span class="o">}</span>,<span class="s1">&#39;clip_score&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.4,<span class="w"> </span><span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;softmax&#39;</span><span class="o">}</span>,<span class="o">}</span>,
+<span class="o">(</span><span class="s1">&#39;an image about birds&#39;</span>,<span class="w"> </span><span class="o">{</span><span class="s1">&#39;clip_score_cosine&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.1,<span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;cosine&#39;</span>,<span class="o">}</span>,<span class="s1">&#39;clip_score&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.2,<span class="w"> </span><span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;softmax&#39;</span><span class="o">}</span>,<span class="o">}]</span>
+</pre></div>
+</div>
+<p>The result will be a list of tuples, where each tuple contains the candidate and its score.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We try our best to guess the type of the input data, but there are certain cases where the image path or url cannot be distinguished from a text string and the input will be treated as text.
+To make sure the input is treated as an image, please use <code class="docutils literal notranslate"><span class="pre">DocumentArray</span></code> input instead.</p>
+</div>
+</section>
+<section id="documentarray-input">
+<h2>DocumentArray Input<a class="headerlink" href="#documentarray-input" title="Permalink to this heading">#</a></h2>
+<p>When using <code class="docutils literal notranslate"><span class="pre">DocumentArray</span></code> input with the rank method, the reference and candidates can be passed as <code class="docutils literal notranslate"><span class="pre">DocumentArray</span></code> objects or lists of <code class="docutils literal notranslate"><span class="pre">Document</span></code> objects.</p>
+<p>First construct a cross-modal <code class="docutils literal notranslate"><span class="pre">Document</span></code> where the root contains an image and <code class="docutils literal notranslate"><span class="pre">.matches</span></code> contain sentences to rerank.
+You can also construct text-to-image rerank as below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jina</span> <span class="kn">import</span> <span class="n">DocumentArray</span><span class="p">,</span> <span class="n">Document</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s1">&#39;a photo of conference room&#39;</span><span class="p">,</span>
+    <span class="n">matches</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Document</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="s1">&#39;path/to/image1.jpg&#39;</span><span class="p">),</span>
+        <span class="n">Document</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="s1">&#39;path/to/image2.jpg&#39;</span><span class="p">),</span>
+        <span class="n">Document</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="s1">&#39;path/to/image3.jpg&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Then pass the <code class="docutils literal notranslate"><span class="pre">Document</span></code> to the rank method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># A list of Document objects</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">docs</span><span class="o">=</span><span class="p">[</span><span class="n">doc</span><span class="p">])</span>
+
+<span class="c1"># A DocumentArray object</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">docs</span><span class="o">=</span><span class="n">DocumentArray</span><span class="p">([</span><span class="n">doc</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>The result will be a DocumentArray object with the same structure as the input, but with the <code class="docutils literal notranslate"><span class="pre">.matches</span></code> reordered and scored.
+You can access the matches and their scores using the <code class="docutils literal notranslate"><span class="pre">matches</span></code> and <code class="docutils literal notranslate"><span class="pre">scores</span></code> attributes of the <code class="docutils literal notranslate"><span class="pre">Document</span></code> object like below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">matches</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">scores</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>path/to/image2.jpg<span class="w"> </span><span class="o">{</span><span class="s1">&#39;clip_score_cosine&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.3,<span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;cosine&#39;</span>,<span class="o">}</span>,<span class="s1">&#39;clip_score&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.6,<span class="w"> </span><span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;softmax&#39;</span><span class="o">}</span>,<span class="o">}</span>
+path/to/image1.jpg<span class="w"> </span><span class="o">{</span><span class="s1">&#39;clip_score_cosine&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.2,<span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;cosine&#39;</span>,<span class="o">}</span>,<span class="s1">&#39;clip_score&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.4,<span class="w"> </span><span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;softmax&#39;</span><span class="o">}</span>,<span class="o">}</span>
+path/to/image3.jpg<span class="w"> </span><span class="o">{</span><span class="s1">&#39;clip_score_cosine&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.1,<span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;cosine&#39;</span>,<span class="o">}</span>,<span class="s1">&#39;clip_score&#39;</span>:<span class="w"> </span><span class="o">{</span><span class="s1">&#39;value&#39;</span>:<span class="w"> </span><span class="m">0</span>.2,<span class="w"> </span><span class="s1">&#39;op_name&#39;</span>:<span class="w"> </span><span class="s1">&#39;softmax&#39;</span><span class="o">}</span>,<span class="o">}</span>
+</pre></div>
+</div>
+<p>You can refer to the <a class="reference external" href="https://docarray.org/legacy-docs/">DocArray documentation</a> to learn more about how to construct a <a class="reference external" href="https://docarray.org/legacy-docs/datatypes/text/">text <code class="docutils literal notranslate"><span class="pre">Document</span></code></a> or an <a class="reference external" href="https://docarray.org/legacy-docs/datatypes/image/">image <code class="docutils literal notranslate"><span class="pre">Document</span></code></a>.
+You can also learn more about how to construct a <a class="reference external" href="https://docarray.org/legacy-docs/fundamentals/document/nested/">Nested Structure <code class="docutils literal notranslate"><span class="pre">Document</span></code></a>.</p>
+</section>
+</section>
+
+                </article>
+            </div>
+            <footer>
+                
+                <div class="related-pages">
+                    <a class="next-page" href="../caption/">
+                        <div class="page-info">
+                            <div class="context">
+                                <span>Next</span>
+                            </div>
+                            <div class="title">Caption</div>
+                        </div>
+                        <svg class="furo-related-icon">
+                            <use href="#svg-arrow-right"></use>
+                        </svg>
+                    </a>
+                    <a class="prev-page" href="../encode/">
+                        <svg class="furo-related-icon">
+                            <use href="#svg-arrow-right"></use>
+                        </svg>
+                        <div class="page-info">
+                            <div class="context">
+                                <span>Previous</span>
+                            </div>
+                            
+                            <div class="title">Encode</div>
+                            
+                        </div>
+                    </a>
+                </div>
+                <div class="bottom-of-page">
+                    <div class="left-details">
+                        <div class="copyright">
+                            Copyright &#169; Jina AI Limited. All rights reserved.
+                        </div><div class="last-updated">
+                            Last updated on Apr 28, 2023</div>
+                    </div>
+                    <div class="right-details">
+                        <div class="social-btns">
+                            <a class='social-btn' href="https://github.com/jina-ai/inference-client/" aria-label="GitHub"
+                               target="_blank" rel="noreferrer"> <i class="fab fa-github"></i></a>
+                            <a class='social-btn' href="https://slack.jina.ai" aria-label="Slack" target="_blank"
+                               rel="noreferrer"> <i class="fab fa-slack"></i></a>
+                            <a class='social-btn' href="https://youtube.com/c/jina-ai" aria-label="YouTube"
+                               target="_blank" rel="noreferrer"> <i class="fab fa-youtube"></i></a>
+                            <a class='social-btn' href="https://twitter.com/JinaAI_" aria-label="Twitter"
+                               target="_blank" rel="noreferrer"> <i class="fab fa-twitter"></i></a>
+                            <a class='social-btn' href="https://www.linkedin.com/company/jinaai/" aria-label="LinkedIn"
+                               target="_blank" rel="noreferrer"> <i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+            </footer>
+        </div>
+        <aside class="toc-drawer">
+            
+            
+            <div class="toc-sticky toc-scroll">
+                <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+                </div>
+                <div class="toc-tree-container">
+                    <div class="toc-tree">
+                        <ul>
+<li><a class="reference internal" href="#">Rank</a><ul>
+<li><a class="reference internal" href="#plain-input">Plain Input</a></li>
+<li><a class="reference internal" href="#documentarray-input">DocumentArray Input</a></li>
+</ul>
+</li>
+</ul>
+
+                    </div>
+                </div>
+            </div>
+            
+            
+        </aside>
+    </div>
+</div>
+<img referrerpolicy="no-referrer-when-downgrade"
+     src="https://static.scarf.sh/a.png?x-pxid=2823e771-0e1e-4320-8fde-48bc48e53262"/><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.min.js"></script>
+    </body>
+</html>

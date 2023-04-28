@@ -1,0 +1,7 @@
+inference-client
+================
+
+.. toctree::
+   :maxdepth: 4
+
+   inference_client

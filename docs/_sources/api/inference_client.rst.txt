@@ -1,0 +1,22 @@
+inference\_client package
+=========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   inference_client.base
+   inference_client.client
+   inference_client.config
+   inference_client.helper
+   inference_client.logging
+
+Module contents
+---------------
+
+.. automodule:: inference_client
+   :members:
+   :undoc-members:
+   :show-inheritance:
