@@ -94,7 +94,7 @@ class EncodeMixin:
         payload, content_type, is_list = self._get_enocde_payload(
             endpoint='/encode', **kwargs
         )
-        result = self._post(payload=payload)
+        result = self.client.post(payload=payload)
         return self._unbox_encode_result(
             result=result,
             content_type=content_type,
@@ -129,7 +129,7 @@ class EncodeMixin:
 
             content_type = 'plain'
             text_content = kwargs.pop('text')
-            if not isinstance(text_content, list):
+            if isinstance(text_content, str):
                 is_list = False
                 text_doc = Document(text=text_content)
                 payload.update(inputs=DocumentArray([text_doc]))
@@ -149,7 +149,7 @@ class EncodeMixin:
 
             content_type = 'plain'
             image_content = kwargs.pop('image')
-            if not isinstance(image_content, list):
+            if isinstance(image_content, str):
                 is_list = False
                 image_doc = load_plain_into_document(image_content, mime_type='image')
                 payload.update(inputs=DocumentArray([image_doc]))

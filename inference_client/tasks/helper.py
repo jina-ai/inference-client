@@ -1,4 +1,3 @@
-import mimetypes
 from typing import Optional
 
 from docarray import Document
@@ -17,18 +16,17 @@ def load_plain_into_document(content, mime_type: Optional[str] = None):
     import torch
 
     if isinstance(content, str):
-        if mime_type is None:
-            _mime = mimetypes.guess_type(content)[0]
-            if _mime and _mime.startswith('image'):
-                mime_type = 'image'
-            else:
-                mime_type = 'text'
         if mime_type == 'image':
             return Document(
                 uri=content,
             ).load_uri_to_blob()
         elif mime_type == 'text':
             return Document(text=content)
+        if mime_type is None:
+            try:
+                return Document(uri=content).load_uri_to_blob()
+            except ValueError:
+                return Document(text=content)
     elif isinstance(content, bytes):
         return Document(blob=content)
     elif isinstance(content, (numpy.ndarray, torch.Tensor)):
