@@ -10,8 +10,8 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v3
 
-      - name: Install and build rdme deps
-        run: npm ci && npm run build
+#      - name: Install and build rdme deps
+#        run: npm ci && npm run build
 
 #      # Let's dynamically update our docs with the latest version of rdme!
 #      # Note that these next three steps are not required
@@ -60,7 +60,7 @@ jobs:
       # First we're going to perform a dry run of syncing process.
       # We do this on every push to ensure that an actual sync will work properly
       - name: Sync docs to ReadMe (dry run)
-        uses: ./
+        uses: readmeio/rdme@v8
         with:
           rdme: docs ./docs --key=${{ secrets.README_DEVELOPERS_API_KEY }} --version=0.0.1 --dryRun
 
