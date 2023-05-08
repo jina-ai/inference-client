@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
 from docarray import Document, DocumentArray
-from helper import iter_doc, load_plain_into_document
 from jina import Client
+
+from .helper import get_base_payload, iter_doc, load_plain_into_document
 
 if TYPE_CHECKING:
     from docarray.typing import ArrayType
@@ -85,23 +86,21 @@ class RankMixin:
         :param kwargs: additional arguments to pass to the model
         :return: ranked content
         """
-        payload, content_type = self._get_rank_payload(endpoint='/rank', **kwargs)
-        result = self.client.post(payload=payload)
+        payload, content_type = self._get_rank_payload(**kwargs)
+        result = self.client.post(**payload)
         return self._unbox_rank_result(
             result=result,
             content_type=content_type,
         )
 
     def _get_rank_payload(self, **kwargs):
-        payload = dict(
-            on=kwargs.pop('endpoint', '/'),
-            request_size=kwargs.pop('request_size', 1),
-            metadata=(('authorization', self.token),),
-        )
-
-        content_type = None
+        payload = get_base_payload('/rank', self.token, **kwargs)
 
         if 'docs' in kwargs:
+            if 'text' in kwargs or 'image' in kwargs:
+                raise ValueError(
+                    'More than one input type provided. Please provide only text, image or docs input.'
+                )
             content_type = 'docarray'
             total_docs = (
                 len(kwargs.get('docs'))
@@ -116,42 +115,47 @@ class RankMixin:
                 raise ValueError(
                     'Multi-modal input not supported. Please provide only text or image input.'
                 )
-
+            if 'candidates' not in kwargs:
+                raise ValueError(
+                    'Please provide candidates to rank against the text input.'
+                )
             content_type = 'plain'
             text_content = kwargs.pop('text')
             if isinstance(text_content, str):
                 text_doc = Document(text=text_content)
-                if 'candidates' in kwargs:
-                    candidates = kwargs.pop('candidates')
-                    text_doc.matches = DocumentArray(
-                        [load_plain_into_document(c) for c in candidates]
-                    )
+                candidates = kwargs.pop('candidates')
+                text_doc.matches = DocumentArray(
+                    [load_plain_into_document(c) for c in candidates]
+                )
                 payload.update(inputs=DocumentArray([text_doc]))
                 payload.update(total_docs=1)
             else:
-                raise ValueError('Text input must be a string.')
+                raise ValueError('Only single text input is supported.')
 
         elif 'image' in kwargs:
             if 'text' in kwargs:
                 raise ValueError(
                     'Multi-modal input not supported. Please provide only text or image input.'
                 )
-
+            if 'candidates' not in kwargs:
+                raise ValueError(
+                    'Please provide candidates to rank against the image input.'
+                )
             content_type = 'plain'
             image_content = kwargs.pop('image')
             if isinstance(image_content, str):
                 image_doc = load_plain_into_document(image_content, mime_type='image')
-                if 'candidates' in kwargs:
-                    candidates = kwargs.pop('candidates')
-                    image_doc.matches = DocumentArray(
-                        [load_plain_into_document(c) for c in candidates]
-                    )
-                elif 'question' in kwargs:
-                    image_doc.tags.update(prompt=kwargs.pop('question'))
+                candidates = kwargs.pop('candidates')
+                image_doc.matches = DocumentArray(
+                    [load_plain_into_document(c) for c in candidates]
+                )
                 payload.update(inputs=DocumentArray([image_doc]))
                 payload.update(total_docs=1)
             else:
                 raise ValueError('Only single image input is supported.')
+
+        else:
+            raise ValueError('Please provide either text, image or docs input to rank.')
 
         return payload, content_type
 

@@ -25,7 +25,7 @@ def load_plain_into_document(content, mime_type: Optional[str] = None):
         if mime_type is None:
             try:
                 return Document(uri=content).load_uri_to_blob()
-            except ValueError:
+            except:
                 return Document(text=content)
     elif isinstance(content, bytes):
         return Document(blob=content)
@@ -53,3 +53,23 @@ def iter_doc(content):
         else:
             raise TypeError(f'unsupported input type {c!r} {c.content_type}')
         yield d
+
+
+def get_base_payload(endpoint, token, **kwargs):
+    """
+    Get the base payload for the request.
+
+    :param endpoint: the endpoint to send the request to
+    :param token: user token
+    :param kwargs: other parameters
+    :return: a dict of payload containing the endpoint, token, request size and parameters
+    """
+    parameters = kwargs.pop('parameters', {})
+    parameters['drop_image_content'] = parameters.get('drop_image_content', True)
+    payload = dict(
+        on=endpoint,
+        request_size=kwargs.pop('request_size', 1),
+        metadata=(('authorization', token),),
+        parameters=parameters,
+    )
+    return payload

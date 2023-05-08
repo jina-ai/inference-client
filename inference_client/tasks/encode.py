@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
 from docarray import Document, DocumentArray
-from helper import iter_doc, load_plain_into_document
 from jina import Client
+
+from .helper import get_base_payload, iter_doc, load_plain_into_document
 
 if TYPE_CHECKING:
     from docarray.typing import ArrayType
@@ -91,10 +92,8 @@ class EncodeMixin:
         :param kwargs: additional arguments to pass to the model
         :return: encoded content
         """
-        payload, content_type, is_list = self._get_enocde_payload(
-            endpoint='/encode', **kwargs
-        )
-        result = self.client.post(payload=payload)
+        payload, content_type, is_list = self._get_enocde_payload(**kwargs)
+        result = self.client.post(**payload)
         return self._unbox_encode_result(
             result=result,
             content_type=content_type,
@@ -102,16 +101,14 @@ class EncodeMixin:
         )
 
     def _get_enocde_payload(self, **kwargs):
-        payload = dict(
-            on=kwargs.pop('endpoint', '/'),
-            request_size=kwargs.pop('request_size', 1),
-            metadata=(('authorization', self.token),),
-        )
-
-        content_type = None
+        payload = get_base_payload('/encode', self.token, **kwargs)
         is_list = False
 
         if 'docs' in kwargs:
+            if 'text' in kwargs or 'image' in kwargs:
+                raise ValueError(
+                    'More than one input type provided. Please provide only text, image or docs input.'
+                )
             content_type = 'docarray'
             total_docs = (
                 len(kwargs.get('docs'))
@@ -126,7 +123,6 @@ class EncodeMixin:
                 raise ValueError(
                     'Multi-modal input not supported. Please provide only text or image input.'
                 )
-
             content_type = 'plain'
             text_content = kwargs.pop('text')
             if isinstance(text_content, str):
@@ -146,7 +142,6 @@ class EncodeMixin:
                 raise ValueError(
                     'Multi-modal input not supported. Please provide only text or image input.'
                 )
-
             content_type = 'plain'
             image_content = kwargs.pop('image')
             if isinstance(image_content, str):
@@ -165,6 +160,11 @@ class EncodeMixin:
                 payload.update(inputs=image_docs)
                 payload.update(total_docs=len(image_docs))
                 payload.update(results_in_order=True)
+
+        else:
+            raise ValueError(
+                'Please provide either text, image or docs input to encode.'
+            )
 
         return payload, content_type, is_list
 

@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
 from docarray import Document, DocumentArray
-from helper import iter_doc, load_plain_into_document
 from jina import Client
+
+from .helper import get_base_payload, iter_doc, load_plain_into_document
 
 if TYPE_CHECKING:
     from docarray.typing import ArrayType
@@ -17,101 +18,66 @@ class VQAMixin:
     client: Client
 
     @overload
-    def encode(self, text: Union[str, Iterable[str]], **kwargs):
+    def vqa(self, image: Union[str, bytes, 'ArrayType'], question: str, **kwargs):
         """
-        Encode plain text
+        Answer the question using the model.
 
-        :param text: the text to encode
+        :param image: the image that the question is about
+        :param question: the question to be answered
         :param kwargs: additional arguments to pass to the model
         """
         ...
 
     @overload
-    def encode(
-        self,
-        image: Union[
-            str,
-            bytes,
-            'ArrayType',
-            Iterable[str],
-            Iterable[bytes],
-            Iterable['ArrayType'],
-        ],
-        **kwargs,
-    ):
+    def vqa(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
-        Encode image
+        Answer the question using the model.
 
-        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image
+        :param docs: the documents to be answered with image as root and question stored in the tags
         :param kwargs: additional arguments to pass to the model
         """
         ...
 
     @overload
-    def encode(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
-        """
-        Encode documents
-
-        :param docs: the documents to encode
-        :param kwargs: additional arguments to pass to the model
-        """
-        ...
-
-    @overload
-    def encode(
+    def vqa(
         self,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
-        text: Optional[Union[str, Iterable[str]]] = None,
-        image: Optional[
-            Union[
-                str,
-                bytes,
-                'ArrayType',
-                Iterable[str],
-                Iterable[bytes],
-                Iterable['ArrayType'],
-            ]
-        ] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        question: Optional[str] = None,
         **kwargs,
     ):
         """
-        Encode text, image, or documents using a pre-trained model.
+        Answer the question using the model.
 
-        :param docs: the documents to encode. Default: None.
-        :param text: the text to encode. Default: None.
-        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
-        :param kwargs: additional arguments to pass to the model.
+        :param docs: the documents to be answered with image as root and question stored in the tags. Default: None.
+        :param image: the image that the question is about. Default: None.
+        :param question: the question to be answered. Default: None.
+        :param kwargs: additional arguments to pass to the model
         """
         ...
 
-    def encode(self, **kwargs):
+    def vqa(self, **kwargs):
         """
-        Encode the documents using the model.
+        Answer the question using the model.
 
         :param kwargs: additional arguments to pass to the model
-        :return: encoded content
+        :return: answered content
         """
-        payload, content_type, is_list = self._get_enocde_payload(
-            endpoint='/encode', **kwargs
-        )
-        result = self._post(payload=payload)
-        return self._unbox_encode_result(
+        payload, content_type = self._get_vqa_payload(**kwargs)
+        result = self.client.post(**payload)
+        return self._unbox_vqa_result(
             result=result,
             content_type=content_type,
-            is_list=is_list,
         )
 
-    def _get_enocde_payload(self, **kwargs):
-        payload = dict(
-            on=kwargs.pop('endpoint', '/'),
-            request_size=kwargs.pop('request_size', 1),
-            metadata=(('authorization', self.token),),
-        )
-
-        content_type = None
-        is_list = False
+    def _get_vqa_payload(self, **kwargs):
+        payload = get_base_payload('/vqa', self.token, **kwargs)
 
         if 'docs' in kwargs:
+            if 'image' in kwargs or 'question' in kwargs:
+                raise ValueError(
+                    'More than one input type provided. Please provide only docs or image and question.'
+                )
             content_type = 'docarray'
             total_docs = (
                 len(kwargs.get('docs'))
@@ -121,63 +87,30 @@ class VQAMixin:
             payload.update(total_docs=total_docs)
             payload.update(inputs=iter_doc(kwargs.pop('docs')))
 
-        elif 'text' in kwargs:
-            if 'image' in kwargs:
-                raise ValueError(
-                    'Multi-modal input not supported. Please provide only text or image input.'
-                )
-
-            content_type = 'plain'
-            text_content = kwargs.pop('text')
-            if not isinstance(text_content, list):
-                is_list = False
-                text_doc = Document(text=text_content)
-                payload.update(inputs=DocumentArray([text_doc]))
-                payload.update(total_docs=1)
-            else:
-                is_list = True
-                text_docs = DocumentArray([Document(text=c) for c in text_content])
-                payload.update(inputs=text_docs)
-                payload.update(total_docs=len(text_docs))
-                payload.update(results_in_order=True)
-
         elif 'image' in kwargs:
-            if 'text' in kwargs:
-                raise ValueError(
-                    'Multi-modal input not supported. Please provide only text or image input.'
-                )
-
+            if 'question' not in kwargs:
+                raise ValueError('Please provide a question for the image input.')
             content_type = 'plain'
             image_content = kwargs.pop('image')
-            if not isinstance(image_content, list):
-                is_list = False
+            if isinstance(image_content, str):
                 image_doc = load_plain_into_document(image_content, mime_type='image')
+                image_doc.tags.update(prompt=kwargs.pop('question'))
                 payload.update(inputs=DocumentArray([image_doc]))
                 payload.update(total_docs=1)
             else:
-                is_list = True
-                image_docs = DocumentArray(
-                    [
-                        load_plain_into_document(c, mime_type='image')
-                        for c in image_content
-                    ]
-                )
-                payload.update(inputs=image_docs)
-                payload.update(total_docs=len(image_docs))
-                payload.update(results_in_order=True)
+                raise ValueError('Only single image input is supported.')
 
-        return payload, content_type, is_list
+        else:
+            raise ValueError('Please provide either image and question or docs input.')
 
-    def _unbox_encode_result(
+        return payload, content_type
+
+    def _unbox_vqa_result(
         self,
         result: 'DocumentArray' = None,
         content_type: str = 'docarray',
-        is_list: bool = False,
     ):
         if content_type == 'plain':
-            if is_list:
-                return result.embeddings
-            else:
-                return result[0].embedding
+            return result[0].tags['response']
         else:
             return result
