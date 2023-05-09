@@ -1,9 +1,5 @@
-from unittest.mock import Mock, patch
-
 import pytest
 from docarray import Document, DocumentArray
-
-from inference_client import Client
 
 
 @pytest.mark.parametrize(
@@ -19,29 +15,10 @@ from inference_client import Client
         ],
     ],
 )
-@patch(
-    'inference_client.client.get_model_spec',
-    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
-)
-@patch('inference_client.client.login', Mock(return_value='valid_token'))
-@patch(
-    'inference_client.base.BaseClient._post',
-    Mock(
-        return_value=DocumentArray(
-            [
-                Document(
-                    uri='https://picsum.photos/id/233/100',
-                    tags={'response': 'a image of two rails'},
-                ),
-            ]
-        )
-    ),
-)
-def test_caption_document(inputs):
-    model = Client().get_model('mock-model')
-    res = model.caption(docs=inputs)
+def test_caption_document(make_client, inputs):
+    res = make_client.caption(docs=inputs)
     assert isinstance(res, DocumentArray)
-    assert res[0].tags['response'] == 'a image of two rails'
+    assert res[0].tags['response'] == 'A image of something very nice'
 
 
 @pytest.mark.parametrize(
@@ -54,25 +31,6 @@ def test_caption_document(inputs):
         .tensor,
     ],
 )
-@patch(
-    'inference_client.client.get_model_spec',
-    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
-)
-@patch('inference_client.client.login', Mock(return_value='valid_token'))
-@patch(
-    'inference_client.base.BaseClient._post',
-    Mock(
-        return_value=DocumentArray(
-            [
-                Document(
-                    uri='https://picsum.photos/id/233/100',
-                    tags={'response': 'a image of two rails'},
-                ),
-            ]
-        )
-    ),
-)
-def test_encode_plain_image(inputs):
-    model = Client().get_model('mock-model')
-    res = model.caption(image=inputs)
-    assert res == 'a image of two rails'
+def test_encode_plain_image(make_client, inputs):
+    res = make_client.caption(image=inputs)
+    assert res == 'A image of something very nice'
