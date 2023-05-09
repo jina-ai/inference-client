@@ -380,7 +380,7 @@ class BaseClient:
         return payload, content_type, is_list
 
     def _post(self, payload):
-        return self.client.post(payload)
+        return self.client.post(**payload)
 
     @staticmethod
     def _unboxed_result(

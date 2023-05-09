@@ -1,9 +1,7 @@
-from unittest.mock import Mock, patch
-
 import pytest
 from docarray import Document, DocumentArray
 
-from inference_client import Client
+from inference_client.base import BaseClient
 
 
 @pytest.mark.parametrize(
@@ -25,29 +23,15 @@ from inference_client import Client
         ],
     ],
 )
-@patch(
-    'inference_client.client.get_model_spec',
-    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
-)
-@patch('inference_client.client.login', Mock(return_value='valid_token'))
-@patch(
-    'inference_client.base.BaseClient._post',
-    Mock(
-        return_value=DocumentArray(
-            [
-                Document(
-                    uri='https://picsum.photos/id/233/100',
-                    tags={'response': 'a lot more than you think'},
-                ),
-            ]
-        ),
-    ),
-)
-def test_vqa_document(inputs):
-    model = Client().get_model('mock-model')
+def test_vqa_document(make_flow, inputs):
+    model = BaseClient(
+        model_name='dummy-model',
+        token='valid_token',
+        host=f'grpc://0.0.0.0:{make_flow.port}',
+    )
     res = model.vqa(docs=inputs)
     assert isinstance(res, DocumentArray)
-    assert res[0].tags['response'] == 'a lot more than you think'
+    assert res[0].tags['response'] == 'Yes, it is a cat'
 
 
 @pytest.mark.parametrize(
@@ -69,25 +53,11 @@ def test_vqa_document(inputs):
         ],
     ],
 )
-@patch(
-    'inference_client.client.get_model_spec',
-    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
-)
-@patch('inference_client.client.login', Mock(return_value='valid_token'))
-@patch(
-    'inference_client.base.BaseClient._post',
-    Mock(
-        return_value=DocumentArray(
-            [
-                Document(
-                    uri='https://picsum.photos/id/233/100',
-                    tags={'response': 'a lot more than you think'},
-                ),
-            ]
-        ),
-    ),
-)
-def test_vqa_plain_image(inputs):
-    model = Client().get_model('mock-model')
+def test_vqa_plain_image(make_flow, inputs):
+    model = BaseClient(
+        model_name='dummy-model',
+        token='valid_token',
+        host=f'grpc://0.0.0.0:{make_flow.port}',
+    )
     res = model.vqa(image=inputs[0], question=inputs[1])
-    assert res == 'a lot more than you think'
+    assert res == 'Yes, it is a cat'

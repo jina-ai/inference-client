@@ -1,9 +1,7 @@
-from unittest.mock import Mock, patch
-
 import pytest
 from docarray import Document, DocumentArray
 
-from inference_client import Client
+from inference_client.base import BaseClient
 
 
 @pytest.mark.parametrize(
@@ -37,70 +35,18 @@ from inference_client import Client
         ],
     ],
 )
-@patch(
-    'inference_client.client.get_model_spec',
-    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
-)
-@patch('inference_client.client.login', Mock(return_value='valid_token'))
-@patch(
-    'inference_client.base.BaseClient._post',
-    Mock(
-        return_value=DocumentArray(
-            [
-                Document(
-                    text='a black and white photo of nature',
-                    matches=DocumentArray(
-                        [
-                            Document(
-                                text='a colorful photo of nature',
-                                scores={
-                                    'clip_score_cosine': {
-                                        'value': 0.1,
-                                        'op_name': 'cosine',
-                                    },
-                                    'clip_score': {'value': 0.4, 'op_name': 'softmax'},
-                                },
-                            ),
-                            Document(
-                                text='a black and white photo of a cat',
-                                scores={
-                                    'clip_score_cosine': {
-                                        'value': 0.2,
-                                        'op_name': 'cosine',
-                                    },
-                                    'clip_score': {'value': 0.5, 'op_name': 'softmax'},
-                                },
-                            ),
-                            Document(
-                                text='a black and white photo of a dog',
-                                scores={
-                                    'clip_score_cosine': {
-                                        'value': 0.3,
-                                        'op_name': 'cosine',
-                                    },
-                                    'clip_score': {'value': 0.6, 'op_name': 'softmax'},
-                                },
-                            ),
-                        ]
-                    ),
-                ),
-            ]
-        ),
-    ),
-)
-def test_rank_document(inputs):
-    model = Client().get_model('mock-model')
+def test_rank_document(make_flow, inputs):
+    model = BaseClient(
+        model_name='dummy-model',
+        token='valid_token',
+        host=f'grpc://0.0.0.0:{make_flow.port}',
+    )
     res = model.rank(docs=inputs)
     assert isinstance(res, DocumentArray)
-    assert res[0].matches[0].text == 'a colorful photo of nature'
-    assert res[0].matches[0].scores['clip_score_cosine']['value'] == 0.1
-    assert res[0].matches[0].scores['clip_score']['value'] == 0.4
-    assert res[0].matches[1].text == 'a black and white photo of a cat'
-    assert res[0].matches[1].scores['clip_score_cosine']['value'] == 0.2
-    assert res[0].matches[1].scores['clip_score']['value'] == 0.5
-    assert res[0].matches[2].text == 'a black and white photo of a dog'
-    assert res[0].matches[2].scores['clip_score_cosine']['value'] == 0.3
-    assert res[0].matches[2].scores['clip_score']['value'] == 0.6
+    assert len(res[0].matches) == 3
+    for m in res[0].matches:
+        assert m.text is not None
+        assert m.scores['cosine'].value is not None
 
 
 @pytest.mark.parametrize(
@@ -119,103 +65,56 @@ def test_rank_document(inputs):
                 .tensor,
             ],
         ],
+        # [
+        #     'https://picsum.photos/id/232/100',
+        #     [
+        #         'a colorful photo of nature',
+        #         'a lovely photo of cat',
+        #         'a black and white photo of dog',
+        #         'a cat playing with a dog',
+        #     ],
+        # ],
     ],
 )
-@patch(
-    'inference_client.client.get_model_spec',
-    Mock(return_value={'endpoints': {'grpc': 'grpc://mock.inference.jina.ai'}}),
-)
-@patch('inference_client.client.login', Mock(return_value='valid_token'))
-@patch(
-    'inference_client.base.BaseClient._post',
-    Mock(
-        return_value=DocumentArray(
-            [
-                Document(
-                    text='a black and white photo of nature',
-                    matches=DocumentArray(
-                        [
-                            Document(
-                                tensor=Document(uri='https://picsum.photos/id/234/100')
-                                .load_uri_to_image_tensor()
-                                .tensor,
-                                scores={
-                                    'clip_score_cosine': {
-                                        'value': 0.1,
-                                        'op_name': 'cosine',
-                                    },
-                                    'clip_score': {'value': 0.5, 'op_name': 'softmax'},
-                                },
-                            ),
-                            Document(
-                                blob=Document(uri='https://picsum.photos/id/233/100')
-                                .load_uri_to_blob()
-                                .blob,
-                                scores={
-                                    'clip_score_cosine': {
-                                        'value': 0.2,
-                                        'op_name': 'cosine',
-                                    },
-                                    'clip_score': {'value': 0.6, 'op_name': 'softmax'},
-                                },
-                            ),
-                            Document(
-                                uri='https://picsum.photos/id/232/100',
-                                scores={
-                                    'clip_score_cosine': {
-                                        'value': 0.3,
-                                        'op_name': 'cosine',
-                                    },
-                                    'clip_score': {'value': 0.7, 'op_name': 'softmax'},
-                                },
-                            ),
-                            Document(
-                                text='a colorful photo of nature',
-                                scores={
-                                    'clip_score_cosine': {
-                                        'value': 0.4,
-                                        'op_name': 'cosine',
-                                    },
-                                    'clip_score': {'value': 0.8, 'op_name': 'softmax'},
-                                },
-                            ),
-                        ]
-                    ),
-                ),
-            ]
-        ),
-    ),
-)
-def test_rank_plain_input(inputs):
-    model = Client().get_model('mock-model')
-    res = model.rank(reference=inputs[0], candidates=inputs[1])
+def test_rank_plain_text(make_flow, inputs):
+    model = BaseClient(
+        model_name='dummy-model',
+        token='valid_token',
+        host=f'grpc://0.0.0.0:{make_flow.port}',
+    )
+    res = model.rank(text=inputs[0], candidates=inputs[1])
     assert isinstance(res, list)
     assert len(res) == 4
     assert isinstance(res[0], tuple)
-    assert (
-        res[0][0]
-        == Document(uri='https://picsum.photos/id/234/100')
-        .load_uri_to_image_tensor()
-        .tensor
-    ).all()
-    assert isinstance(res[0][1], dict)
-    assert res[0][1]['clip_score_cosine']['value'] == 0.1
-    assert res[0][1]['clip_score']['value'] == 0.5
-    assert isinstance(res[1], tuple)
-    assert (
-        res[1][0]
-        == Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob
+    for r in res:
+        assert r[0] is not None
+        assert r[1]['cosine'].value is not None
+
+
+@pytest.mark.parametrize(
+    'inputs',
+    [
+        [
+            'https://picsum.photos/id/232/100',
+            [
+                'a colorful photo of nature',
+                'a lovely photo of cat',
+                'a black and white photo of dog',
+                'a cat playing with a dog',
+            ],
+        ],
+    ],
+)
+def test_rank_plain_image(make_flow, inputs):
+    model = BaseClient(
+        model_name='dummy-model',
+        token='valid_token',
+        host=f'grpc://0.0.0.0:{make_flow.port}',
     )
-    assert isinstance(res[1][1], dict)
-    assert res[1][1]['clip_score_cosine']['value'] == 0.2
-    assert res[1][1]['clip_score']['value'] == 0.6
-    assert isinstance(res[2], tuple)
-    assert res[2][0] == 'https://picsum.photos/id/232/100'
-    assert isinstance(res[2][1], dict)
-    assert res[2][1]['clip_score_cosine']['value'] == 0.3
-    assert res[2][1]['clip_score']['value'] == 0.7
-    assert isinstance(res[3], tuple)
-    assert res[3][0] == 'a colorful photo of nature'
-    assert isinstance(res[3][1], dict)
-    assert res[3][1]['clip_score_cosine']['value'] == 0.4
-    assert res[3][1]['clip_score']['value'] == 0.8
+    res = model.rank(image=inputs[0], candidates=inputs[1])
+    assert isinstance(res, list)
+    assert len(res) == 4
+    assert isinstance(res[0], tuple)
+    for r in res:
+        assert r[0] is not None
+        assert r[1]['cosine'].value is not None
