@@ -1,8 +1,6 @@
 import pytest
 from docarray import Document, DocumentArray
 
-from inference_client.base import BaseClient
-
 
 @pytest.mark.parametrize(
     'inputs',
@@ -35,13 +33,8 @@ from inference_client.base import BaseClient
         ],
     ],
 )
-def test_rank_document(make_flow, inputs):
-    model = BaseClient(
-        model_name='dummy-model',
-        token='valid_token',
-        host=f'grpc://0.0.0.0:{make_flow.port}',
-    )
-    res = model.rank(docs=inputs)
+def test_rank_document(make_client, inputs):
+    res = make_client.rank(docs=inputs)
     assert isinstance(res, DocumentArray)
     assert len(res[0].matches) == 3
     for m in res[0].matches:
@@ -65,24 +58,10 @@ def test_rank_document(make_flow, inputs):
                 .tensor,
             ],
         ],
-        # [
-        #     'https://picsum.photos/id/232/100',
-        #     [
-        #         'a colorful photo of nature',
-        #         'a lovely photo of cat',
-        #         'a black and white photo of dog',
-        #         'a cat playing with a dog',
-        #     ],
-        # ],
     ],
 )
-def test_rank_plain_text(make_flow, inputs):
-    model = BaseClient(
-        model_name='dummy-model',
-        token='valid_token',
-        host=f'grpc://0.0.0.0:{make_flow.port}',
-    )
-    res = model.rank(text=inputs[0], candidates=inputs[1])
+def test_rank_plain_text(make_client, inputs):
+    res = make_client.rank(text=inputs[0], candidates=inputs[1])
     assert isinstance(res, list)
     assert len(res) == 4
     assert isinstance(res[0], tuple)
@@ -105,13 +84,8 @@ def test_rank_plain_text(make_flow, inputs):
         ],
     ],
 )
-def test_rank_plain_image(make_flow, inputs):
-    model = BaseClient(
-        model_name='dummy-model',
-        token='valid_token',
-        host=f'grpc://0.0.0.0:{make_flow.port}',
-    )
-    res = model.rank(image=inputs[0], candidates=inputs[1])
+def test_rank_plain_image(make_client, inputs):
+    res = make_client.rank(image=inputs[0], candidates=inputs[1])
     assert isinstance(res, list)
     assert len(res) == 4
     assert isinstance(res[0], tuple)

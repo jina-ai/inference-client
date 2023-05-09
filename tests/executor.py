@@ -10,8 +10,7 @@ class DummyExecutor(Executor):
 
     @requests(on='/encode')
     def encode(self, docs, **kwargs):
-        for doc in docs:
-            doc.embedding = np.random.random((512,))
+        docs.embeddings = np.random.random((len(docs), 512))
 
     @requests(on='/rank')
     def rank(self, docs, **kwargs):

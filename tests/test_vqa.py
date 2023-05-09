@@ -1,8 +1,6 @@
 import pytest
 from docarray import Document, DocumentArray
 
-from inference_client.base import BaseClient
-
 
 @pytest.mark.parametrize(
     'inputs',
@@ -23,13 +21,8 @@ from inference_client.base import BaseClient
         ],
     ],
 )
-def test_vqa_document(make_flow, inputs):
-    model = BaseClient(
-        model_name='dummy-model',
-        token='valid_token',
-        host=f'grpc://0.0.0.0:{make_flow.port}',
-    )
-    res = model.vqa(docs=inputs)
+def test_vqa_document(make_client, inputs):
+    res = make_client.vqa(docs=inputs)
     assert isinstance(res, DocumentArray)
     assert res[0].tags['response'] == 'Yes, it is a cat'
 
@@ -53,11 +46,6 @@ def test_vqa_document(make_flow, inputs):
         ],
     ],
 )
-def test_vqa_plain_image(make_flow, inputs):
-    model = BaseClient(
-        model_name='dummy-model',
-        token='valid_token',
-        host=f'grpc://0.0.0.0:{make_flow.port}',
-    )
-    res = model.vqa(image=inputs[0], question=inputs[1])
+def test_vqa_plain_image(make_client, inputs):
+    res = make_client.vqa(image=inputs[0], question=inputs[1])
     assert res == 'Yes, it is a cat'

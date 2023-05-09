@@ -1,8 +1,6 @@
 import pytest
 from docarray import Document, DocumentArray
 
-from inference_client.base import BaseClient
-
 
 @pytest.mark.parametrize(
     'inputs',
@@ -17,13 +15,8 @@ from inference_client.base import BaseClient
         ],
     ],
 )
-def test_caption_document(make_flow, inputs):
-    model = BaseClient(
-        model_name='dummy-model',
-        token='valid_token',
-        host=f'grpc://0.0.0.0:{make_flow.port}',
-    )
-    res = model.caption(docs=inputs)
+def test_caption_document(make_client, inputs):
+    res = make_client.caption(docs=inputs)
     assert isinstance(res, DocumentArray)
     assert res[0].tags['response'] == 'A image of something very nice'
 
@@ -38,11 +31,6 @@ def test_caption_document(make_flow, inputs):
         .tensor,
     ],
 )
-def test_encode_plain_image(make_flow, inputs):
-    model = BaseClient(
-        model_name='dummy-model',
-        token='valid_token',
-        host=f'grpc://0.0.0.0:{make_flow.port}',
-    )
-    res = model.caption(image=inputs)
+def test_encode_plain_image(make_client, inputs):
+    res = make_client.caption(image=inputs)
     assert res == 'A image of something very nice'
