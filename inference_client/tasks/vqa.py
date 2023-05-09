@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
+import numpy
 from docarray import Document, DocumentArray
 from jina import Client
 
@@ -92,7 +93,7 @@ class VQAMixin:
                 raise ValueError('Please provide a question for the image input.')
             content_type = 'plain'
             image_content = kwargs.pop('image')
-            if isinstance(image_content, str):
+            if isinstance(image_content, (str, bytes, numpy.ndarray)):
                 image_doc = load_plain_into_document(image_content, mime_type='image')
                 image_doc.tags.update(prompt=kwargs.pop('question'))
                 payload.update(inputs=DocumentArray([image_doc]))

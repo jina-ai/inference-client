@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
+import numpy
 from docarray import Document, DocumentArray
 from jina import Client
 
@@ -87,7 +88,7 @@ class CaptionMixin:
         elif 'image' in kwargs:
             content_type = 'plain'
             image_content = kwargs.pop('image')
-            if isinstance(image_content, str):
+            if isinstance(image_content, (str, bytes, numpy.ndarray)):
                 image_doc = load_plain_into_document(image_content, mime_type='image')
                 payload.update(inputs=DocumentArray([image_doc]))
                 payload.update(total_docs=1)
