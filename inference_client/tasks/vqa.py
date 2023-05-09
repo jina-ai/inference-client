@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class VQAMixin:
     """
-    Mixin class for encoding documents.
+    Mixin class for VQA documents.
     """
 
     token: str

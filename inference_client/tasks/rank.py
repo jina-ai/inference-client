@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class RankMixin:
     """
-    Mixin class for encoding documents.
+    Mixin class for ranking documents.
     """
 
     token: str

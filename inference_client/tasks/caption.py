@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class CaptionMixin:
     """
-    Mixin class for encoding documents.
+    Mixin class for captioning documents.
     """
 
     token: str
