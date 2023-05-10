@@ -1,3 +1,8 @@
+---
+title: Inference Client Title Test
+category: 645b13aedb547006c67ccd0f
+---
+
 # Welcome to the Inference Client
 
 The Inference Client is a powerful library that provides a simple and efficient way to use Jina AI's Inference platform. 
