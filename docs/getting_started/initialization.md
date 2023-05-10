@@ -1,3 +1,8 @@
+---
+title: Client Initialization Title Test
+category: 645b13aedb547006c67ccd0f
+---
+
 # Client Initialization
 
 To get started with the Inference Client, you'll need to import the `Client` class from the `inference_client` package:

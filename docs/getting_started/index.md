@@ -1,3 +1,8 @@
+---
+title: XXX Title Test
+category: 645b13aedb547006c67ccd0f
+---
+
 # Getting Started
 
 The Inference Client is a Python package that provides a simple and flexible way to connect to inference models hosted on Jina AI Cloud. 

@@ -1,3 +1,8 @@
+---
+title: Connecting to Models Title Test
+category: 645b13aedb547006c67ccd0f
+---
+
 # Connecting to Models
 
 Once you have initialized the Client object, you can connect to the models you created at [Jina AI Cloud](https://cloud.jina.ai) by calling the `get_model` method, which takes the name of the model as it appears in Jina AI Cloud as an argument.

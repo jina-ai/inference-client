@@ -1,3 +1,8 @@
+---
+title: Creating a Model Title Test
+category: 645b13aedb547006c67ccd0f
+---
+
 # Creating a Model
 
 Jina AI Cloud provides a user-friendly interface for creating and managing your own AI models. 
