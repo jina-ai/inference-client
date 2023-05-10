@@ -1,6 +1,7 @@
 ---
 title: Inference Client Title Test
-category: 645b13aedb547006c67ccd0f
+category: 645b1e71f6dfd506df5acc01
+hidden: false
 ---
 
 # Welcome to the Inference Client
