@@ -21,7 +21,12 @@ class Client:
         :param token: An optional user token for authentication.
         """
 
-        self._auth_token = login(token)
+        try:
+            self._auth_token = login(token)
+        except Exception:
+            raise ValueError(
+                f'Invalid or expired auth token. Please re-enter your token and try again.'
+            ) from None
 
     @lru_cache(maxsize=10)
     def get_model(self, model_name: str):
