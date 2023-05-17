@@ -16,7 +16,10 @@ def test_valid_token():
 def test_invalid_token():
     with pytest.raises(Exception) as e:
         Client(token='invalid token')
-    assert str(e.value) == 'Invalid or expired auth token. Please try again.'
+    assert (
+        str(e.value)
+        == 'Invalid or expired auth token. Please re-enter your token and try again.'
+    )
 
 
 @patch.dict(os.environ, {'JINA_AUTH_TOKEN': 'valid session'})
