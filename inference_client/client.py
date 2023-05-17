@@ -25,7 +25,7 @@ class Client:
             self._auth_token = login(token)
         except Exception:
             raise ValueError(
-                f'Invalid or expired auth token. Please try again.'
+                f'Invalid or expired auth token. Please re-enter your token and try again.'
             ) from None
 
     @lru_cache(maxsize=10)
