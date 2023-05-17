@@ -54,15 +54,14 @@ def get_model_spec(model_name: str, token: str):
             )
         elif resp.status_code == 404:
             raise ValueError(
-                f"The given model name `{model_name}` is not valid. "
-                f"Please go to https://cloud.jina.ai/user/inference "
-                f"and create a model with the given model name."
+                f"Invalid model name `{model_name}` provided. "
+                f"Please visit https://cloud.jina.ai/user/inference to create and use the model names listed there."
             )
         resp.raise_for_status()
         return resp.json()
     except Exception as e:
-        logger.error(f'failed to fetch the model spec for {model_name}')
-        raise Exception(f'failed to fetch the model spec: {e}')
+        logger.error(f'Failed to fetch the model spec for {model_name}')
+        raise e from None
 
 
 def load_plain_into_document(content, is_image: bool = False):

@@ -94,7 +94,7 @@ class EncodeMixin:
         :return: encoded content
         """
         payload, content_type, is_list = self._get_enocde_payload(**kwargs)
-        result = self.client.post(**payload)
+        result = self.client.post(**payload, timeout=5)
         return self._unbox_encode_result(
             result=result,
             content_type=content_type,
