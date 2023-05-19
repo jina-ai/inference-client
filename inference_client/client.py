@@ -14,42 +14,41 @@ class Client:
         self,
         *,
         token: Optional[str] = None,
-        host: Optional[str] = None,
     ):
         """
         Initializes the client with the desired model and user token.
 
         :param token: An optional user token for authentication.
-        :param host: An optional host to connect to.
         """
 
-        if host:
-            assert host.startswith('grpc'), 'Host must be a gRPC endpoint.'
-        self._host = host
-
         try:
-            self._auth_token = login(token) if not host else token
+            self._auth_token = login(token) if token else None
         except Exception:
             raise ValueError(
                 f'Invalid or expired auth token. Please re-enter your token and try again.'
             ) from None
 
     @lru_cache(maxsize=10)
-    def get_model(self, model_name: str):
+    def get_model(self, model_name_or_endpoint: str):
         """
-        Get a model by name. Returns a cached model if it exists.
+        Get a model by name or endpoint. Returns a cached model if it exists.
 
-        :param model_name: The name of the model to connect to.
+        :param model_name_or_endpoint: The name of the model or the endpoint.
         :return: The model.
         """
 
-        spec = (
-            get_model_spec(model_name, self._auth_token)
-            if not self._host
-            else {"endpoints": self._host}
-        )
+        from urllib.parse import urlparse
+
+        scheme = urlparse(model_name_or_endpoint).scheme
+
+        if not scheme:
+            spec = get_model_spec(model_name_or_endpoint, self._auth_token)
+            endpoint = spec['endpoints']['grpc']
+        else:
+            endpoint = model_name_or_endpoint
+
         return BaseClient(
-            model_name=model_name,
+            model_name=model_name_or_endpoint,
             token=self._auth_token,
-            host=spec["endpoints"]["grpc"],
+            host=endpoint,
         )
