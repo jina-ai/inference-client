@@ -78,5 +78,13 @@ class GenerationMixin:
 
         :param prompts: The prompt(s) to generate from.
         :param kwargs: The arguments to pass to the model.
+        :return: The generated text.
         """
-        ...
+        prompts = [prompts] if isinstance(prompts, str) else prompts
+        payload = get_base_payload('/generate', self.token, **kwargs)
+        payload.update(
+            inputs=DocumentArray([Document(text=prompt) for prompt in prompts])
+        )
+        result = self.client.post(**payload)
+        text_out = [r.tags['generated_text'] or r.tags['response'] for r in result]
+        return text_out if len(text_out) > 1 else text_out[0]
