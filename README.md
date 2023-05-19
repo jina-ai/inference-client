@@ -1,4 +1,4 @@
-<p>
+<p align="center">
 <br>
 <a href="https://cloud.jina.ai/user/inference"><img src="https://github.com/jina-ai/inference-client/blob/main/.github/README-img/inference_client.svg?raw=true" alt="" width="360px"></a>
 <br>
