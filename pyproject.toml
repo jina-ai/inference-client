@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "inference_client"
-version = "0.0.3"
+version = "0.0.4"
 description = "Python Client for Jina Inference API"
 
 license = "Apache-2.0"
