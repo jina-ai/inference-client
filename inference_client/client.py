@@ -14,15 +14,21 @@ class Client:
         self,
         *,
         token: Optional[str] = None,
+        host: Optional[str] = None,
     ):
         """
         Initializes the client with the desired model and user token.
 
         :param token: An optional user token for authentication.
+        :param host: An optional host to connect to.
         """
 
+        if host:
+            assert host.startswith('grpc'), 'Host must be a gRPC endpoint.'
+        self._host = host
+
         try:
-            self._auth_token = login(token)
+            self._auth_token = login(token) if not host else token
         except Exception:
             raise ValueError(
                 f'Invalid or expired auth token. Please re-enter your token and try again.'
@@ -37,7 +43,11 @@ class Client:
         :return: The model.
         """
 
-        spec = get_model_spec(model_name, self._auth_token)
+        spec = (
+            get_model_spec(model_name, self._auth_token)
+            if not self._host
+            else {"endpoints": self._host}
+        )
         return BaseClient(
             model_name=model_name,
             token=self._auth_token,
