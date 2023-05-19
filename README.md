@@ -197,7 +197,7 @@ the merlion fountain in singapore
 
 ## Documentation
 
-For more information about advanced usage of Inference Client, please refer to the [documentation](https://docs.jina.ai/advanced/experimental/inference-client/).
+For more information about advanced usage of Inference Client, please refer to the [documentation](https://jina.readme.io/docs/inference).
 
 ## Support
 
