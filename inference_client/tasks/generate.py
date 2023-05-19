@@ -1,12 +1,10 @@
 from typing import TYPE_CHECKING, List, Optional, Union, overload
 
-import numpy
 from docarray import Document, DocumentArray
 
-from .helper import get_base_payload, iter_doc, load_plain_into_document
+from .helper import get_base_payload
 
 if TYPE_CHECKING:
-    from docarray.typing import ArrayType
     from jina import Client
 
 
