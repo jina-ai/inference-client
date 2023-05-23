@@ -39,16 +39,16 @@ class RankMixin:
     def rank(
         self,
         *,
-        image: Union[str, bytes, 'ArrayType'],
-        candidates: Iterable[Union[str, bytes, 'ArrayType']],
+        image: Union[str, bytes, 'ArrayType'] = None,
+        candidates: Iterable[Union[str, bytes, 'ArrayType']] = None,
         **kwargs,
     ):
         """
         Rank the documents using the model.
 
-        :param image: the reference image, can be a `ndarray`, 'bytes' or uri of the image.
-        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images.
-        :param kwargs: additional arguments to pass to the model.
+        :param image: the reference image, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
+        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images. Defaults to None.
+        :param kwargs: additional arguments to pass to the model. Defaults to None.
         """
         ...
 

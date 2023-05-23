@@ -64,8 +64,8 @@ class EncodeMixin:
     def encode(
         self,
         *,
-        docs: Optional[Union[Iterable['Document'], 'DocumentArray']],
-        text: Optional[Union[str, Iterable[str]]],
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
+        text: Optional[Union[str, Iterable[str]]] = None,
         image: Optional[
             Union[
                 str,
@@ -75,15 +75,15 @@ class EncodeMixin:
                 Iterable[bytes],
                 Iterable['ArrayType'],
             ]
-        ],
+        ] = None,
         **kwargs,
     ):
         """
         Encode text, image, or documents using a pre-trained model.
 
-        :param docs: the documents to encode.
-        :param text: the text to encode.
-        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image.
+        :param docs: the documents to encode. Defaults to None.
+        :param text: the text to encode. Defaults to None.
+        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...

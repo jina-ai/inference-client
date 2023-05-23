@@ -68,23 +68,23 @@ class UpscaleMixin:
     def upscale(
         self,
         *,
-        docs: Optional[Union[Iterable['Document'], 'DocumentArray']],
-        image: Optional[Union[str, bytes, 'ArrayType']],
-        output_width: Optional[int],
-        output_height: Optional[int],
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        output_width: Optional[int] = None,
+        output_height: Optional[int] = None,
         **kwargs,
     ):
         """
         Upscale an image or a set of image documents using a pre-trained model.
 
-        :param docs: the image documents to upscale.
-        :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image.
+        :param docs: the image documents to upscale. Defaults to None.
+        :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
         :param output_width: the target width of the output image, if not provided, the original output from the model
                 will be returned. The height will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided.
+                can be provided. Defaults to None.
         :param output_height: the target height of the output image, if not provided, the original output from the model
                 will be returned. The width will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided.
+                can be provided. Defaults to None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -93,8 +93,8 @@ class UpscaleMixin:
         """
         Upscale the image documents using the model.
 
-        :param kwargs: additional arguments to pass to the model
-        :return: upscaled image
+        :param kwargs: additional arguments to pass to the model.
+        :return: upscaled image.
         """
         payload, content_type = self._get_caption_payload(**kwargs)
         result = self.client.post(**payload)

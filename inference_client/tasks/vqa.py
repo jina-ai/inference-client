@@ -43,17 +43,17 @@ class VQAMixin:
     def vqa(
         self,
         *,
-        docs: Optional[Union[Iterable['Document'], 'DocumentArray']],
-        image: Optional[Union[str, bytes, 'ArrayType']],
-        question: Optional[str],
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        question: Optional[str] = None,
         **kwargs,
     ):
         """
         Answer the question using the model.
 
-        :param docs: the documents to be answered with image as root and question stored in the tags.
-        :param image: the image that the question is about.
-        :param question: the question to be answered.
+        :param docs: the documents to be answered with image as root and question stored in the tags. Default to None.
+        :param image: the image that the question is about. Default to None.
+        :param question: the question to be answered. Default to None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
