@@ -17,29 +17,30 @@ class GenerationMixin:
     client: 'Client'
 
     @overload
-    def generate(self, prompts: Union[str, List[str]], **kwargs):
+    def generate(self, *, prompts: Union[str, List[str]], **kwargs):
         """
         Generate text from prompts using the model.
 
-        :param prompts: the prompts to generate text from
-        :param kwargs: additional arguments to pass to the model
+        :param prompts: the prompts to generate text from.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
-    def generate(self, prompt: str, inplace_images: List = [], **kwargs):
+    def generate(self, *, prompts: str, inplace_images: List = [], **kwargs):
         """
         Generate text from prompts using the model.
 
-        :param prompt: the prompt to generate text from
-        :param inplace_images: the images to generate text from
-        :param kwargs: additional arguments to pass to the model
+        :param prompts: the prompt to generate text from.
+        :param inplace_images: the images to generate text from.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
     def generate(
         self,
+        *,
         prompts: Union[str, List[str]],
         max_new_tokens: Optional[int] = None,
         num_beams: int = 1,
@@ -67,11 +68,11 @@ class GenerationMixin:
                 Since the score is the log likelihood of the sequence (i.e. negative), length_penalty > 0.0 promotes longer sequences,
                 while length_penalty < 0.0 encourages shorter sequences.
         :param no_repeat_ngram_size: If set to int > 0, all ngrams of that size can only occur once.
-        :param kwargs: additional arguments to pass to the model
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
-    def generate(self, prompts: Union[str, List[str]], **kwargs):
+    def generate(self, *, prompts: Union[str, List[str]], **kwargs):
         """Generate text from the given prompt.
 
         :param prompts: The prompt(s) to generate from.

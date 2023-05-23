@@ -19,7 +19,7 @@ class CaptionMixin:
     client: Client
 
     @overload
-    def caption(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
+    def caption(self, *, image: Union[str, bytes, 'ArrayType'], **kwargs):
         """
         caption image # TODO: add image type
 
@@ -29,7 +29,7 @@ class CaptionMixin:
         ...
 
     @overload
-    def caption(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
+    def caption(self, *, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         caption documents
 
@@ -41,15 +41,16 @@ class CaptionMixin:
     @overload
     def caption(
         self,
-        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
-        image: Optional[Union[str, bytes, 'ArrayType']] = None,
+        *,
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']],
+        image: Optional[Union[str, bytes, 'ArrayType']],
         **kwargs,
     ):
         """
         Generate a caption for an image or a set of documents using a pre-trained model.
 
-        :param docs: The documents to caption. Default: None.
-        :param image: The image to caption, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param docs: The documents to caption.
+        :param image: The image to caption, can be a `ndarray`, 'bytes' or uri of the image.
         :param kwargs: Additional arguments to pass to the model.
         """
         ...

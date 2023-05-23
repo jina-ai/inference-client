@@ -19,41 +19,42 @@ class VQAMixin:
     client: Client
 
     @overload
-    def vqa(self, image: Union[str, bytes, 'ArrayType'], question: str, **kwargs):
+    def vqa(self, *, image: Union[str, bytes, 'ArrayType'], question: str, **kwargs):
         """
         Answer the question using the model.
 
-        :param image: the image that the question is about
-        :param question: the question to be answered
-        :param kwargs: additional arguments to pass to the model
+        :param image: the image that the question is about.
+        :param question: the question to be answered.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
-    def vqa(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
+    def vqa(self, *, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         Answer the question using the model.
 
-        :param docs: the documents to be answered with image as root and question stored in the tags
-        :param kwargs: additional arguments to pass to the model
+        :param docs: the documents to be answered with image as root and question stored in the tags.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
     def vqa(
         self,
-        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
-        image: Optional[Union[str, bytes, 'ArrayType']] = None,
-        question: Optional[str] = None,
+        *,
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']],
+        image: Optional[Union[str, bytes, 'ArrayType']],
+        question: Optional[str],
         **kwargs,
     ):
         """
         Answer the question using the model.
 
-        :param docs: the documents to be answered with image as root and question stored in the tags. Default: None.
-        :param image: the image that the question is about. Default: None.
-        :param question: the question to be answered. Default: None.
-        :param kwargs: additional arguments to pass to the model
+        :param docs: the documents to be answered with image as root and question stored in the tags.
+        :param image: the image that the question is about.
+        :param question: the question to be answered.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 

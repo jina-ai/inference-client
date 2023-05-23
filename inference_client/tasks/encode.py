@@ -19,18 +19,19 @@ class EncodeMixin:
     client: Client
 
     @overload
-    def encode(self, text: Union[str, Iterable[str]], **kwargs):
+    def encode(self, *, text: Union[str, Iterable[str]], **kwargs):
         """
-        Encode plain text
+        Encode plain text.
 
-        :param text: the text to encode
-        :param kwargs: additional arguments to pass to the model
+        :param text: the text to encode.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
     def encode(
         self,
+        *,
         image: Union[
             str,
             bytes,
@@ -42,15 +43,15 @@ class EncodeMixin:
         **kwargs,
     ):
         """
-        Encode image
+        Encode image.
 
-        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image
-        :param kwargs: additional arguments to pass to the model
+        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
-    def encode(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
+    def encode(self, *, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         Encode documents
 
@@ -62,8 +63,9 @@ class EncodeMixin:
     @overload
     def encode(
         self,
-        docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
-        text: Optional[Union[str, Iterable[str]]] = None,
+        *,
+        docs: Optional[Union[Iterable['Document'], 'DocumentArray']],
+        text: Optional[Union[str, Iterable[str]]],
         image: Optional[
             Union[
                 str,
@@ -73,15 +75,15 @@ class EncodeMixin:
                 Iterable[bytes],
                 Iterable['ArrayType'],
             ]
-        ] = None,
+        ],
         **kwargs,
     ):
         """
         Encode text, image, or documents using a pre-trained model.
 
-        :param docs: the documents to encode. Default: None.
-        :param text: the text to encode. Default: None.
-        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param docs: the documents to encode.
+        :param text: the text to encode.
+        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -90,8 +92,8 @@ class EncodeMixin:
         """
         Encode the documents using the model.
 
-        :param kwargs: additional arguments to pass to the model
-        :return: encoded content
+        :param kwargs: additional arguments to pass to the model.
+        :return: encoded content.
         """
         payload, content_type, is_list = self._get_enocde_payload(**kwargs)
         result = self.client.post(**payload)
