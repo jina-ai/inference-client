@@ -28,7 +28,7 @@ class UpscaleMixin:
         **kwargs,
     ):
         """
-        Upscale plain input images # TODO: add image type
+        Upscale plain input images. The result will be an image bytes.
 
         :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image
         :param output_width: the target width of the output image, if not provided, the original output from the model
@@ -51,7 +51,7 @@ class UpscaleMixin:
         **kwargs,
     ):
         """
-        Upscale image documents
+        Upscale image documents. The result will be stored in the `blob` attribute of the document.
 
         :param docs: the image documents to upscale
         :param output_width: the target width of the output image, if not provided, the original output from the model
@@ -96,15 +96,15 @@ class UpscaleMixin:
         :param kwargs: additional arguments to pass to the model.
         :return: upscaled image.
         """
-        payload, content_type = self._get_caption_payload(**kwargs)
+        payload, content_type = self._get_upscale_payload(**kwargs)
         result = self.client.post(**payload)
-        return self._unbox_caption_result(
+        return self._unbox_upscale_result(
             result=result,
             content_type=content_type,
         )
 
-    def _get_caption_payload(self, **kwargs):
-        payload = get_base_payload('/caption', self.token, **kwargs)
+    def _get_upscale_payload(self, **kwargs):
+        payload = get_base_payload('/upscale', self.token, **kwargs)
 
         if 'docs' in kwargs:
             if 'image' in kwargs:
@@ -133,14 +133,23 @@ class UpscaleMixin:
         else:
             raise ValueError('Please provide either image or docs input.')
 
+        if 'output_width' in kwargs and 'output_height' in kwargs:
+            raise ValueError(
+                'Only one of `output_width` or `output_height` can be provided.'
+            )
+        elif 'output_width' in kwargs:
+            payload.update(parameters={'output_width': kwargs.pop('output_width')})
+        elif 'output_height' in kwargs:
+            payload.update(parameters={'output_height': kwargs.pop('output_height')})
+
         return payload, content_type
 
-    def _unbox_caption_result(
+    def _unbox_upscale_result(
         self,
         result: 'DocumentArray' = None,
         content_type: str = 'docarray',
     ):
         if content_type == 'plain':
-            return result[0].tags['response']
+            return result[0].blob
         else:
             return result
