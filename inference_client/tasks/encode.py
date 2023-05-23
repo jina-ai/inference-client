@@ -81,9 +81,9 @@ class EncodeMixin:
         """
         Encode text, image, or documents using a pre-trained model.
 
-        :param docs: the documents to encode. Defaults to None.
-        :param text: the text to encode. Defaults to None.
-        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
+        :param docs: the documents to encode. Default: None.
+        :param text: the text to encode. Default: None.
+        :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...

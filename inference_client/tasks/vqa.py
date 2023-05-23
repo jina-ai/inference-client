@@ -51,9 +51,9 @@ class VQAMixin:
         """
         Answer the question using the model.
 
-        :param docs: the documents to be answered with image as root and question stored in the tags. Default to None.
-        :param image: the image that the question is about. Default to None.
-        :param question: the question to be answered. Default to None.
+        :param docs: the documents to be answered with image as root and question stored in the tags. Default: None.
+        :param image: the image that the question is about. Default: None.
+        :param question: the question to be answered. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -62,8 +62,8 @@ class VQAMixin:
         """
         Answer the question using the model.
 
-        :param kwargs: additional arguments to pass to the model
-        :return: answered content
+        :param kwargs: additional arguments to pass to the model.
+        :return: answered content.
         """
         payload, content_type = self._get_vqa_payload(**kwargs)
         result = self.client.post(**payload)

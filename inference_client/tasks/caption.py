@@ -49,8 +49,8 @@ class CaptionMixin:
         """
         Generate a caption for an image or a set of documents using a pre-trained model.
 
-        :param docs: The documents to caption. Defaults to None.
-        :param image: The image to caption, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
+        :param docs: The documents to caption. Default: None.
+        :param image: The image to caption, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
         :param kwargs: Additional arguments to pass to the model.
         """
         ...
@@ -59,8 +59,8 @@ class CaptionMixin:
         """
         Caption the documents using the model.
 
-        :param kwargs: additional arguments to pass to the model
-        :return: captioned content
+        :param kwargs: additional arguments to pass to the model.
+        :return: captioned content.
         """
         payload, content_type = self._get_caption_payload(**kwargs)
         result = self.client.post(**payload)

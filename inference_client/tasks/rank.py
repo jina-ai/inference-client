@@ -75,10 +75,10 @@ class RankMixin:
         """
         Rank the documents using the model.
 
-        :param docs: the documents to be ranked with candidates stored in the matches. Defaults to None.
-        :param text: the reference text. Defaults to None.
-        :param image: the reference image, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
-        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images. Defaults to None.
+        :param docs: the documents to be ranked with candidates stored in the matches. Default: None.
+        :param text: the reference text. Default: None.
+        :param image: the reference image, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
