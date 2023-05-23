@@ -3,10 +3,11 @@ from jina import Client
 from .tasks.caption import CaptionMixin
 from .tasks.encode import EncodeMixin
 from .tasks.rank import RankMixin
+from .tasks.upscale import UpscaleMixin
 from .tasks.vqa import VQAMixin
 
 
-class BaseClient(CaptionMixin, EncodeMixin, RankMixin, VQAMixin):
+class BaseClient(CaptionMixin, EncodeMixin, RankMixin, UpscaleMixin, VQAMixin):
     """
     Base client of inference-client.
     """

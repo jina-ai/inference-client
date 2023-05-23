@@ -31,6 +31,6 @@ def test_caption_document(make_client, inputs):
         .tensor,
     ],
 )
-def test_encode_plain_image(make_client, inputs):
+def test_caption_plain_image(make_client, inputs):
     res = make_client.caption(image=inputs)
     assert res == 'A image of something very nice'

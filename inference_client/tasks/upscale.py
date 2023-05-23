@@ -78,8 +78,8 @@ class UpscaleMixin:
         """
         Upscale an image or a set of image documents using a pre-trained model.
 
-        :param docs: the image documents to upscale. Defaults to None.
-        :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
+        :param docs: the image documents to upscale. Default: None.
+        :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
         :param scale: the scale of the output image, if not provided, the image of the model output will be used. The
                 scale should be in the format of `width:height`, e.g. `100:200`. Both width and height should be
                 integers. If the width is 0, the input width is used for the output. If the height is 0, the input
@@ -87,7 +87,7 @@ class UpscaleMixin:
                 will use a value that maintains the aspect ratio of the input image, calculated from the other specified
                 dimension. After that it will, however, make sure that the calculated dimension is divisible by n and
                 adjust the value if necessary. If both values are -n with n >= 1, the behavior will be identical to both
-                values being set to 0 as previously detailed.
+                values being set to 0 as previously detailed. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -136,7 +136,7 @@ class UpscaleMixin:
         else:
             raise ValueError('Please provide either image or docs input.')
 
-        if 'scale' in kwargs:
+        if 'scale' in kwargs and kwargs.get('scale') is not None:
             scale = kwargs.pop('scale')
             self._scale_checker(scale)
             if parameters := payload.get('parameters'):
