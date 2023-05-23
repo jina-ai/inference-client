@@ -23,20 +23,21 @@ class UpscaleMixin:
         self,
         *,
         image: Union[str, bytes, 'ArrayType'],
-        output_width: Optional[int],
-        output_height: Optional[int],
+        scale: Optional[str],
         **kwargs,
     ):
         """
         Upscale plain input images. The result will be an image bytes.
 
         :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image
-        :param output_width: the target width of the output image, if not provided, the original output from the model
-                will be returned. The height will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided.
-        :param output_height: the target height of the output image, if not provided, the original output from the model
-                will be returned. The width will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided.
+        :param scale: the scale of the output image, if not provided, the image of the model output will be used. The
+                scale should be in the format of `width:height`, e.g. `100:200`. Both width and height should be
+                integers. If the width is 0, the input width is used for the output. If the height is 0, the input
+                height is used for the output. If one and only one of the values is -n with n >= 1, the scale filter
+                will use a value that maintains the aspect ratio of the input image, calculated from the other specified
+                dimension. After that it will, however, make sure that the calculated dimension is divisible by n and
+                adjust the value if necessary. If both values are -n with n >= 1, the behavior will be identical to both
+                values being set to 0 as previously detailed.
         :param kwargs: additional arguments to pass to the model
         """
         ...
@@ -46,20 +47,21 @@ class UpscaleMixin:
         self,
         *,
         docs: Union[Iterable['Document'], 'DocumentArray'],
-        output_width: Optional[int],
-        output_height: Optional[int],
+        scale: Optional[str],
         **kwargs,
     ):
         """
         Upscale image documents. The result will be stored in the `blob` attribute of the document.
 
         :param docs: the image documents to upscale
-        :param output_width: the target width of the output image, if not provided, the original output from the model
-                will be returned. The height will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided.
-        :param output_height: the target height of the output image, if not provided, the original output from the model
-                will be returned. The width will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided.
+        :param scale: the scale of the output image, if not provided, the image of the model output will be used. The
+                scale should be in the format of `width:height`, e.g. `100:200`. Both width and height should be
+                integers. If the width is 0, the input width is used for the output. If the height is 0, the input
+                height is used for the output. If one and only one of the values is -n with n >= 1, the scale filter
+                will use a value that maintains the aspect ratio of the input image, calculated from the other specified
+                dimension. After that it will, however, make sure that the calculated dimension is divisible by n and
+                adjust the value if necessary. If both values are -n with n >= 1, the behavior will be identical to both
+                values being set to 0 as previously detailed.
         :param kwargs: additional arguments to pass to the model
         """
         ...
@@ -70,8 +72,7 @@ class UpscaleMixin:
         *,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         image: Optional[Union[str, bytes, 'ArrayType']] = None,
-        output_width: Optional[int] = None,
-        output_height: Optional[int] = None,
+        scale: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -79,12 +80,14 @@ class UpscaleMixin:
 
         :param docs: the image documents to upscale. Defaults to None.
         :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image. Defaults to None.
-        :param output_width: the target width of the output image, if not provided, the original output from the model
-                will be returned. The height will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided. Defaults to None.
-        :param output_height: the target height of the output image, if not provided, the original output from the model
-                will be returned. The width will be scaled accordingly. Only one of `output_width` or `output_height`
-                can be provided. Defaults to None.
+        :param scale: the scale of the output image, if not provided, the image of the model output will be used. The
+                scale should be in the format of `width:height`, e.g. `100:200`. Both width and height should be
+                integers. If the width is 0, the input width is used for the output. If the height is 0, the input
+                height is used for the output. If one and only one of the values is -n with n >= 1, the scale filter
+                will use a value that maintains the aspect ratio of the input image, calculated from the other specified
+                dimension. After that it will, however, make sure that the calculated dimension is divisible by n and
+                adjust the value if necessary. If both values are -n with n >= 1, the behavior will be identical to both
+                values being set to 0 as previously detailed.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -133,14 +136,13 @@ class UpscaleMixin:
         else:
             raise ValueError('Please provide either image or docs input.')
 
-        if 'output_width' in kwargs and 'output_height' in kwargs:
-            raise ValueError(
-                'Only one of `output_width` or `output_height` can be provided.'
-            )
-        elif 'output_width' in kwargs:
-            payload.update(parameters={'output_width': kwargs.pop('output_width')})
-        elif 'output_height' in kwargs:
-            payload.update(parameters={'output_height': kwargs.pop('output_height')})
+        if 'scale' in kwargs:
+            scale = kwargs.pop('scale')
+            self._scale_checker(scale)
+            if parameters := payload.get('parameters'):
+                parameters.update(scale=scale)
+            else:
+                payload.update(parameters={'scale': scale})
 
         return payload, content_type
 
@@ -153,3 +155,14 @@ class UpscaleMixin:
             return result[0].blob
         else:
             return result
+
+    def _scale_checker(self, scale: str = None):
+        if not isinstance(scale, str):
+            raise ValueError('Scale should be a string.')
+        scales = scale.split(':')
+        if len(scales) != 2:
+            raise ValueError('Scale should be in the format of `width:height`.')
+        try:
+            int(scales[0]) and int(scales[1])
+        except ValueError:
+            raise ValueError('Both width and height should be integers.')
