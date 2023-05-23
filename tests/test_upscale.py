@@ -95,7 +95,6 @@ from docarray import Document, DocumentArray
             '-1:-1',
             (300, 200, 3),
         ),
-        ###
         (
             [
                 Document(uri='https://picsum.photos/id/237/200/300'),
@@ -227,7 +226,6 @@ def test_upscale_document(make_client, inputs):
             '-1:-1',
             (300, 200, 3),
         ),
-        # Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
         (
             Document(uri='https://picsum.photos/id/237/200/300')
             .load_uri_to_blob()
@@ -298,9 +296,6 @@ def test_upscale_document(make_client, inputs):
             '-1:-1',
             (300, 200, 3),
         ),
-        # Document(uri='https://picsum.photos/id/233/100')
-        # .load_uri_to_image_tensor()
-        # .tensor,
         (
             Document(uri='https://picsum.photos/id/237/200/300')
             .load_uri_to_image_tensor()
