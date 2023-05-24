@@ -372,3 +372,30 @@ def test_upscale_plain_image(make_client, inputs):
     res = make_client.upscale(image=inputs[0], scale=inputs[1])
     assert isinstance(res, bytes)
     assert Document(blob=res).convert_blob_to_image_tensor().tensor.shape == inputs[2]
+
+
+def test_upscale_invalid_input(make_client):
+    with pytest.raises(ValueError) as e:
+        make_client.upscale(image='invalid', docs='invalid')
+        assert (
+            str(e.value)
+            == 'More than one input type provided. Please provide only docs or image input.'
+        )
+
+
+@pytest.mark.parametrize(
+    'inputs',
+    [
+        (123, 'Scale should be a string.'),
+        ('1:2:3', 'Scale should be in the format of `width:height`.'),
+        ('100:12.34', 'Both width and height should be integers.'),
+        ('12.34:100', 'Both width and height should be integers.'),
+        ('12.34:45.78', 'Both width and height should be integers.'),
+    ],
+)
+def test_upscale_invalid_scale(make_client, inputs):
+    with pytest.raises(ValueError) as e:
+        make_client.upscale(
+            image='https://picsum.photos/id/237/200/300', scale=inputs[0]
+        )
+        assert str(e.value) == inputs[1]
