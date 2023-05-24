@@ -201,6 +201,11 @@ class UpscaleMixin:
         result: 'DocumentArray' = None,
         content_type: str = 'docarray',
     ):
+        for doc in result:
+            if doc.tags.get('output_path'):
+                with open(doc.tags['output_path'], 'wb') as f:
+                    f.write(doc.blob)
+
         if content_type == 'plain':
             return result[0].blob
         else:
