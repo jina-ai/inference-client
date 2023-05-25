@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Callable, Optional
 
 from docarray import Document
 
@@ -39,7 +39,7 @@ def iter_doc(content):
     """
     Iterate over the input content and yield Document.
 
-    :param content: input content to be converted/loaded to Document
+    :param content: input content to be converted/loaded to Document.
     :yield: a Document
     """
     for c in content:
@@ -51,7 +51,7 @@ def iter_doc(content):
         elif c.tensor is not None:
             d = c
         else:
-            raise TypeError(f'unsupported input type {c!r} {c.content_type}')
+            raise TypeError(f'Unsupported input type {c!r} {c.content_type}')
         yield d
 
 

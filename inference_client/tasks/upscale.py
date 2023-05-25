@@ -25,12 +25,12 @@ class UpscaleMixin:
         *,
         image: Union[str, bytes, 'ArrayType'],
         scale: Optional[str] = None,
-        output_format: str = 'jpeg',
+        image_format: Optional[str] = None,
         output_path: Optional[str] = None,
         **kwargs,
     ):
         """
-        Upscale plain input images. Return an image bytes in the format of `output_format`. If `output_path` is
+        Upscale plain input images. Return an image bytes in the format of `image_format`. If `output_path` is
         provided, the image will also be saved to the specified path.
 
         :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image
@@ -42,10 +42,11 @@ class UpscaleMixin:
                 dimension. After that it will, however, make sure that the calculated dimension is divisible by n and
                 adjust the value if necessary. If both values are -n with n >= 1, the behavior will be identical to both
                 values being set to 0 as previously detailed. Default: None.
-        :param output_format: the format of the output image, could be either `jpeg` or `png`. Default: `jpeg`.
+        :param image_format: the format of the output image, could be either `jpeg` or `png`. If not provided, the
+                same format as the input image will be used. Default: None.
         :param output_path: the complete file path to save the output image if provided in addition to returning it.
                 The path should end with the file extension of the output format, and could be either '.jpeg' or '.png'.
-                If both `output_path` and `output_format` are provided, the `output_format` will be ignored, and the
+                If both `output_path` and `image_format` are provided, the `image_format` will be ignored, and the
                 output image will be saved in the format of the file extension of `output_path`. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
@@ -61,15 +62,15 @@ class UpscaleMixin:
     ):
         """
         Upscale image documents. The result will be stored in the `blob` attribute of the document in the format of
-        `output_format` specified in the `tags` attribute. If `output_path` is provided in the `tags` attribute, the
+        `image_format` specified in the `tags` attribute. If `output_path` is provided in the `tags` attribute, the
         image will also be saved to the specified path.
 
-        :param docs: the image documents to upscale. The `output_format` and `output_path` should be provided in the
-                `tags` attribute of each document. The `output_format` specifies the format of the output image, could
+        :param docs: the image documents to upscale. The `image_format` and `output_path` should be provided in the
+                `tags` attribute of each document. The `image_format` specifies the format of the output image, could
                 be either `jpeg` or `png`. The `output_path` specifies the complete file path to save the output image
                 if provided in addition to returning it. The path should end with the file extension of the output
-                format, and could be either '.jpeg' or '.png'. If both `output_path` and `output_format` are provided,
-                the `output_format` will be ignored, and the output image will be saved in the format of the file
+                format, and could be either '.jpeg' or '.png'. If both `output_path` and `image_format` are provided,
+                the `image_format` will be ignored, and the output image will be saved in the format of the file
                 extension of `output_path`.
         :param scale: the scale of the output image, if not provided, the image of the model output will be used. The
                 scale should be in the format of `width:height`, e.g. `100:200`. Both width and height should be
@@ -90,19 +91,19 @@ class UpscaleMixin:
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         image: Optional[Union[str, bytes, 'ArrayType']] = None,
         scale: Optional[str] = None,
-        output_format: str = 'jpeg',
+        image_format: Optional[str] = None,
         output_path: Optional[str] = None,
         **kwargs,
     ):
         """
         Upscale an image or a set of image documents using a pre-trained model.
 
-        :param docs: the image documents to upscale. The `output_format` and `output_path` should be provided in the
-                `tags` attribute of each document. The `output_format` specifies the format of the output image, could
+        :param docs: the image documents to upscale. The `image_format` and `output_path` should be provided in the
+                `tags` attribute of each document. The `image_format` specifies the format of the output image, could
                 be either `jpeg` or `png`. The `output_path` specifies the complete file path to save the output image
                 if provided in addition to returning it. The path should end with the file extension of the output
-                format, and could be either '.jpeg' or '.png'. If both `output_path` and `output_format` are provided,
-                the `output_format` will be ignored, and the output image will be saved in the format of the file
+                format, and could be either '.jpeg' or '.png'. If both `output_path` and `image_format` are provided,
+                the `image_format` will be ignored, and the output image will be saved in the format of the file
                 extension of `output_path`. Default: None.
         :param image: the image to upscale, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
         :param scale: the scale of the output image, if not provided, the image of the model output will be used. The
@@ -113,10 +114,11 @@ class UpscaleMixin:
                 dimension. After that it will, however, make sure that the calculated dimension is divisible by n and
                 adjust the value if necessary. If both values are -n with n >= 1, the behavior will be identical to both
                 values being set to 0 as previously detailed. Default: None.
-        :param output_format: the format of the output image, could be either `jpeg` or `png`. Default: `jpeg`.
+        :param image_format: the format of the output image, could be either `jpeg` or `png`. If not provided, the
+                same format as the input image will be used. Default: None.
         :param output_path: the complete file path to save the output image if provided in addition to returning it.
                 The path should end with the file extension of the output format, and could be either '.jpeg' or '.png'.
-                If both `output_path` and `output_format` are provided, the `output_format` will be ignored, and the
+                If both `output_path` and `image_format` are provided, the `image_format` will be ignored, and the
                 output image will be saved in the format of the file extension of `output_path`. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
@@ -161,22 +163,18 @@ class UpscaleMixin:
 
                 if 'output_path' in kwargs:
                     output_path = kwargs.pop('output_path')
-                    output_format = os.path.splitext(output_path)[1].lower()
-                    if output_format not in ('.jpeg', '.jpg', '.png'):
+                    image_format = os.path.splitext(output_path)[1].lower()
+                    if image_format not in ('.jpeg', '.jpg', '.png'):
                         raise ValueError(
                             'Output path should end with either `.jpeg` or `.png`.'
                         )
-                    image_doc.tags['output_format'] = output_format[1:]
-
-                    output_directory = os.path.dirname(output_path)
-                    os.makedirs(output_directory, exist_ok=True)
                     image_doc.tags['output_path'] = output_path
 
-                elif 'output_format' in kwargs:
-                    output_format = kwargs.pop('output_format').lower()
-                    if output_format not in ('jpeg', 'jpg', 'png'):
+                if 'image_format' in kwargs:
+                    image_format = kwargs.pop('image_format').lower()
+                    if image_format not in ('jpeg', 'jpg', 'png'):
                         raise ValueError('Output format should be either jpeg or png.')
-                    image_doc.tags['output_format'] = output_format
+                    image_doc.tags['image_format'] = image_format
 
                 payload.update(inputs=DocumentArray([image_doc]))
                 payload.update(total_docs=1)
@@ -202,8 +200,8 @@ class UpscaleMixin:
         content_type: str = 'docarray',
     ):
         for doc in result:
-            if doc.tags.get('output_path'):
-                with open(doc.tags['output_path'], 'wb') as f:
+            if output_path := doc.tags.get('output_path'):
+                with open(output_path, 'wb') as f:
                     f.write(doc.blob)
 
         if content_type == 'plain':

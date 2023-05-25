@@ -17,7 +17,7 @@ class GenerationMixin:
     client: 'Client'
 
     @overload
-    def generate(self, *, prompts: Union[str, List[str]], **kwargs):
+    def generate(self, prompts: Union[str, List[str]], **kwargs):
         """
         Generate text from prompts using the model.
 
@@ -27,7 +27,7 @@ class GenerationMixin:
         ...
 
     @overload
-    def generate(self, *, prompts: str, inplace_images: List = [], **kwargs):
+    def generate(self, prompts: str, *, inplace_images: List = [], **kwargs):
         """
         Generate text from prompts using the model.
 
@@ -40,8 +40,8 @@ class GenerationMixin:
     @overload
     def generate(
         self,
-        *,
         prompts: Union[str, List[str]],
+        *,
         max_new_tokens: Optional[int] = None,
         num_beams: int = 1,
         do_sample: bool = False,
@@ -72,7 +72,7 @@ class GenerationMixin:
         """
         ...
 
-    def generate(self, *, prompts: Union[str, List[str]], **kwargs):
+    def generate(self, prompts: Union[str, List[str]], **kwargs):
         """Generate text from the given prompt.
 
         :param prompts: The prompt(s) to generate from.
