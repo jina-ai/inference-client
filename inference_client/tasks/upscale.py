@@ -141,8 +141,8 @@ class UpscaleMixin:
     def _get_upscale_payload(self, **kwargs):
         payload = get_base_payload('/upscale', self.token, **kwargs)
 
-        if 'docs' in kwargs:
-            if 'image' in kwargs:
+        if kwargs.get('docs', None) is not None:
+            if kwargs.get('image', None) is not None:
                 raise ValueError(
                     'More than one input type provided. Please provide only docs or image input.'
                 )
@@ -155,13 +155,13 @@ class UpscaleMixin:
             payload.update(total_docs=total_docs)
             payload.update(inputs=iter_doc(kwargs.pop('docs')))
 
-        elif 'image' in kwargs:
+        elif kwargs.get('image', None) is not None:
             content_type = 'plain'
             image_content = kwargs.pop('image')
             if isinstance(image_content, (str, bytes, numpy.ndarray)):
                 image_doc = load_plain_into_document(image_content, mime_type='image')
 
-                if 'output_path' in kwargs:
+                if kwargs.get('output_path', None) is not None:
                     output_path = kwargs.pop('output_path')
                     image_format = os.path.splitext(output_path)[1].lower()
                     if image_format not in ('.jpeg', '.jpg', '.png'):
@@ -170,7 +170,7 @@ class UpscaleMixin:
                         )
                     image_doc.tags['output_path'] = output_path
 
-                if 'image_format' in kwargs:
+                if kwargs.get('image_format', None) is not None:
                     image_format = kwargs.pop('image_format').lower()
                     if image_format not in ('jpeg', 'jpg', 'png'):
                         raise ValueError('Output format should be either jpeg or png.')
@@ -184,7 +184,7 @@ class UpscaleMixin:
         else:
             raise ValueError('Please provide either image or docs input.')
 
-        if 'scale' in kwargs and kwargs.get('scale') is not None:
+        if kwargs.get('scale', None) is not None:
             scale = kwargs.pop('scale')
             self._scale_checker(scale)
             if parameters := payload.get('parameters'):
