@@ -1,7 +1,7 @@
 import pytest
 from jina import Flow, helper
 
-from inference_client.base import BaseClient
+from inference_client.model import Model
 
 from .executor import DummyExecutor
 
@@ -29,7 +29,7 @@ def make_flow(port_generator):
 
 @pytest.fixture(scope='session')
 def make_client(make_flow):
-    return BaseClient(
+    return Model(
         model_name='dummy-model',
         token='valid_token',
         host=f'grpc://0.0.0.0:{make_flow.port}',
