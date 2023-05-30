@@ -7,9 +7,9 @@ from .tasks.upscale import UpscaleMixin
 from .tasks.vqa import VQAMixin
 
 
-class BaseClient(CaptionMixin, EncodeMixin, RankMixin, UpscaleMixin, VQAMixin):
+class Model(CaptionMixin, EncodeMixin, RankMixin, UpscaleMixin, VQAMixin):
     """
-    Base client of inference-client.
+    The model to be used for inference.
     """
 
     def __init__(self, model_name: str, token: str, host: str, **kwargs):

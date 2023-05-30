@@ -1,8 +1,8 @@
 from functools import lru_cache
 from typing import Optional
 
-from .base import BaseClient
 from .helper import get_model_spec, login
+from .model import Model
 
 
 class Client:
@@ -49,7 +49,7 @@ class Client:
             spec = get_model_spec(model_name, self._auth_token)
             endpoint = spec['endpoints']['grpc']
 
-        return BaseClient(
+        return Model(
             model_name=model_name,
             token=self._auth_token,
             host=endpoint,
