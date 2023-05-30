@@ -19,7 +19,7 @@ class CaptionMixin:
     client: Client
 
     @overload
-    def caption(self, image: Union[str, bytes, 'ArrayType'], **kwargs):
+    def caption(self, *, image: Union[str, bytes, 'ArrayType'], **kwargs):
         """
         caption image # TODO: add image type
 
@@ -29,7 +29,7 @@ class CaptionMixin:
         ...
 
     @overload
-    def caption(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
+    def caption(self, *, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         caption documents
 
@@ -41,6 +41,7 @@ class CaptionMixin:
     @overload
     def caption(
         self,
+        *,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         image: Optional[Union[str, bytes, 'ArrayType']] = None,
         **kwargs,
@@ -58,8 +59,8 @@ class CaptionMixin:
         """
         Caption the documents using the model.
 
-        :param kwargs: additional arguments to pass to the model
-        :return: captioned content
+        :param kwargs: additional arguments to pass to the model.
+        :return: captioned content.
         """
         payload, content_type = self._get_caption_payload(**kwargs)
         result = self.client.post(**payload)

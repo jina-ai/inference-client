@@ -131,6 +131,9 @@ shell/jina-wizard.sh
 /tests/junit/
 /docs/chapters/proto/docs.md
 /tests/.pytest-kind
+*.jpeg
+*.jpg
+*.png
 
 # IntelliJ IDEA
 *.iml

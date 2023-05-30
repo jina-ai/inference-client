@@ -21,6 +21,7 @@ class RankMixin:
     @overload
     def rank(
         self,
+        *,
         text: str,
         candidates: Iterable[Union[str, bytes, 'ArrayType']],
         **kwargs,
@@ -28,15 +29,16 @@ class RankMixin:
         """
         Rank the documents using the model.
 
-        :param text: the reference text
-        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
-        :param kwargs: additional arguments to pass to the model
+        :param text: the reference text.
+        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
     def rank(
         self,
+        *,
         image: Union[str, bytes, 'ArrayType'],
         candidates: Iterable[Union[str, bytes, 'ArrayType']],
         **kwargs,
@@ -44,25 +46,26 @@ class RankMixin:
         """
         Rank the documents using the model.
 
-        :param image: the reference image, can be a `ndarray`, 'bytes' or uri of the image
-        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images
-        :param kwargs: additional arguments to pass to the model
+        :param image: the reference image, can be a `ndarray`, 'bytes' or uri of the image.
+        :param candidates: the candidates to be ranked, can be either a list of strings or a list of images.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
-    def rank(self, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
+    def rank(self, *, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
         """
         Rank the documents using the model.
 
-        :param docs: the documents to be ranked with candidates stored in the matches
-        :param kwargs: additional arguments to pass to the model
+        :param docs: the documents to be ranked with candidates stored in the matches.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
     def rank(
         self,
+        *,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         text: Optional[str] = None,
         image: Optional[Union[str, bytes, 'ArrayType']] = None,
@@ -76,7 +79,7 @@ class RankMixin:
         :param text: the reference text. Default: None.
         :param image: the reference image, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
         :param candidates: the candidates to be ranked, can be either a list of strings or a list of images. Default: None.
-        :param kwargs: additional arguments to pass to the model
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
@@ -84,8 +87,8 @@ class RankMixin:
         """
         Rank the documents using the model.
 
-        :param kwargs: additional arguments to pass to the model
-        :return: ranked content
+        :param kwargs: additional arguments to pass to the model.
+        :return: ranked content.
         """
         payload, content_type = self._get_rank_payload(**kwargs)
         result = self.client.post(**payload)
