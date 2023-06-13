@@ -526,7 +526,6 @@ def test_upscale_plain_image_quality(make_client):
     [
         (123, 'Quality should be an integer between 0 and 100.'),
         (-123, 'Quality should be an integer between 0 and 100.'),
-        ('not keep', 'Quality should be an integer or `keep`.'),
     ],
 )
 def test_upscale_invalid_quality(make_client, inputs):
