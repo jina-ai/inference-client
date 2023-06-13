@@ -35,9 +35,9 @@ pip install inference-client
 
 ## Getting Started
 
-Before using Inference Client, please create an inference on [Jina AI Cloud](https://cloud.jina.ai/user/inference).
+Before using the Inference-Client, please create an inference on [Jina AI Cloud](https://cloud.jina.ai/user/inference).
 
-After the inference is created and the status is "Serving", you can use Inference Client to connect to it.
+After the inference is created and the status is "Serving", you can use the Inference-Client to connect to it.
 This could take a few minutes, depending on the model you selected.
 
 ### Client Initialization
@@ -125,7 +125,6 @@ answer = model.vqa(image=image, question=question)
 
 In addition to the basic usage, the Inference-Client also supports advanced features such as handling DocumentArray inputs, customizing the task parameters, and more. 
 Please refer to the [official documentation](https://jina.readme.io/docs/inference) for more details.
-
 
 ## Support
 
