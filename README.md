@@ -42,7 +42,7 @@ This could take a few minutes, depending on the model you selected.
 
 ### Client Initialization
 
-To use the Inference-Client, you first need to import the Client class and create a new instance of it. 
+To use the Inference-Client, you first need to import the `Client` class and create a new instance of it. 
 
 ```python
 from inference_client import Client
@@ -55,7 +55,7 @@ You will need to provide your access token when creating the client. The token c
 jina auth token create <name of PAT> -e <expiration days>
 ```
 
-You can then use the get_model method of the Client object to get a specific model.
+You can then use the `get_model` method of the `Client` object to get a specific model.
 
 ```python
 model = client.get_model('<model of your selection>')
@@ -68,7 +68,7 @@ Now that you have connected to the models, you can use them to perform the tasks
 
 ### Image Captioning
 
-The caption method of the Model object takes an image as input and returns a caption as output.
+The `caption` method of the `Model` object takes an image as input and returns a caption as output.
 
 ```python
 image = 'path/to/image.jpg'
@@ -77,7 +77,7 @@ caption = model.caption(image=image)
 
 ### Encoding
 
-The encode method of the Model object takes text or image data as input and returns an embedding as output.
+The `encode` method of the `Model` object takes text or image data as input and returns an embedding as output.
 
 ```python
 text = 'a sentence describing the beautiful nature'
@@ -90,7 +90,7 @@ embedding = model.encode(image=image)
 
 ### Ranking
 
-The rank method of the Model object takes a text or image data as query and a list of candidates as input and returns a list of reordered candidates as well as their scores as output.
+The `rank` method of the `Model` object takes a text or image data as query and a list of candidates as input and returns a list of reordered candidates as well as their scores as output.
 
 ```python
 candidates = [
@@ -104,7 +104,7 @@ result = model.rank(image=image, candidates=candidates)
 
 ### Image Upscaling
 
-The upscale method of the Model object takes an image and optional configurations as input, and returns the upscaled image bytes as output.
+The `upscale` method of the `Model` object takes an image and optional configurations as input, and returns the upscaled image bytes as output.
 
 ```python
 image = 'path/to/image.jpg'
@@ -113,7 +113,7 @@ result = model.upscale(image=image, output_path='upscaled_image.png', scale='800
 
 ### Visual Question Answering (VQA)
 
-The vqa method of the Model object takes an image and a question as input and returns an answer as output.
+The `vqa` method of the `Model` object takes an image and a question as input and returns an answer as output.
 
 ```python
 image = 'path/to/image.jpg'
