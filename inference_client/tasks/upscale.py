@@ -51,9 +51,7 @@ class UpscaleMixin:
                 output image will be saved in the format of the file extension of `output_path`. Default: None.
         :param quality: The image quality for JPEG output, on a scale from 0 (worst) to 95 (best). Values above 95
                 should be avoided; 100 disables portions of the JPEG compression algorithm, and results in large files
-                with hardly any gain in image quality. The value 'keep' is only valid for JPEG files and will retain the
-                original image quality level, subsampling, and qtables. This parameter is ignored for PNG files.
-                Default: None.
+                with hardly any gain in image quality. This parameter is ignored for PNG files. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -89,9 +87,7 @@ class UpscaleMixin:
                 values being set to 0 as previously detailed. Default: None.
         :param quality: The image quality for JPEG output, on a scale from 0 (worst) to 95 (best). Values above 95
                 should be avoided; 100 disables portions of the JPEG compression algorithm, and results in large files
-                with hardly any gain in image quality. The value 'keep' is only valid for JPEG files and will retain the
-                original image quality level, subsampling, and qtables. This parameter is ignored for PNG files.
-                Default: None.
+                with hardly any gain in image quality. This parameter is ignored for PNG files. Default: None.
         :param kwargs: additional arguments to pass to the model
         """
         ...
@@ -135,9 +131,7 @@ class UpscaleMixin:
                 output image will be saved in the format of the file extension of `output_path`. Default: None.
         :param quality: The image quality for JPEG output, on a scale from 0 (worst) to 95 (best). Values above 95
                 should be avoided; 100 disables portions of the JPEG compression algorithm, and results in large files
-                with hardly any gain in image quality. The value 'keep' is only valid for JPEG files and will retain the
-                original image quality level, subsampling, and qtables. This parameter is ignored for PNG files.
-                Default: None.
+                with hardly any gain in image quality. This parameter is ignored for PNG files. Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
