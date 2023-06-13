@@ -1,5 +1,8 @@
+import io
+
 import numpy as np
 from jina import Executor, requests
+from PIL import Image
 
 
 def calculate_output_size(input_w, input_h, model_w, model_h, target_w, target_h):
@@ -50,9 +53,10 @@ class DummyExecutor(Executor):
     def upscale(self, docs, **kwargs):
         # This dummy upscale function has a hardcoded output size of 8x the input size
         for doc in docs:
-            if doc.blob:
-                doc.convert_blob_to_image_tensor()
-            input_w, input_h = doc.tensor.shape[1], doc.tensor.shape[0]
+            if doc.tensor is not None:
+                doc.convert_image_tensor_to_blob()
+            original_image = Image.open(io.BytesIO(doc.blob))
+            input_w, input_h = original_image.size
             parameters = kwargs.get('parameters', {})
             scale = parameters.get('scale', None)
             if scale is None:
@@ -67,10 +71,19 @@ class DummyExecutor(Executor):
                     int(scales[0]),
                     int(scales[1]),
                 )
-            doc.tensor = np.random.random((output_h, output_w, 3))
-            doc.convert_image_tensor_to_blob(
-                image_format=doc.tags.get('image_format', 'jpeg')
+            upscale_image = original_image.resize((output_w, output_h))
+            img_byte_arr = io.BytesIO()
+            upscale_image.save(
+                img_byte_arr, format=doc.tags.get('image_format', 'jpeg')
             )
+            doc.blob = img_byte_arr.getvalue()
+
+            if doc.tags.get('image_format', 'jpeg') == 'jpeg':
+                if quality := parameters.get('quality', None):
+                    img_byte_arr = io.BytesIO()
+                    im = Image.open(io.BytesIO(doc.blob))
+                    im.save(img_byte_arr, format='jpeg', quality=int(quality))
+                    doc.blob = img_byte_arr.getvalue()
 
     @requests(on='/vqa')
     def vqa(self, docs, **kwargs):
