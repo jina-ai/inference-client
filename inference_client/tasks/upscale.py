@@ -27,6 +27,7 @@ class UpscaleMixin:
         scale: Optional[str] = None,
         image_format: Optional[str] = None,
         output_path: Optional[str] = None,
+        quality: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -48,6 +49,11 @@ class UpscaleMixin:
                 The path should end with the file extension of the output format, and could be either '.jpeg' or '.png'.
                 If both `output_path` and `image_format` are provided, the `image_format` will be ignored, and the
                 output image will be saved in the format of the file extension of `output_path`. Default: None.
+        :param quality: The image quality for JPEG output, on a scale from 0 (worst) to 95 (best). Values above 95
+                should be avoided; 100 disables portions of the JPEG compression algorithm, and results in large files
+                with hardly any gain in image quality. The value 'keep' is only valid for JPEG files and will retain the
+                original image quality level, subsampling, and qtables. This parameter is ignored for PNG files.
+                Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -58,6 +64,7 @@ class UpscaleMixin:
         *,
         docs: Union[Iterable['Document'], 'DocumentArray'],
         scale: Optional[str] = None,
+        quality: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -80,6 +87,11 @@ class UpscaleMixin:
                 dimension. After that it will, however, make sure that the calculated dimension is divisible by n and
                 adjust the value if necessary. If both values are -n with n >= 1, the behavior will be identical to both
                 values being set to 0 as previously detailed. Default: None.
+        :param quality: The image quality for JPEG output, on a scale from 0 (worst) to 95 (best). Values above 95
+                should be avoided; 100 disables portions of the JPEG compression algorithm, and results in large files
+                with hardly any gain in image quality. The value 'keep' is only valid for JPEG files and will retain the
+                original image quality level, subsampling, and qtables. This parameter is ignored for PNG files.
+                Default: None.
         :param kwargs: additional arguments to pass to the model
         """
         ...
@@ -93,6 +105,7 @@ class UpscaleMixin:
         scale: Optional[str] = None,
         image_format: Optional[str] = None,
         output_path: Optional[str] = None,
+        quality: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -120,6 +133,11 @@ class UpscaleMixin:
                 The path should end with the file extension of the output format, and could be either '.jpeg' or '.png'.
                 If both `output_path` and `image_format` are provided, the `image_format` will be ignored, and the
                 output image will be saved in the format of the file extension of `output_path`. Default: None.
+        :param quality: The image quality for JPEG output, on a scale from 0 (worst) to 95 (best). Values above 95
+                should be avoided; 100 disables portions of the JPEG compression algorithm, and results in large files
+                with hardly any gain in image quality. The value 'keep' is only valid for JPEG files and will retain the
+                original image quality level, subsampling, and qtables. This parameter is ignored for PNG files.
+                Default: None.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -163,14 +181,14 @@ class UpscaleMixin:
 
                 if kwargs.get('output_path', None) is not None:
                     output_path = kwargs.pop('output_path')
-                    image_format = os.path.splitext(output_path)[1].lower()
+                    image_format = os.path.splitext(output_path)[1].strip().lower()
                     if image_format not in ('.jpeg', '.jpg', '.png'):
                         raise ValueError(
                             'Output path should end with either `.jpeg` or `.png`.'
                         )
                     image_doc.tags['output_path'] = output_path
-
-                if kwargs.get('image_format', None) is not None:
+                    image_doc.tags['image_format'] = image_format.split('.')[-1]
+                elif kwargs.get('image_format', None) is not None:
                     image_format = kwargs.pop('image_format').lower()
                     if image_format not in ('jpeg', 'jpg', 'png'):
                         raise ValueError('Output format should be either jpeg or png.')
@@ -191,6 +209,14 @@ class UpscaleMixin:
                 parameters.update(scale=scale)
             else:
                 payload.update(parameters={'scale': scale})
+        if kwargs.get('quality', None) is not None:
+            quality = kwargs.pop('quality')
+            if isinstance(quality, int) and (quality < 0 or quality > 100):
+                raise ValueError('Quality should be an integer between 0 and 100.')
+            if parameters := payload.get('parameters'):
+                parameters.update(quality=quality)
+            else:
+                payload.update(parameters={'quality': quality})
 
         return payload, content_type
 

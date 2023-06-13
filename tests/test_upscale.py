@@ -467,3 +467,70 @@ def test_upscale_plain_image_savefile(make_client, inputs):
     )
     assert os.path.exists(inputs[2])
     assert what(inputs[2]) == inputs[3]
+
+
+def test_upscale_document_quality(make_client):
+    doc0 = Document(
+        uri='https://picsum.photos/id/237/200/300',
+        tags={'image_format': 'jpeg', 'output_path': 'test0.jpeg'},
+    )
+    doc1 = Document(
+        uri='https://picsum.photos/id/237/200/300',
+        tags={'image_format': 'jpeg', 'output_path': 'test1.jpeg'},
+    )
+    doc2 = Document(
+        uri='https://picsum.photos/id/237/200/300',
+        tags={'image_format': 'jpeg', 'output_path': 'test2.jpeg'},
+    )
+    make_client.upscale(docs=[doc0], quality=75)
+    make_client.upscale(docs=[doc1], quality=50)
+    make_client.upscale(docs=[doc2], quality=25)
+    assert os.path.exists('test0.jpeg')
+    assert os.path.exists('test1.jpeg')
+    assert os.path.exists('test2.jpeg')
+    assert os.path.getsize('test0.jpeg') > os.path.getsize('test1.jpeg')
+    assert os.path.getsize('test1.jpeg') > os.path.getsize('test2.jpeg')
+    os.remove('test0.jpeg')
+    os.remove('test1.jpeg')
+    os.remove('test2.jpeg')
+
+
+def test_upscale_plain_image_quality(make_client):
+    make_client.upscale(
+        image='https://picsum.photos/id/237/200/300',
+        quality=75,
+        output_path='test0.jpeg',
+    )
+    make_client.upscale(
+        image='https://picsum.photos/id/237/200/300',
+        quality=50,
+        output_path='test1.jpeg',
+    )
+    make_client.upscale(
+        image='https://picsum.photos/id/237/200/300',
+        quality=25,
+        output_path='test2.jpeg',
+    )
+    assert os.path.exists('test0.jpeg')
+    assert os.path.exists('test1.jpeg')
+    assert os.path.exists('test2.jpeg')
+    assert os.path.getsize('test0.jpeg') > os.path.getsize('test1.jpeg')
+    assert os.path.getsize('test1.jpeg') > os.path.getsize('test2.jpeg')
+    os.remove('test0.jpeg')
+    os.remove('test1.jpeg')
+    os.remove('test2.jpeg')
+
+
+@pytest.mark.parametrize(
+    'inputs',
+    [
+        (123, 'Quality should be an integer between 0 and 100.'),
+        (-123, 'Quality should be an integer between 0 and 100.'),
+    ],
+)
+def test_upscale_invalid_quality(make_client, inputs):
+    with pytest.raises(ValueError) as e:
+        make_client.upscale(
+            image='https://picsum.photos/id/237/200/300', quality=inputs[0]
+        )
+        assert str(e.value) == inputs[1]
