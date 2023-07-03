@@ -8,6 +8,7 @@ from .helper import get_base_payload, iter_doc, load_plain_into_document
 
 if TYPE_CHECKING:
     from docarray.typing import ArrayType
+    from jina.clients.base import CallbackFnType
 
 
 class EncodeMixin:
@@ -19,11 +20,30 @@ class EncodeMixin:
     client: Client
 
     @overload
-    def encode(self, *, text: Union[str, Iterable[str]], **kwargs):
+    def encode(
+        self,
+        *,
+        text: Union[str, Iterable[str]],
+        batch_size: Optional[int] = None,
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        prefetch: int = 100,
+        **kwargs,
+    ):
         """
         Encode plain text.
 
         :param text: the text to encode.
+        :param batch_size: the number of elements in each request when sending a list of texts.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -40,23 +60,56 @@ class EncodeMixin:
             Iterable[bytes],
             Iterable['ArrayType'],
         ],
+        batch_size: Optional[int] = None,
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        prefetch: int = 100,
         **kwargs,
     ):
         """
         Encode image.
 
         :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image.
+        :param batch_size: the number of elements in each request when sending a list of images.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
-    def encode(self, *, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
+    def encode(
+        self,
+        *,
+        docs: Union[Iterable['Document'], 'DocumentArray'],
+        batch_size: Optional[int] = None,
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        prefetch: int = 100,
+        **kwargs,
+    ):
         """
-        Encode documents
+        Encode documents.
 
-        :param docs: the documents to encode
-        :param kwargs: additional arguments to pass to the model
+        :param docs: the documents to encode.
+        :param batch_size: the number of elements in each request when sending a list of documents.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
@@ -76,6 +129,11 @@ class EncodeMixin:
                 Iterable['ArrayType'],
             ]
         ] = None,
+        batch_size: Optional[int] = None,
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        prefetch: int = 100,
         **kwargs,
     ):
         """
@@ -84,6 +142,15 @@ class EncodeMixin:
         :param docs: the documents to encode. Default: None.
         :param text: the text to encode. Default: None.
         :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param batch_size: the number of elements in each request when sending a list of documents.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
