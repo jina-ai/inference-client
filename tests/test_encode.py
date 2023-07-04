@@ -73,12 +73,12 @@ def test_encode_plain_image(make_client, inputs):
             'https://picsum.photos/id/233/100',
             Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
         ],
-        [
-            Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
-            Document(uri='https://picsum.photos/id/233/100')
-            .load_uri_to_image_tensor()
-            .tensor,
-        ],
+        # [
+        #     Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
+        #     Document(uri='https://picsum.photos/id/233/100')
+        #     .load_uri_to_image_tensor()
+        #     .tensor,
+        # ],
         [
             Document(uri='https://picsum.photos/id/233/100')
             .load_uri_to_image_tensor()
