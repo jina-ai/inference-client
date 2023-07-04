@@ -92,6 +92,12 @@ class DummyExecutor(Executor):
             doc.tags['response'] = 'Yes, it is a cat'
 
 
+class ErrorExecutor(Executor):
+    @requests
+    def foo(self, docs, **kwargs):
+        raise NotImplementedError
+
+
 if __name__ == '__main__':
     from jina import Document, DocumentArray, Flow
 

@@ -249,10 +249,11 @@ class EncodeMixin:
         content_type: str = 'docarray',
         is_list: bool = False,
     ):
-        if content_type == 'plain':
-            if is_list:
-                return result.embeddings
+        if result is not None:
+            if content_type == 'plain':
+                if is_list:
+                    return result.embeddings
+                else:
+                    return result[0].embedding
             else:
-                return result[0].embedding
-        else:
-            return result
+                return result
