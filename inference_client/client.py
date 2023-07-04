@@ -35,6 +35,20 @@ class Client:
         """
         Get a model by name or endpoint. Returns a cached model if it exists.
 
+        Example:
+
+        ```python
+        from jina import Client
+
+        client = Client()
+
+        # get model by name
+        model = client.get_model('Salesforce/blip2-flan-t5-xl')
+
+        # or get model by endpoint
+        model = client.get_model('grpc://localhost:12345')
+        ```
+
         :param model_name: The name of the model.
         :param endpoint: The endpoint of the model.
         :return: The model.
@@ -45,7 +59,12 @@ class Client:
                 'Please provide an endpoint or a valid user token to access the model.'
             )
 
-        if model_name:
+        from urllib.parse import urlparse
+
+        o = urlparse(model_name or endpoint)
+        if o.scheme and o.netloc:
+            endpoint = model_name or endpoint
+        elif model_name:
             spec = get_model_spec(model_name, self._auth_token)
             endpoint = spec['endpoints']['grpc']
 
