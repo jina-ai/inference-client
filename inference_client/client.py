@@ -61,9 +61,10 @@ class Client:
 
         from urllib.parse import urlparse
 
-        o = urlparse(model_name or endpoint)
+        # Note: if endpoint is provided, model_name is ignored
+        o = urlparse(endpoint or model_name)
         if o.scheme and o.netloc:
-            endpoint = model_name or endpoint
+            endpoint = endpoint or model_name
         elif model_name:
             spec = get_model_spec(model_name, self._auth_token)
             endpoint = spec['endpoints']['grpc']
