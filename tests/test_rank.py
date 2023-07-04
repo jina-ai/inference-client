@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from docarray import Document, DocumentArray
 
@@ -50,7 +52,7 @@ def test_rank_document(make_client, inputs):
             [
                 'a colorful photo of nature',
                 'https://picsum.photos/id/232/100',
-                Document(uri='https://picsum.photos/id/233/100')
+                Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
                 .load_uri_to_blob()
                 .blob,
                 Document(uri='https://picsum.photos/id/234/100')

@@ -1,3 +1,4 @@
+import os
 from unittest.mock import Mock, patch
 
 import pytest
@@ -10,12 +11,12 @@ from docarray import Document, DocumentArray
         DocumentArray(
             [
                 Document(text='hello world'),
-                Document(uri='https://picsum.photos/id/233/100'),
+                Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'),
             ]
         ),
         [
             Document(text='hello world'),
-            Document(uri='https://picsum.photos/id/233/100'),
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'),
         ],
     ],
 )
@@ -54,9 +55,11 @@ def test_encode_plain_text_list(make_client, inputs):
 @pytest.mark.parametrize(
     'inputs',
     [
-        'https://picsum.photos/id/233/100',
-        Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
-        Document(uri='https://picsum.photos/id/233/100')
+        f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
+        Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+        .load_uri_to_blob()
+        .blob,
+        Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
         .load_uri_to_image_tensor()
         .tensor,
     ],
@@ -70,20 +73,24 @@ def test_encode_plain_image(make_client, inputs):
     'inputs',
     [
         [
-            'https://picsum.photos/id/233/100',
-            Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+            .load_uri_to_blob()
+            .blob,
         ],
-        # [
-        #     Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
-        #     Document(uri='https://picsum.photos/id/233/100')
-        #     .load_uri_to_image_tensor()
-        #     .tensor,
-        # ],
         [
-            Document(uri='https://picsum.photos/id/233/100')
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+            .load_uri_to_blob()
+            .blob,
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
             .load_uri_to_image_tensor()
             .tensor,
-            'https://picsum.photos/id/233/100',
+        ],  # Commented out for a wierd GitHub Actions timeout error with Python 3.10
+        [
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+            .load_uri_to_image_tensor()
+            .tensor,
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
         ],
     ],
 )
