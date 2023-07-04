@@ -236,9 +236,9 @@ class EncodeMixin:
                 'Please provide either text, image or docs input to encode.'
             )
 
-        # payload.update(on_done=kwargs.pop('on_done', None))
-        # payload.update(on_error=kwargs.pop('on_error', None))
-        # payload.update(on_always=kwargs.pop('on_always', None))
+        payload.update(on_done=kwargs.pop('on_done', None))
+        payload.update(on_error=kwargs.pop('on_error', None))
+        payload.update(on_always=kwargs.pop('on_always', None))
         # payload.update(prefetch=kwargs.pop('prefetch', 100))
 
         return payload, content_type, is_list
