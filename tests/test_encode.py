@@ -85,7 +85,7 @@ def test_encode_plain_image(make_client, inputs):
             Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
             .load_uri_to_image_tensor()
             .tensor,
-        ],  # Commented out for a wierd GitHub Actions timeout error with Python 3.10
+        ],
         [
             Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
             .load_uri_to_image_tensor()
