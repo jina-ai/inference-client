@@ -8,6 +8,7 @@ from .helper import get_base_payload, iter_doc, load_plain_into_document
 
 if TYPE_CHECKING:
     from docarray.typing import ArrayType
+    from jina.clients.base import CallbackFnType
 
 
 class EncodeMixin:
@@ -19,11 +20,32 @@ class EncodeMixin:
     client: Client
 
     @overload
-    def encode(self, *, text: Union[str, Iterable[str]], **kwargs):
+    def encode(
+        self,
+        *,
+        text: Union[str, Iterable[str]],
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        batch_size: Optional[int] = 8,
+        prefetch: Optional[int] = 100,
+        show_progress: Optional[bool] = False,
+        **kwargs,
+    ):
         """
         Encode plain text.
 
         :param text: the text to encode.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param batch_size: the number of elements in each request when sending a list of texts.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
+        :param show_progress: if set, client will show a progress bar on receiving every request.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -40,23 +62,60 @@ class EncodeMixin:
             Iterable[bytes],
             Iterable['ArrayType'],
         ],
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        batch_size: Optional[int] = 8,
+        prefetch: Optional[int] = 100,
+        show_progress: Optional[bool] = False,
         **kwargs,
     ):
         """
         Encode image.
 
         :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param batch_size: the number of elements in each request when sending a list of images.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
+        :param show_progress: if set, client will show a progress bar on receiving every request.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
 
     @overload
-    def encode(self, *, docs: Union[Iterable['Document'], 'DocumentArray'], **kwargs):
+    def encode(
+        self,
+        *,
+        docs: Union[Iterable['Document'], 'DocumentArray'],
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        batch_size: Optional[int] = 8,
+        prefetch: Optional[int] = 100,
+        show_progress: Optional[bool] = False,
+        **kwargs,
+    ):
         """
-        Encode documents
+        Encode documents.
 
-        :param docs: the documents to encode
-        :param kwargs: additional arguments to pass to the model
+        :param docs: the documents to encode.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param batch_size: the number of elements in each request when sending a list of documents.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
+        :param show_progress: if set, client will show a progress bar on receiving every request.
+        :param kwargs: additional arguments to pass to the model.
         """
         ...
 
@@ -76,6 +135,12 @@ class EncodeMixin:
                 Iterable['ArrayType'],
             ]
         ] = None,
+        on_done: Optional['CallbackFnType'] = None,
+        on_error: Optional['CallbackFnType'] = None,
+        on_always: Optional['CallbackFnType'] = None,
+        batch_size: Optional[int] = 8,
+        prefetch: Optional[int] = 100,
+        show_progress: Optional[bool] = False,
         **kwargs,
     ):
         """
@@ -84,6 +149,16 @@ class EncodeMixin:
         :param docs: the documents to encode. Default: None.
         :param text: the text to encode. Default: None.
         :param image: the image to encode, can be a `ndarray`, 'bytes' or uri of the image. Default: None.
+        :param on_done: the callback function executed while streaming, after successful completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_error: the callback function executed while streaming, after failed completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param on_always: the callback function executed while streaming, after completion of each request.
+            It takes the response ``DataRequest`` as the only argument.
+        :param batch_size: the number of elements in each request when sending a list of documents.
+        :param prefetch: the number of in-flight batches made by the post() method. Use a lower value for expensive
+            operations, and a higher value for faster response times.
+        :param show_progress: if set, client will show a progress bar on receiving every request.
         :param kwargs: additional arguments to pass to the model.
         """
         ...
@@ -169,6 +244,12 @@ class EncodeMixin:
                 'Please provide either text, image or docs input to encode.'
             )
 
+        payload.update(on_done=kwargs.pop('on_done', None))
+        payload.update(on_error=kwargs.pop('on_error', None))
+        payload.update(on_always=kwargs.pop('on_always', None))
+        payload.update(prefetch=kwargs.pop('prefetch', 100))
+        payload.update(request_size=kwargs.pop('batch_size', 8))
+        payload.update(show_progress=kwargs.pop('show_progress', False))
         return payload, content_type, is_list
 
     def _unbox_encode_result(
@@ -177,10 +258,11 @@ class EncodeMixin:
         content_type: str = 'docarray',
         is_list: bool = False,
     ):
-        if content_type == 'plain':
-            if is_list:
-                return result.embeddings
+        if result is not None:
+            if content_type == 'plain':
+                if is_list:
+                    return result.embeddings
+                else:
+                    return result[0].embedding
             else:
-                return result[0].embedding
-        else:
-            return result
+                return result

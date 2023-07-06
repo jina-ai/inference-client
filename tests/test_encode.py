@@ -1,3 +1,4 @@
+import os
 from unittest.mock import Mock, patch
 
 import pytest
@@ -10,12 +11,12 @@ from docarray import Document, DocumentArray
         DocumentArray(
             [
                 Document(text='hello world'),
-                Document(uri='https://picsum.photos/id/233/100'),
+                Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'),
             ]
         ),
         [
             Document(text='hello world'),
-            Document(uri='https://picsum.photos/id/233/100'),
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'),
         ],
     ],
 )
@@ -54,9 +55,11 @@ def test_encode_plain_text_list(make_client, inputs):
 @pytest.mark.parametrize(
     'inputs',
     [
-        'https://picsum.photos/id/233/100',
-        Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
-        Document(uri='https://picsum.photos/id/233/100')
+        f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
+        Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+        .load_uri_to_blob()
+        .blob,
+        Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
         .load_uri_to_image_tensor()
         .tensor,
     ],
@@ -70,20 +73,24 @@ def test_encode_plain_image(make_client, inputs):
     'inputs',
     [
         [
-            'https://picsum.photos/id/233/100',
-            Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+            .load_uri_to_blob()
+            .blob,
         ],
         [
-            Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
-            Document(uri='https://picsum.photos/id/233/100')
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+            .load_uri_to_blob()
+            .blob,
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
             .load_uri_to_image_tensor()
             .tensor,
         ],
         [
-            Document(uri='https://picsum.photos/id/233/100')
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
             .load_uri_to_image_tensor()
             .tensor,
-            'https://picsum.photos/id/233/100',
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
         ],
     ],
 )
@@ -92,3 +99,39 @@ def test_encode_plain_image_list(make_client, inputs):
     assert len(res) == 2
     assert res[0].shape == (512,)
     assert res[1].shape == (512,)
+
+
+@pytest.mark.slow
+def test_custom_on_done(make_client, mocker):
+    on_done_mock = mocker.Mock()
+    on_error_mock = mocker.Mock()
+    on_always_mock = mocker.Mock()
+
+    res = make_client.encode(
+        text='hello',
+        on_done=on_done_mock,
+        on_error=on_error_mock,
+        on_always=on_always_mock,
+    )
+    assert res is None
+    on_done_mock.assert_called_once()
+    on_error_mock.assert_not_called()
+    on_always_mock.assert_called_once()
+
+
+@pytest.mark.slow
+def test_custom_on_error(make_error_client, mocker):
+    on_done_mock = mocker.Mock()
+    on_error_mock = mocker.Mock()
+    on_always_mock = mocker.Mock()
+
+    res = make_error_client.encode(
+        text='hello',
+        on_done=on_done_mock,
+        on_error=on_error_mock,
+        on_always=on_always_mock,
+    )
+    assert res is None
+    on_done_mock.assert_not_called()
+    on_error_mock.assert_called_once()
+    on_always_mock.assert_called_once()

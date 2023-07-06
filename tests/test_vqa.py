@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from docarray import Document, DocumentArray
 
@@ -8,14 +10,14 @@ from docarray import Document, DocumentArray
         DocumentArray(
             [
                 Document(
-                    uri='https://picsum.photos/id/233/100',
+                    uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
                     tags={'prompt': 'Question: how many cats are there? Answer:'},
                 ),
             ]
         ),
         [
             Document(
-                uri='https://picsum.photos/id/233/100',
+                uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
                 tags={'prompt': 'Question: how many cats are there? Answer:'},
             ),
         ],
@@ -31,15 +33,17 @@ def test_vqa_document(make_client, inputs):
     'inputs',
     [
         [
-            'https://picsum.photos/id/233/100',
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
             'Question: how many cats are there? Answer:',
         ],
         [
-            Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+            .load_uri_to_blob()
+            .blob,
             'Question: how many cats are there? Answer:',
         ],
         [
-            Document(uri='https://picsum.photos/id/233/100')
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
             .load_uri_to_image_tensor()
             .tensor,
             'Question: how many cats are there? Answer:',

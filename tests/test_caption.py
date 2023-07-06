@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from docarray import Document, DocumentArray
 
@@ -7,11 +9,11 @@ from docarray import Document, DocumentArray
     [
         DocumentArray(
             [
-                Document(uri='https://picsum.photos/id/233/100'),
+                Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'),
             ]
         ),
         [
-            Document(uri='https://picsum.photos/id/233/100'),
+            Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'),
         ],
     ],
 )
@@ -24,9 +26,11 @@ def test_caption_document(make_client, inputs):
 @pytest.mark.parametrize(
     'inputs',
     [
-        'https://picsum.photos/id/233/100',
-        Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob().blob,
-        Document(uri='https://picsum.photos/id/233/100')
+        f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
+        Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
+        .load_uri_to_blob()
+        .blob,
+        Document(uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg')
         .load_uri_to_image_tensor()
         .tensor,
     ],

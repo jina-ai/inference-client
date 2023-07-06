@@ -1,4 +1,5 @@
 import io
+import os
 
 import numpy as np
 from jina import Executor, requests
@@ -91,11 +92,21 @@ class DummyExecutor(Executor):
             doc.tags['response'] = 'Yes, it is a cat'
 
 
+class ErrorExecutor(Executor):
+    @requests
+    def foo(self, docs, **kwargs):
+        raise NotImplementedError
+
+
 if __name__ == '__main__':
     from jina import Document, DocumentArray, Flow
 
     with Flow().add(uses=DummyExecutor) as f:
         input = DocumentArray(
-            [Document(uri='https://picsum.photos/id/233/100').load_uri_to_blob()]
+            [
+                Document(
+                    uri=f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'
+                ).load_uri_to_blob()
+            ]
         )
         f.post(on='/upscale', inputs=input, return_results=True)
