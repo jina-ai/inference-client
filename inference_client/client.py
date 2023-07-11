@@ -54,6 +54,11 @@ class Client:
         :return: The model.
         """
 
+        if not model_name and not endpoint:
+            raise ValueError(
+                'Please provide either a model name or endpoint to get a model.'
+            )
+
         from urllib.parse import urlparse
 
         # Note: if endpoint is provided, model_name is ignored
