@@ -24,12 +24,12 @@ def login(token: Optional[str] = None) -> str:
     if token:
         os.environ['JINA_AUTH_TOKEN'] = token
         Auth.validate_token(token)
-        logger.info(f'successfully validated token: {token}')
+        logger.debug(f'successfully validated token: {token}')
         return token
     else:
         hubble.login()
         token = hubble.get_token()
-        logger.info(f'successfully logged in with token: {token}')
+        logger.debug(f'successfully logged in with token: {token}')
         return token
 
 

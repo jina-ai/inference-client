@@ -2,12 +2,15 @@ from jina import Client
 
 from .tasks.caption import CaptionMixin
 from .tasks.encode import EncodeMixin
+from .tasks.generate import GenerationMixin
 from .tasks.rank import RankMixin
 from .tasks.upscale import UpscaleMixin
 from .tasks.vqa import VQAMixin
 
 
-class Model(CaptionMixin, EncodeMixin, RankMixin, UpscaleMixin, VQAMixin):
+class Model(
+    CaptionMixin, EncodeMixin, RankMixin, UpscaleMixin, VQAMixin, GenerationMixin
+):
     """
     The model to be used for inference.
     """
