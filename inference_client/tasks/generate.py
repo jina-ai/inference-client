@@ -82,7 +82,9 @@ class GenerationMixin:
         prompts = [prompts] if isinstance(prompts, str) else prompts
         payload = get_base_payload('/generate', self.token, **kwargs)
         payload.update(
-            inputs=DocumentArray([Document(text=prompt) for prompt in prompts])
+            inputs=DocumentArray(
+                [Document(tags={'prompt': prompt}) for prompt in prompts]
+            )
         )
         result = self.client.post(**payload)
         text_out = [r.tags['generated_text'] or r.tags['response'] for r in result]

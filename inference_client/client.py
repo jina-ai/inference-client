@@ -54,11 +54,6 @@ class Client:
         :return: The model.
         """
 
-        if not self._auth_token and not endpoint:
-            raise ValueError(
-                'Please provide an endpoint or a valid user token to access the model.'
-            )
-
         from urllib.parse import urlparse
 
         # Note: if endpoint is provided, model_name is ignored

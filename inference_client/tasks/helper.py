@@ -65,7 +65,9 @@ def get_base_payload(endpoint, token, **kwargs):
     :return: a dict of payload containing the endpoint, token, request size and parameters
     """
     parameters = kwargs.pop('parameters', {})
-    parameters['drop_image_content'] = parameters.get('drop_image_content', True)
+
+    if endpoint != '/generate':
+        parameters['drop_image_content'] = parameters.get('drop_image_content', True)
     payload = dict(
         on=endpoint,
         request_size=kwargs.pop('request_size', 1),
