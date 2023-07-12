@@ -51,7 +51,7 @@ class GenerationMixin:
         repetition_penalty: float = 1.0,
         length_penalty: float = 1.0,
         no_repeat_ngram_size: int = 0,
-        **kwargs
+        **kwargs,
     ):
         """Generate text from the given prompt.
 
@@ -80,7 +80,7 @@ class GenerationMixin:
         :return: The generated text.
         """
         prompts = [prompts] if isinstance(prompts, str) else prompts
-        payload = get_base_payload('/generate', self.token, **kwargs)
+        payload = self._get_generate_payload(**kwargs)
         payload.update(
             inputs=DocumentArray(
                 [Document(tags={'prompt': prompt}) for prompt in prompts]
@@ -89,3 +89,18 @@ class GenerationMixin:
         result = self.client.post(**payload)
         text_out = [r.tags['generated_text'] or r.tags['response'] for r in result]
         return text_out if len(text_out) > 1 else text_out[0]
+
+    def _get_generate_payload(self, **kwargs):
+        """Get the payload for the generate endpoint.
+
+        :param kwargs: The arguments to pass to the model.
+        :return: The payload.
+        """
+        payload = get_base_payload('/generate', self.token, **kwargs)
+
+        if parameters := payload.get('parameters'):
+            parameters.update(kwargs)
+        else:
+            payload.update(parameters=kwargs)
+
+        return payload
