@@ -87,7 +87,10 @@ class GenerationMixin:
             )
         )
         result = self.client.post(**payload)
-        text_out = [r.tags['generated_text'] or r.tags['response'] for r in result]
+        text_out = [
+            r.tags.get('generated_text', '') or r.tags.get('response', '')
+            for r in result
+        ]
         return text_out if len(text_out) > 1 else text_out[0]
 
     def _get_generate_payload(self, **kwargs):
