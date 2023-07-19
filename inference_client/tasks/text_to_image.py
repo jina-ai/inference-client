@@ -70,7 +70,6 @@ class TextToImageMixin:
 
     def _get_text_to_image_payload(self, **kwargs):
         payload = get_base_payload('/text-to-image', self.token, **kwargs)
-        print(payload)
 
         if kwargs.get('prompt') is not None:
             if kwargs.get('docs') is not None:
@@ -91,5 +90,7 @@ class TextToImageMixin:
             )
             payload.update(total_docs=total_docs)
             payload.update(inputs=iter_doc(kwargs.pop('docs')))
+        else:
+            raise ValueError('Please provide either prompt or docs input.')
 
         return payload, content_type
