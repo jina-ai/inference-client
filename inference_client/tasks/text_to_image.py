@@ -65,8 +65,10 @@ class TextToImageMixin:
 
         :return: The generated image.
         """
-        self._get_text_to_image_payload(prompt=prompt, **kwargs)
-        return None
+        payload, content_type = self._get_text_to_image_payload(prompt=prompt, **kwargs)
+        result = self.client.post(**payload)
+        return self._unbox_text_to_image_result(result, content_type)
+        # return result
 
     def _get_text_to_image_payload(self, **kwargs):
         payload = get_base_payload('/text-to-image', self.token, **kwargs)
@@ -94,3 +96,16 @@ class TextToImageMixin:
             raise ValueError('Please provide either prompt or docs input.')
 
         return payload, content_type
+
+    def _unbox_text_to_image_result(self, result, content_type):
+        if content_type == 'plain':
+            matches = result[0].matches
+            if matches[0].blob is not None:
+                output = [m.blob for m in matches]
+            elif matches[0].tensor is not None:
+                output = [m.tensor for m in matches]
+            else:
+                raise ValueError('No image found in the result.')
+            return output[0] if len(output) == 1 else output
+        else:
+            return result[0].matches
