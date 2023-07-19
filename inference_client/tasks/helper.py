@@ -50,6 +50,7 @@ def iter_doc(content):
             d = c
         elif c.tensor is not None:
             d = c
+        # Should also consider the case where the doc only has tags
         else:
             raise TypeError(f'Unsupported input type {c!r} {c.content_type}')
         yield d
