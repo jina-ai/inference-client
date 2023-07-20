@@ -21,7 +21,7 @@ from docarray import Document, DocumentArray
 def test_text_to_image_document(make_client, inputs):
     res = make_client.text_to_image(docs=inputs)
     assert isinstance(res, DocumentArray)
-    assert res[0].matches[0].blob is not None
+    assert len(res[0].matches[0].blob) > 0
 
 
 @pytest.mark.parametrize(
@@ -43,8 +43,8 @@ def test_text_to_image_document_2_images_per_prompt(make_client, inputs):
     )
     assert isinstance(res, DocumentArray)
     assert len(res[0].matches) == 2
-    assert res[0].matches[0].blob is not None
-    assert res[0].matches[1].blob is not None
+    assert len(res[0].matches[0].blob) > 0
+    assert len(res[0].matches[1].blob) > 0
 
 
 @pytest.mark.parametrize(
@@ -109,7 +109,9 @@ def test_text_to_image_plain_2_images_per_prompt(make_client, inputs):
     assert isinstance(res, list)
     assert len(res) == 2
     assert isinstance(res[0], bytes)
+    assert len(res[0]) > 0
     assert isinstance(res[1], bytes)
+    assert len(res[1]) > 0
 
 
 @pytest.mark.parametrize(
