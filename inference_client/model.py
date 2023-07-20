@@ -4,12 +4,19 @@ from .tasks.caption import CaptionMixin
 from .tasks.encode import EncodeMixin
 from .tasks.generate import GenerationMixin
 from .tasks.rank import RankMixin
+from .tasks.text_to_image import TextToImageMixin
 from .tasks.upscale import UpscaleMixin
 from .tasks.vqa import VQAMixin
 
 
 class Model(
-    CaptionMixin, EncodeMixin, RankMixin, UpscaleMixin, VQAMixin, GenerationMixin
+    CaptionMixin,
+    EncodeMixin,
+    GenerationMixin,
+    RankMixin,
+    TextToImageMixin,
+    UpscaleMixin,
+    VQAMixin,
 ):
     """
     The model to be used for inference.
