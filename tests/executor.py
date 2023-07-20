@@ -2,6 +2,7 @@ import io
 import os
 
 import numpy as np
+from docarray import DocumentArray
 from jina import Executor, requests
 from PIL import Image
 
@@ -49,6 +50,22 @@ class DummyExecutor(Executor):
                 doc.matches, key=lambda _m: _m.scores['cosine'].value, reverse=True
             )
             doc.matches = final
+
+    @requests(on='/text-to-image')
+    def text_to_image(self, docs, **kwargs):
+        for doc in docs:
+            parameters = kwargs.get('parameters', {})
+            output_type = parameters.get('output_type', 'pil')
+            matches = DocumentArray.empty(
+                int(parameters.get('num_images_per_prompt', 1))
+            )
+            for m in matches:
+                m.uri = f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg'
+                m.load_uri_to_blob()
+                if output_type == 'latent':
+                    m.convert_blob_to_image_tensor()
+                m.uri = None
+            doc.matches = matches
 
     @requests(on='/upscale')
     def upscale(self, docs, **kwargs):

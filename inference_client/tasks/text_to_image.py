@@ -68,7 +68,6 @@ class TextToImageMixin:
         payload, content_type = self._get_text_to_image_payload(prompt=prompt, **kwargs)
         result = self.client.post(**payload)
         return self._unbox_text_to_image_result(result, content_type)
-        # return result
 
     def _get_text_to_image_payload(self, **kwargs):
         payload = get_base_payload('/text-to-image', self.token, **kwargs)
@@ -100,7 +99,7 @@ class TextToImageMixin:
     def _unbox_text_to_image_result(self, result, content_type):
         if content_type == 'plain':
             matches = result[0].matches
-            if matches[0].blob is not None:
+            if len(matches[0].blob) > 0:
                 output = [m.blob for m in matches]
             elif matches[0].tensor is not None:
                 output = [m.tensor for m in matches]
@@ -108,4 +107,4 @@ class TextToImageMixin:
                 raise ValueError('No image found in the result.')
             return output[0] if len(output) == 1 else output
         else:
-            return result[0].matches
+            return result
