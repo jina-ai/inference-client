@@ -1,12 +1,16 @@
 from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
 
+import numpy
 from docarray import Document, DocumentArray
 from jina import Client
 
-from .helper import get_base_payload, iter_doc
+from .helper import get_base_payload, iter_doc, load_plain_into_document
+
+if TYPE_CHECKING:
+    from docarray.typing import ArrayType
 
 
-class TextToImageMixin:
+class ImageToImageMixin:
     """
     Mixin class for text to image generation.
     """
