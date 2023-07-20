@@ -20,13 +20,19 @@ class ImageToImageMixin:
 
     @overload
     def image_to_image(
-        self, image: Union[str, bytes, 'ArrayType'], prompt: str, **kwargs
+        self,
+        image: Union[str, bytes, 'ArrayType'],
+        prompt: str,
+        *,
+        negative_prompt: Optional[str],
+        **kwargs,
     ):
         """
         Generate an image from a base image and prompt.
 
         :param image: The base image to generate from.
         :param prompt: The prompt or prompts to guide the image generation.
+        :param negative_prompt: The prompt or prompts not to guide the image generation.
         :param kwargs: Additional arguments to pass to the model.
         """
         ...
@@ -48,6 +54,7 @@ class ImageToImageMixin:
         self,
         image: Optional[Union[str, bytes, 'ArrayType']] = None,
         prompt: Optional[str] = None,
+        negative_prompt: Optional[str] = None,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         **kwargs,
     ):
@@ -56,48 +63,55 @@ class ImageToImageMixin:
 
         :param image: The base image to generate from.
         :param prompt: The prompt or prompts to guide the image generation.
+        :param negative_prompt: The prompt or prompts not to guide the image generation.
         :param docs: The documents containing base images and prompts to guide the image generation.
         :param kwargs: Additional arguments to pass to the model.
         """
         ...
 
-    def image_to_image(self, prompt: str = None, **kwargs):
+    def image_to_image(
+        self, image: Union[str, bytes, 'ArrayType'] = None, prompt: str = None, **kwargs
+    ):
         """
         Generate an image from prompt or documents containing prompts.
 
+        :param image: The base image to generate from.
         :param prompt: The prompt or prompts to guide the image generation.
         :param kwargs: Additional arguments to pass to the model.
 
         :return: The generated image.
         """
-        payload, content_type = self._get_text_to_image_payload(prompt=prompt, **kwargs)
+        payload, content_type = self._get_image_to_image_payload(
+            image=image, prompt=prompt, **kwargs
+        )
         result = self.client.post(**payload)
-        return self._unbox_text_to_image_result(result, content_type)
+        return self._unbox_image_to_image_result(result, content_type)
 
     def _get_image_to_image_payload(self, **kwargs):
         payload = get_base_payload('/image-to-image', self.token, **kwargs)
 
-        if kwargs.get('prompt') is not None:
+        if (image_content := kwargs.pop('image', None)) is not None:
             if kwargs.get('docs') is not None:
                 raise ValueError(
                     'More than one input type provided. Please provide either prompt or docs input.'
                 )
+            if (prompt := kwargs.pop('prompt', None)) is None:
+                raise ValueError('Please provide a prompt input.')
             content_type = 'plain'
-            prompt_doc = Document(tags={'prompt': kwargs.get('prompt')})
-            payload.update(inputs=DocumentArray([prompt_doc]))
+            image_doc = load_plain_into_document(image_content, mime_type='image')
+            image_doc.tags.update(
+                prompt=prompt, negative_prompt=kwargs.pop('negative_prompt', None)
+            )
+            payload.update(inputs=DocumentArray([image_doc]))
             payload.update(total_docs=1)
 
-        elif kwargs.get('docs') is not None:
+        elif (docs := kwargs.pop('docs', None)) is not None:
             content_type = 'docarray'
-            total_docs = (
-                len(kwargs.get('docs'))
-                if hasattr(kwargs.get('docs'), '__len__')
-                else None
-            )
+            total_docs = len(docs) if hasattr(docs, '__len__') else None
             payload.update(total_docs=total_docs)
-            payload.update(inputs=iter_doc(kwargs.pop('docs')))
+            payload.update(inputs=iter_doc(docs))
         else:
-            raise ValueError('Please provide either prompt or docs input.')
+            raise ValueError('Please provide either docs or image and prompt input.')
 
         return payload, content_type
 

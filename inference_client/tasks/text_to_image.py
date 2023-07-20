@@ -15,7 +15,7 @@ class TextToImageMixin:
     client: Client
 
     @overload
-    def text_to_image(self, prompt: str, *, negative_prompt, **kwargs):
+    def text_to_image(self, prompt: str, *, negative_prompt: Optional[str], **kwargs):
         """
         Generate an image from prompt.
 
