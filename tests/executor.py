@@ -51,8 +51,8 @@ class DummyExecutor(Executor):
             )
             doc.matches = final
 
-    @requests(on='/text-to-image')
-    def text_to_image(self, docs, **kwargs):
+    @requests(on=['/image-to-image', '/text-to-image'])
+    def something_to_image(self, docs, **kwargs):
         for doc in docs:
             parameters = kwargs.get('parameters', {})
             output_type = parameters.get('output_type', 'pil')

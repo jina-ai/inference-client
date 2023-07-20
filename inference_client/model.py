@@ -3,6 +3,7 @@ from jina import Client
 from .tasks.caption import CaptionMixin
 from .tasks.encode import EncodeMixin
 from .tasks.generate import GenerationMixin
+from .tasks.image_to_image import ImageToImageMixin
 from .tasks.rank import RankMixin
 from .tasks.text_to_image import TextToImageMixin
 from .tasks.upscale import UpscaleMixin
@@ -13,6 +14,7 @@ class Model(
     CaptionMixin,
     EncodeMixin,
     GenerationMixin,
+    ImageToImageMixin,
     RankMixin,
     TextToImageMixin,
     UpscaleMixin,
