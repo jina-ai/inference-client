@@ -51,9 +51,7 @@ def test_image_to_image_document(make_client, inputs):
     ],
 )
 def test_image_to_image_document_2_images_per_prompt(make_client, inputs):
-    res = make_client.image_to_image(
-        docs=inputs, parameters={'num_images_per_prompt': 2}
-    )
+    res = make_client.image_to_image(docs=inputs, num_images_per_prompt=2)
     assert isinstance(res, DocumentArray)
     assert len(res[0].blob) > 0
     assert len(res[0].matches) == 2
@@ -81,7 +79,7 @@ def test_image_to_image_document_2_images_per_prompt(make_client, inputs):
     ],
 )
 def test_image_to_image_document_latent_output(make_client, inputs):
-    res = make_client.image_to_image(docs=inputs, parameters={'output_type': 'latent'})
+    res = make_client.image_to_image(docs=inputs, output_type='latent')
     assert isinstance(res, DocumentArray)
     assert len(res[0].blob) > 0
     assert res[0].matches[0].tensor is not None
@@ -108,7 +106,7 @@ def test_image_to_image_document_latent_output(make_client, inputs):
 )
 def test_image_to_image_document_latent_output_2_images_per_prompt(make_client, inputs):
     res = make_client.image_to_image(
-        docs=inputs, parameters={'output_type': 'latent', 'num_images_per_prompt': 2}
+        docs=inputs, output_type='latent', num_images_per_prompt=2
     )
     assert isinstance(res, DocumentArray)
     assert len(res[0].blob) > 0
@@ -121,13 +119,13 @@ def test_image_to_image_document_latent_output_2_images_per_prompt(make_client, 
     'inputs',
     [
         [
-            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
             'A dog is sleeping on the floor.',
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
         ]
     ],
 )
 def test_image_to_image_plain(make_client, inputs):
-    res = make_client.image_to_image(image=inputs[0], prompt=inputs[1])
+    res = make_client.image_to_image(prompt=inputs[0], image=inputs[1])
     assert isinstance(res, bytes)
 
 
@@ -135,14 +133,14 @@ def test_image_to_image_plain(make_client, inputs):
     'inputs',
     [
         [
-            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
             'A dog is sleeping on the floor.',
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
         ]
     ],
 )
 def test_image_to_image_plain_2_images_per_prompt(make_client, inputs):
     res = make_client.image_to_image(
-        image=inputs[0], prompt=inputs[1], parameters={'num_images_per_prompt': 2}
+        prompt=inputs[0], image=inputs[1], num_images_per_prompt=2
     )
     assert isinstance(res, list)
     assert len(res) == 2
@@ -154,14 +152,14 @@ def test_image_to_image_plain_2_images_per_prompt(make_client, inputs):
     'inputs',
     [
         [
-            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
             'A dog is sleeping on the floor.',
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
         ]
     ],
 )
 def test_image_to_image_plain_latent_output(make_client, inputs):
     res = make_client.image_to_image(
-        image=inputs[0], prompt=inputs[1], parameters={'output_type': 'latent'}
+        prompt=inputs[0], image=inputs[1], output_type='latent'
     )
     assert isinstance(res, np.ndarray)
 
@@ -170,16 +168,17 @@ def test_image_to_image_plain_latent_output(make_client, inputs):
     'inputs',
     [
         [
-            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
             'A dog is sleeping on the floor.',
+            f'{os.path.dirname(os.path.abspath(__file__))}/test.jpeg',
         ]
     ],
 )
 def test_text_to_image_plain_latent_output_2_images_per_prompt(make_client, inputs):
     res = make_client.image_to_image(
-        image=inputs[0],
-        prompt=inputs[1],
-        parameters={'output_type': 'latent', 'num_images_per_prompt': 2},
+        prompt=inputs[0],
+        image=inputs[1],
+        output_type='latent',
+        num_images_per_prompt=2,
     )
     assert isinstance(res, list)
     assert len(res) == 2

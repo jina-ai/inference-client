@@ -38,9 +38,7 @@ def test_text_to_image_document(make_client, inputs):
     ],
 )
 def test_text_to_image_document_2_images_per_prompt(make_client, inputs):
-    res = make_client.text_to_image(
-        docs=inputs, parameters={'num_images_per_prompt': 2}
-    )
+    res = make_client.text_to_image(docs=inputs, num_images_per_prompt=2)
     assert isinstance(res, DocumentArray)
     assert len(res[0].matches) == 2
     assert len(res[0].matches[0].blob) > 0
@@ -61,7 +59,7 @@ def test_text_to_image_document_2_images_per_prompt(make_client, inputs):
     ],
 )
 def test_text_to_image_document_latent_output(make_client, inputs):
-    res = make_client.text_to_image(docs=inputs, parameters={'output_type': 'latent'})
+    res = make_client.text_to_image(docs=inputs, output_type='latent')
     assert isinstance(res, DocumentArray)
     assert res[0].matches[0].tensor is not None
 
@@ -81,7 +79,7 @@ def test_text_to_image_document_latent_output(make_client, inputs):
 )
 def test_text_to_image_document_latent_output_2_images_per_prompt(make_client, inputs):
     res = make_client.text_to_image(
-        docs=inputs, parameters={'output_type': 'latent', 'num_images_per_prompt': 2}
+        docs=inputs, output_type='latent', num_images_per_prompt=2
     )
     assert isinstance(res, DocumentArray)
     assert len(res[0].matches) == 2
@@ -103,9 +101,7 @@ def test_text_to_image_plain(make_client, inputs):
     ['A dog is sleeping on the floor.'],
 )
 def test_text_to_image_plain_2_images_per_prompt(make_client, inputs):
-    res = make_client.text_to_image(
-        prompt=inputs, parameters={'num_images_per_prompt': 2}
-    )
+    res = make_client.text_to_image(prompt=inputs, num_images_per_prompt=2)
     assert isinstance(res, list)
     assert len(res) == 2
     assert isinstance(res[0], bytes)
@@ -119,7 +115,7 @@ def test_text_to_image_plain_2_images_per_prompt(make_client, inputs):
     ['A dog is sleeping on the floor.'],
 )
 def test_text_to_image_plain_latent_output(make_client, inputs):
-    res = make_client.text_to_image(prompt=inputs, parameters={'output_type': 'latent'})
+    res = make_client.text_to_image(prompt=inputs, output_type='latent')
     assert isinstance(res, np.ndarray)
 
 
@@ -129,7 +125,7 @@ def test_text_to_image_plain_latent_output(make_client, inputs):
 )
 def test_text_to_image_plain_latent_output_2_images_per_prompt(make_client, inputs):
     res = make_client.text_to_image(
-        prompt=inputs, parameters={'output_type': 'latent', 'num_images_per_prompt': 2}
+        prompt=inputs, output_type='latent', num_images_per_prompt=2
     )
     assert isinstance(res, list)
     assert len(res) == 2
