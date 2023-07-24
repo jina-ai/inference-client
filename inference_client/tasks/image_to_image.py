@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Iterable, Optional, Union, overload
+from typing import TYPE_CHECKING, Iterable, Optional, Tuple, Union, overload
 
 import numpy
 from docarray import Document, DocumentArray
@@ -21,18 +21,58 @@ class ImageToImageMixin:
     @overload
     def image_to_image(
         self,
-        image: Union[str, bytes, 'ArrayType'],
         prompt: str,
+        image: Union[str, bytes, 'ArrayType'],
         *,
+        strength: Optional[float],
+        num_inference_steps: Optional[int],
+        guidance_scale: Optional[float],
         negative_prompt: Optional[str],
+        num_images_per_prompt: Optional[int],
+        eta: Optional[float],
+        output_type: Optional[str],
+        return_dict: Optional[bool],
+        cross_attention_kwargs: Optional[dict],
+        guidance_rescale: Optional[float],
+        original_size: Optional[Tuple[int]],
+        crops_coords_top_left: Optional[Tuple[int]],
+        target_size: Optional[Tuple[int]],
+        aesthetic_score: Optional[float],
+        negative_aesthetic_score: Optional[float],
         **kwargs,
     ):
         """
         Generate an image from a base image and prompt.
 
-        :param image: The base image to generate from.
-        :param prompt: The prompt or prompts to guide the image generation.
-        :param negative_prompt: The prompt or prompts not to guide the image generation.
+        :param prompt: The prompt to guide the image generation.
+        :param image: Image, or tensor representing an image, that will be used as the starting point for the process.
+        Can also accpet image latents as image, if passing latents directly, it will not be encoded again.
+        :param strength: Conceptually, indicates how much to transform the reference image. Must be between 0 and 1.
+        `image` will be used as a starting point, adding more noise to it the larger the strength. The number of
+        denoising steps depends on the amount of noise initially added. When strength is 1, added noise will be maximum
+        and the denoising process will run for the full number of iterations specified in num_inference_steps. A value
+        of 1, therefore, essentially ignores image.
+        :param num_inference_steps: The number of denoising steps. More denoising steps usually lead to a higher quality
+        image at the expense of slower inference. This parameter will be modulated by strength.
+        :param guidance_scale: Guidance scale as defined in Classifier-Free Diffusion Guidance. Higher guidance scale
+        encourages to generate images that are closely linked to the text prompt, usually at the expense of lower image
+        quality.
+        :param negative_prompt: The prompt or prompts not to guide the image generation. Ignored when not using
+        guidance.
+        :param num_images_per_prompt: The number of images to generate per prompt.
+        :param eta: Corresponds to parameter eta (η) in the DDIM paper. Only applies to schedulers.DDIMScheduler, will
+        be ignored for others.
+        :param output_type: The output format of the generate image.
+        :param return_dict: Whether or not to return a StableDiffusionPipelineOutput instead of a plain tuple.
+        :param cross_attention_kwargs: A kwargs dictionary that if specified is passed along to the AttentionProcessor
+        as defined under self.processor in diffusers.cross_attention.
+        :param guidance_rescale: Guidance rescale factor proposed by Common Diffusion Noise Schedules and Sample Steps
+        are Flawed. Guidance rescale factor should fix overexposure when using zero terminal SNR.
+        :param original_size: Parameter used by Stable Diffusion XL.
+        :param crops_coords_top_left: Parameter used by Stable Diffusion XL.
+        :param target_size: Parameter used by Stable Diffusion XL.
+        :param aesthetic_score: Parameter used by Stable Diffusion XL.
+        :param negative_aesthetic_score: Parameter used by Stable Diffusion XL.
         :param kwargs: Additional arguments to pass to the model.
         """
         ...
@@ -52,8 +92,8 @@ class ImageToImageMixin:
     @overload
     def image_to_image(
         self,
-        image: Optional[Union[str, bytes, 'ArrayType']] = None,
         prompt: Optional[str] = None,
+        image: Optional[Union[str, bytes, 'ArrayType']] = None,
         negative_prompt: Optional[str] = None,
         docs: Optional[Union[Iterable['Document'], 'DocumentArray']] = None,
         **kwargs,
@@ -61,8 +101,8 @@ class ImageToImageMixin:
         """
         Generate an image from prompt or documents containing prompts.
 
-        :param image: The base image to generate from.
         :param prompt: The prompt or prompts to guide the image generation.
+        :param image: The base image to generate from.
         :param negative_prompt: The prompt or prompts not to guide the image generation.
         :param docs: The documents containing base images and prompts to guide the image generation.
         :param kwargs: Additional arguments to pass to the model.
@@ -70,19 +110,19 @@ class ImageToImageMixin:
         ...
 
     def image_to_image(
-        self, image: Union[str, bytes, 'ArrayType'] = None, prompt: str = None, **kwargs
+        self, prompt: str = None, image: Union[str, bytes, 'ArrayType'] = None, **kwargs
     ):
         """
         Generate an image from prompt or documents containing prompts.
 
-        :param image: The base image to generate from.
         :param prompt: The prompt or prompts to guide the image generation.
+        :param image: The base image to generate from.
         :param kwargs: Additional arguments to pass to the model.
 
         :return: The generated image.
         """
         payload, content_type = self._get_image_to_image_payload(
-            image=image, prompt=prompt, **kwargs
+            prompt=prompt, image=image, **kwargs
         )
         result = self.client.post(**payload)
         return self._unbox_image_to_image_result(result, content_type)

@@ -42,7 +42,7 @@ class TextToImageMixin:
         """
         Generate an image from prompt.
 
-        :param prompt: The prompt or prompts to guide the image generation.
+        :param prompt: The prompt to guide the image generation.
         :param height: The height in pixels of the generated image.
         :param width: The width in pixels of the generated image.
         :param num_inference_steps: The number of denoising steps. More denoising steps usually lead to a higher quality
@@ -50,7 +50,8 @@ class TextToImageMixin:
         :param guidance_scale: Guidance scale as defined in Classifier-Free Diffusion Guidance. Higher guidance scale
         encourages to generate images that are closely linked to the text prompt, usually at the expense of lower image
         quality.
-        :param negative_prompt: The prompt or prompts not to guide the image generation.
+        :param negative_prompt: The prompt or prompts not to guide the image generation. Ignored when not using
+        guidance.
         :param num_images_per_prompt: The number of images to generate per prompt.
         :param eta: Corresponds to parameter eta (η) in the DDIM paper. Only applies to schedulers.DDIMScheduler, will
         be ignored for others.
@@ -62,9 +63,9 @@ class TextToImageMixin:
         as defined under self.processor in diffusers.cross_attention.
         :param guidance_rescale:  Guidance rescale factor proposed by Common Diffusion Noise Schedules and Sample Steps
         are Flawed. Guidance rescale factor should fix overexposure when using zero terminal SNR.
-        :param original_size: Parameter used for Stable Diffusion XL.
-        :param crops_coords_top_left: Parameter used for Stable Diffusion XL.
-        :param target_size: Parameter used for Stable Diffusion XL.
+        :param original_size: Parameter used by Stable Diffusion XL.
+        :param crops_coords_top_left: Parameter used by Stable Diffusion XL.
+        :param target_size: Parameter used by Stable Diffusion XL.
         :param kwargs: Additional arguments to pass to the model.
         """
         ...
@@ -112,9 +113,9 @@ class TextToImageMixin:
         as defined under self.processor in diffusers.cross_attention.
         :param guidance_rescale:  Guidance rescale factor proposed by Common Diffusion Noise Schedules and Sample Steps
         are Flawed. Guidance rescale factor should fix overexposure when using zero terminal SNR.
-        :param original_size: Parameter used for Stable Diffusion XL.
-        :param crops_coords_top_left: Parameter used for Stable Diffusion XL.
-        :param target_size: Parameter used for Stable Diffusion XL.
+        :param original_size: Parameter used by Stable Diffusion XL.
+        :param crops_coords_top_left: Parameter used by Stable Diffusion XL.
+        :param target_size: Parameter used by Stable Diffusion XL.
         :param kwargs: Additional arguments to pass to the model.
         """
         ...
@@ -144,7 +145,7 @@ class TextToImageMixin:
         """
         Generate an image from prompt or documents containing prompts.
 
-        :param prompt: The prompt or prompts to guide the image generation.
+        :param prompt: The prompt to guide the image generation.
         :param height: The height in pixels of the generated image.
         :param width: The width in pixels of the generated image.
         :param num_inference_steps: The number of denoising steps. More denoising steps usually lead to a higher quality
@@ -152,7 +153,8 @@ class TextToImageMixin:
         :param guidance_scale: Guidance scale as defined in Classifier-Free Diffusion Guidance. Higher guidance scale
         encourages to generate images that are closely linked to the text prompt, usually at the expense of lower image
         quality.
-        :param negative_prompt: The prompt or prompts not to guide the image generation.
+        :param negative_prompt: The prompt or prompts not to guide the image generation. Ignored when not using
+        guidance.
         :param num_images_per_prompt: The number of images to generate per prompt.
         :param eta: Corresponds to parameter eta (η) in the DDIM paper. Only applies to schedulers.DDIMScheduler, will
         be ignored for others.
@@ -162,11 +164,11 @@ class TextToImageMixin:
         :param return_dict: Whether or not to return a StableDiffusionPipelineOutput instead of a plain tuple.
         :param cross_attention_kwargs: A kwargs dictionary that if specified is passed along to the AttentionProcessor
         as defined under self.processor in diffusers.cross_attention.
-        :param guidance_rescale:  Guidance rescale factor proposed by Common Diffusion Noise Schedules and Sample Steps
+        :param guidance_rescale: Guidance rescale factor proposed by Common Diffusion Noise Schedules and Sample Steps
         are Flawed. Guidance rescale factor should fix overexposure when using zero terminal SNR.
-        :param original_size: Parameter used for Stable Diffusion XL.
-        :param crops_coords_top_left: Parameter used for Stable Diffusion XL.
-        :param target_size: Parameter used for Stable Diffusion XL.
+        :param original_size: Parameter used by Stable Diffusion XL.
+        :param crops_coords_top_left: Parameter used by Stable Diffusion XL.
+        :param target_size: Parameter used by Stable Diffusion XL.
         :param docs: The documents containing prompts and/or negative_prompt to guide the image generation.
         :param kwargs: Additional arguments to pass to the model.
         """
