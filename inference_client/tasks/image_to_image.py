@@ -236,6 +236,11 @@ class ImageToImageMixin:
         else:
             raise ValueError('Please provide either docs or image and prompt input.')
 
+        if (parameters := payload.get('parameters', None)) is not None:
+            parameters.update(kwargs)
+        else:
+            payload.update(parameters=kwargs)
+
         return payload, content_type
 
     def _unbox_image_to_image_result(self, result, content_type):
